@@ -199,45 +199,70 @@
 
   <div class="funnel">
     <div class="funnel-step">
-      <div class="funnel-bar" style="width:100%;">20,902 PV</div>
-      <div class="funnel-label"><strong>/mcp/main</strong> — 메인 랜딩. "내가 마케터라면 리포트 만들어줘" + 연동 앱 안내 (Kiro, Claude, ChatGPT)</div>
+      <div class="funnel-bar" style="width:100%;">7,454명</div>
+      <div class="funnel-label"><strong>/mcp/main</strong> — 메인 랜딩 (활성 사용자) · 세션당 참여 6초</div>
     </div>
-    <div class="funnel-arrow">↓ 18%</div>
+    <div class="funnel-arrow">↓ 19%</div>
     <div class="funnel-step">
-      <div class="funnel-bar" style="width:36%; background: linear-gradient(90deg, #42a5f5, #90caf9);">3,795 PV</div>
-      <div class="funnel-label"><strong>/mcp/guide</strong> — 활용 가이드. MCP로 할 수 있는 작업 예시 (업종 분석, 경쟁 비교, 리포트 생성 등)</div>
+      <div class="funnel-bar" style="width:38%; background: linear-gradient(90deg, #42a5f5, #90caf9);">1,411명</div>
+      <div class="funnel-label"><strong>/mcp/guide</strong> — 활용 가이드 (할 수 있는 작업 예시) · 참여 11초</div>
     </div>
-    <div class="funnel-arrow">↓ 37% → /mcp/skills (1,415 PV)</div>
+    <div class="funnel-arrow">↓ 35%</div>
     <div class="funnel-step">
-      <div class="funnel-bar" style="width:5%; background: linear-gradient(90deg, #ef5350, #ef9a9a);">470 PV</div>
-      <div class="funnel-label"><strong>/mcp/connect</strong> — 연동 방법 페이지 <span class="red bold">← 전체 PV 대비 2.2%만 도달. 최대 병목.</span></div>
+      <div class="funnel-bar" style="width:13%; background: linear-gradient(90deg, #7e57c2, #b39ddb);">497명</div>
+      <div class="funnel-label"><strong>/mcp/skills</strong> — 스킬 라이브러리 · 참여 9초</div>
+    </div>
+    <div class="funnel-arrow">↓ 0.56% (전체 대비) <span class="red bold">&nbsp;← 최대 병목</span></div>
+    <div class="funnel-step">
+      <div class="funnel-bar" style="width:2%; background: linear-gradient(90deg, #ef5350, #ef9a9a);">42명</div>
+      <div class="funnel-label"><strong>/mcp/connect</strong> — 연동 방법 페이지 · <strong>참여 1분 18초</strong> (진지하게 설치 가이드 읽는 중)</div>
     </div>
   </div>
-  <p style="font-size:13px; color:#666; margin-top:12px;">※ 위는 페이지뷰(PV) 기준 퍼널. 아래 발급 101명은 유니크 유저 기준(디파이너리+크레딧 로그 집계)으로, PV와 단위가 다릅니다. /mcp/connect 도달 유저 중 상당수가 실제 발급까지 완료한 것으로 보아, <strong>연동 페이지까지 도달한 유저의 발급 의지는 강합니다.</strong></p>
 
-  <h3>페이지별 이탈률 (GA 기준)</h3>
+  <p style="font-size:13px; color:#666; margin: 16px 0 8px;">※ GA "방문 페이지" 보고서 기준 활성 사용자 수. /mcp/connect는 29위로, 전체 사이트 내에서 도달률 극히 낮음.</p>
+
+  <h3>발급과 실사용의 구분</h3>
   <table>
     <thead>
-      <tr><th>페이지</th><th>세션 소스</th><th class="text-right">조회수</th><th class="text-right">이탈률</th><th>해석</th></tr>
+      <tr><th>단계</th><th class="text-right">유저 수</th><th>비고</th></tr>
     </thead>
     <tbody>
-      <tr><td class="bold">/mcp/main</td><td>instagram.com</td><td class="text-right num">1,731</td><td class="text-right red bold">83.4%</td><td>SNS 호기심 유입. 인지 목적(의도적)</td></tr>
-      <tr><td class="bold">/mcp/main</td><td>m.facebook.com</td><td class="text-right num">559</td><td class="text-right red bold">78.1%</td><td>상동</td></tr>
-      <tr><td>/mcp/main</td><td>(direct)</td><td class="text-right num">6,717</td><td class="text-right">41.2%</td><td>직접 유입은 양호</td></tr>
-      <tr><td>/mcp/main</td><td>google</td><td class="text-right num">647</td><td class="text-right green bold">9.9%</td><td>검색 유입 최고 품질</td></tr>
-      <tr><td>/mcp/guide</td><td>(direct)</td><td class="text-right num">3,795</td><td class="text-right">18.7%</td><td>가이드 진입 후 이탈은 낮음</td></tr>
-      <tr><td>/mcp/skills</td><td>(direct)</td><td class="text-right num">1,415</td><td class="text-right">19.3%</td><td>스킬 페이지 관심 존재</td></tr>
-      <tr><td>/mcp/connect</td><td>(direct)</td><td class="text-right num">470</td><td class="text-right green">13.6%</td><td>여기까지 온 유저는 의지 강함</td></tr>
+      <tr><td>/mcp/main 활성 사용자</td><td class="text-right num bold">7,454명</td><td></td></tr>
+      <tr><td>/mcp/connect 도달</td><td class="text-right num">42명</td><td>메인 대비 0.56%</td></tr>
+      <tr><td class="bold">API 키 발급 완료</td><td class="text-right num bold">101명</td><td>메인에서 바로 발급 가능 → connect 미경유 발급이 더 많음</td></tr>
+      <tr><td class="bold red">실제 크레딧 사용</td><td class="text-right num bold">45명</td><td>발급 대비 44.6%. 56명은 발급만 하고 한 번도 미사용</td></tr>
+      <tr><td>그 중 외부 유저 (크레딧 로그 확인)</td><td class="text-right num">34명</td><td>내부 4명 + 집계 차이 제외</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <div class="title">핵심 발견: 발급 경로가 2개 존재</div>
+    <p><strong>/mcp/connect를 거쳐 발급한 유저는 42명 중 일부</strong>에 불과하고, 나머지는 <strong>메인 페이지에서 바로 키 발급</strong>한 것. 즉, 가이드/스킬/커넥트 페이지를 안 봐도 발급 자체는 가능한 구조.</p>
+    <p>그러나 <strong>발급 ≠ 사용.</strong> 101명 중 실제 크레딧을 소진한 유저는 45명(44.6%)뿐. 메인에서 "일단 발급"은 쉽지만, 발급 후 <strong>실제 MCP 연동까지 가는 것</strong>이 진짜 허들.</p>
+    <p>/mcp/connect를 방문한 42명은 참여 시간 1분 18초로, <strong>진지하게 연동을 시도한 유저.</strong> 이들의 발급→사용 전환율이 메인에서 바로 발급한 유저보다 높을 것으로 추정.</p>
+  </div>
+
+  <h3>페이지별 참여 지표 (GA 방문 페이지 보고서)</h3>
+  <table>
+    <thead>
+      <tr><th>페이지</th><th class="text-right">활성 사용자</th><th class="text-right">새 사용자</th><th class="text-right">세션당 참여 시간</th><th>해석</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="bold">/mcp/main</td><td class="text-right num">7,454</td><td class="text-right num">7,442</td><td class="text-right">6초</td><td>대부분 신규. 빠르게 스캔 후 이동 또는 이탈</td></tr>
+      <tr><td class="bold">/mcp/guide</td><td class="text-right num">1,411</td><td class="text-right num">1,393</td><td class="text-right">11초</td><td>활용 사례 카드를 훑어봄</td></tr>
+      <tr><td>/mcp/skills</td><td class="text-right num">497</td><td class="text-right num">497</td><td class="text-right">9초</td><td>스킬 목록 탐색</td></tr>
+      <tr><td class="bold">/mcp/connect</td><td class="text-right num">42</td><td class="text-right num">15</td><td class="text-right bold green">1분 18초</td><td><strong>진지하게 연동 시도.</strong> 새 사용자 15명 = 나머지 27명은 기존 회원</td></tr>
     </tbody>
   </table>
 
   <div class="insight bad">
-    <div class="title">최대 병목: 가이드/스킬 탐색 후 → /mcp/connect 미도달 (88% 이탈)</div>
-    <p>가이드 페이지(3,795 PV)에서 "이런 걸 할 수 있구나"를 확인한 유저가 스킬 라이브러리(1,415 PV)까지는 탐색하지만, <strong>실제 연동 페이지(/mcp/connect, 470 PV)까지 가는 유저는 12%뿐.</strong></p>
-    <p>이는 두 가지로 해석 가능:</p>
-    <p><strong>① "할 수 있는 건 알겠는데, 어떻게 시작하는지 모르겠다"</strong> — 가이드/스킬에서 가치는 인지했으나, 연동 페이지로의 동선(CTA)이 약하거나 눈에 띄지 않음</p>
-    <p><strong>② "재밌어 보이지만 나한테 필요한 건 아니다"</strong> — SNS 유입의 일반인이 호기심으로 가이드까지 봤으나, 본인 업무와의 연결점을 못 느끼고 이탈</p>
-    <p>반면 /mcp/connect 도달 후 → 발급 완료(79%)는 매우 양호. <strong>"연동 페이지까지 오게 만드는 것"이 핵심.</strong></p>
+    <div class="title">최대 병목: 가이드/스킬 이후 → /mcp/connect 미도달</div>
+    <p>활성 사용자 기준, 메인 7,454명 중 가이드까지 1,411명(19%), 스킬 497명(7%)까지는 탐색하지만, <strong>연동 페이지(/mcp/connect)에 도달하는 유저는 42명(0.56%)</strong>에 불과.</p>
+    <p>그러나 <strong>메인에서 바로 키 발급이 가능한 구조</strong>이므로, connect 미경유 발급이 오히려 다수(101명 중 대부분). 진짜 문제는 connect 도달이 적은 게 아니라, <strong>발급 후 실제 MCP 연동·사용까지 가는 유저가 45명(44.6%)뿐</strong>이라는 것.</p>
+    <p>이탈 원인 추정:</p>
+    <p><strong>① 메인에서 "일단 발급" → 연동 방법을 모르거나 나중에 하려다 안 함</strong><br>
+       <strong>② 연동 페이지(connect)까지 간 42명은 참여 1분 18초로 진지하게 시도했으나, 터미널/설정의 복잡성에서 일부 좌절</strong><br>
+       <strong>③ "재밌어 보이지만 나한테 필요한 건 아니다"</strong> — SNS 유입의 일반인이 호기심으로 발급만 하고 끝</p>
   </div>
 
   <h3>GPT 앱 / 클로드 커넥터 도입 후 예상 변화</h3>
@@ -248,9 +273,9 @@
     <tbody>
       <tr>
         <td class="bold">가이드/스킬 → 연동</td>
-        <td class="text-right red">12%</td>
-        <td class="text-right green bold">30~50%</td>
-        <td>현재 /mcp/connect에서 "MCP 키 발급 → AI 클라이언트에 코드 붙여넣기"라는 4단계 설치가 필요. GPT 앱은 스토어에서 추가, 클로드 커넥터는 1클릭 연결. 메인 페이지에 이미 Kiro/Claude/ChatGPT APP 버튼이 있으므로, 이 버튼이 바로 작동하면 /mcp/connect 자체를 건너뛸 수 있음.</td>
+        <td class="text-right red">0.56%</td>
+        <td class="text-right green bold">불필요</td>
+        <td>GPT 앱은 메인에서 바로 스토어 이동 → 설치. connect 페이지를 거칠 필요 없음. 퍼널 자체가 축소.</td>
       </tr>
       <tr>
         <td class="bold">발급 → 첫 사용</td>
@@ -262,7 +287,7 @@
         <td class="bold">메인 이탈 (SNS)</td>
         <td class="text-right">78~83%</td>
         <td class="text-right green bold">50~60%</td>
-        <td>메인 페이지 첫 화면에서 "GPT에서 바로 써보세요" → GPT 스토어 바로가기를 제공하면, "터미널? MCP?" 모르는 일반인도 1클릭으로 시도 가능. 행동 허들 자체가 없어짐.</td>
+        <td>"GPT에서 바로 써보세요" → GPT 스토어 바로가기를 제공하면, 일반인도 1클릭으로 시도 가능.</td>
       </tr>
       <tr>
         <td class="bold">전체 유입→사용</td>
