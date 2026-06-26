@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모바일인덱스 MCP · 사용 현황 종합 분석</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+    max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px;
+    line-height: 1.75; color: #1a1a1a; background: #fff;
+  }
+  
+  .report-header { margin-bottom: 48px; }
+  .report-header .brand { font-size: 12px; color: #888; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .report-header h1 { font-size: 28px; font-weight: 700; color: #111; margin-bottom: 12px; }
+  .report-header .meta { font-size: 13px; color: #666; line-height: 1.8; }
+  .report-header .meta span { display: inline-block; margin-right: 16px; }
+  .report-header .notice { font-size: 12px; color: #999; margin-top: 12px; border-top: 1px solid #eee; padding-top: 12px; }
+
+  .section { margin-top: 56px; }
+  .section-num { display: inline-block; font-size: 11px; font-weight: 700; color: #fff; background: #111; border-radius: 3px; padding: 2px 8px; margin-bottom: 12px; }
+  .section h2 { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 8px; }
+  .section .subtitle { font-size: 14px; color: #666; margin-bottom: 24px; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 24px 0; }
+  .kpi-card { background: #f8f9fa; border-radius: 8px; padding: 20px; text-align: center; border: 1px solid #eee; }
+  .kpi-card .value { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 4px; }
+  .kpi-card .label { font-size: 12px; color: #666; }
+  .kpi-card .sub { font-size: 11px; color: #999; margin-top: 4px; }
+
+  .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0; }
+  .status-card { border-radius: 8px; padding: 20px; border: 1px solid #eee; }
+  .status-card.current { background: #f8f9fa; }
+  .status-card.future { background: #e8f5e9; border-color: #c8e6c9; }
+  .status-card h4 { font-size: 13px; font-weight: 600; color: #666; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .status-card ul { list-style: none; font-size: 14px; }
+  .status-card ul li { padding: 4px 0; }
+  .status-card ul li::before { content: '·'; margin-right: 8px; color: #999; }
+
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+  thead th { background: #f8f9fa; color: #333; font-weight: 600; padding: 12px 10px; border-bottom: 2px solid #ddd; text-align: left; }
+  tbody td { padding: 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+  tbody tr:hover { background: #fafbfc; }
+  .text-center { text-align: center; }
+  .text-right { text-align: right; }
+  .num { font-variant-numeric: tabular-nums; }
+  .bold { font-weight: 600; }
+  .red { color: #e53935; }
+  .green { color: #2e7d32; }
+  .gray { color: #999; }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 6px; border-radius: 3px; font-weight: 500; }
+  .tag-green { background: #e8f5e9; color: #2e7d32; }
+  .tag-yellow { background: #fff8e1; color: #f57f17; }
+  .tag-red { background: #fbe9e7; color: #d32f2f; }
+  .tag-blue { background: #e3f2fd; color: #1565c0; }
+  .tag-gray { background: #f5f5f5; color: #666; }
+
+  .insight { background: #f8f9fa; border-radius: 8px; padding: 20px 24px; margin: 24px 0; border-left: 4px solid #1a73e8; }
+  .insight.warn { border-left-color: #f9a825; }
+  .insight.good { border-left-color: #2e7d32; }
+  .insight.bad { border-left-color: #d32f2f; }
+  .insight .title { font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px; }
+  .insight p { font-size: 14px; color: #444; margin-bottom: 6px; }
+  .insight p:last-child { margin-bottom: 0; }
+
+  .funnel { margin: 24px 0; padding: 24px; background: #f8f9fa; border-radius: 8px; }
+  .funnel-step { display: flex; align-items: center; margin-bottom: 12px; }
+  .funnel-step:last-child { margin-bottom: 0; }
+  .funnel-bar { height: 32px; background: linear-gradient(90deg, #1a73e8, #4dabf7); border-radius: 4px; display: flex; align-items: center; padding: 0 12px; color: #fff; font-size: 12px; font-weight: 600; min-width: 60px; }
+  .funnel-label { font-size: 13px; color: #333; margin-left: 12px; }
+  .funnel-arrow { text-align: center; color: #ccc; font-size: 18px; margin: 4px 0 4px 16px; }
+
+  /* Heatmap */
+  .heatmap-wrap { overflow-x: auto; margin: 20px 0; }
+  .heatmap { border-collapse: collapse; font-size: 11px; min-width: 700px; }
+  .heatmap th, .heatmap td { padding: 6px 8px; text-align: center; border: 1px solid #eee; white-space: nowrap; }
+  .heatmap th { background: #f8f9fa; font-weight: 600; }
+  .heatmap .cell-0 { background: #fff; }
+  .heatmap .cell-1 { background: #e3f2fd; }
+  .heatmap .cell-2 { background: #bbdefb; }
+  .heatmap .cell-3 { background: #90caf9; }
+  .heatmap .cell-4 { background: #64b5f6; color: #fff; }
+  .heatmap .cell-5 { background: #1a73e8; color: #fff; }
+  .heatmap .user-name { text-align: left; font-weight: 500; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+  .heatmap .user-grade { font-size: 10px; padding: 1px 4px; border-radius: 2px; }
+  .grade-prm { background: #e8f5e9; color: #2e7d32; }
+  .grade-ess { background: #e3f2fd; color: #1565c0; }
+  .grade-basic { background: #f5f5f5; color: #666; }
+  .grade-demo { background: #fff8e1; color: #f57f17; }
+
+  .retention-bar { display: flex; align-items: center; margin-bottom: 8px; }
+  .retention-label { width: 140px; font-size: 12px; color: #666; flex-shrink: 0; }
+  .retention-track { flex: 1; height: 24px; background: #eee; border-radius: 4px; overflow: hidden; position: relative; }
+  .retention-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; }
+  .retention-value { font-size: 12px; font-weight: 600; color: #333; width: 50px; text-align: right; margin-left: 8px; }
+
+  h3 { font-size: 15px; margin: 32px 0 16px; color: #333; }
+
+  .report-footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999; }
+  
+  @media (max-width: 640px) {
+    body { padding: 20px 16px 60px; }
+    .report-header h1 { font-size: 22px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .status-grid { grid-template-columns: 1fr; }
+    table { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="report-header">
+  <div class="brand">MOBILEINDEX INSIGHT · MCP 사용 현황 분석</div>
+  <h1>모바일인덱스 MCP 소프트 런칭 · 사용자 행동 분석 리포트</h1>
+  <div class="meta">
+    <span>분석 기간 &nbsp;2026.06.10 ~ 06.26 (17일)</span>
+    <span>단계 &nbsp;소프트 런칭</span>
+    <span>데이터 기준 &nbsp;2026.06.26</span>
+  </div>
+  <div class="notice">※ 내부 유저(digitaltrinity, tradingworks) 제외. 크레딧 사용 로그 기반 분석. BASIC은 분석 기간 내 30크레딧/일이었으며, 6/26 오후부로 100크레딧/일로 상향. BASIC은 최근 1년 데이터 조회 불가.</div>
+</div>
+
+<!-- Section 01 -->
+<div class="section">
+  <span class="section-num">01</span>
+  <h2>현재 위치</h2>
+  <p class="subtitle">GPT 앱 + 클로드 커넥터 심사 중. 1~2주 내 그랜드 오픈 예정.</p>
+
+  <div class="status-grid">
+    <div class="status-card current">
+      <h4>현재 (소프트 런칭)</h4>
+      <ul>
+        <li>연동: MCP 직접 연동 (터미널 필요)</li>
+        <li>BASIC: 30→<strong></strong>100크레딧/일</strong> (6/26 상향, 최근 1년 데이터 조회 불가)</li>
+        <li>ESSENTIAL: 200크레딧/일</li>
+        <li>PREMIUM: 500크레딧/일</li>
+      </ul>
+    </div>
+    <div class="status-card future">
+      <h4>그랜드 오픈 후 (1~2주 내)</h4>
+      <ul>
+        <li>연동: GPT 앱 + 클로드 커넥터 (원클릭)</li>
+        <li>기술 허들 대폭 해소</li>
+        <li>매체비 확대, 전환 목적으로 전환</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Section 02 -->
+<div class="section">
+  <span class="section-num">02</span>
+  <h2>사용자 현황 요약</h2>
+  <p class="subtitle">외부 사용자 34명 · 유료 고객 사용률 양호, BASIC은 일회성 지배적</p>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="value">34명</div>
+      <div class="label">외부 사용자</div>
+      <div class="sub">내부 4명 제외</div>
+    </div>
+    <div class="kpi-card">
+      <div class="value">14명</div>
+      <div class="label">프리미엄 (유료)</div>
+      <div class="sub">500크레딧/일</div>
+    </div>
+    <div class="kpi-card">
+      <div class="value">2명</div>
+      <div class="label">에센셜 (유료)</div>
+      <div class="sub">200크레딧/일</div>
+    </div>
+    <div class="kpi-card">
+      <div class="value">17명</div>
+      <div class="label">베이직 (무료)</div>
+      <div class="sub">30→100크레딧/일(6/26~) · 1년 제한</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>등급</th><th class="text-right">유저 수</th><th class="text-right">평균 사용량</th><th class="text-right">평균 사용일수</th><th class="text-right">복수일 사용 비율</th><th>특성</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="bold">프리미엄 (유료)</td><td class="text-right">14명</td><td class="text-right num">232</td><td class="text-right">3.1일</td><td class="text-right bold green">64%</td><td>필요 시 깊이 사용. 보고/기획 시기 집중</td></tr>
+      <tr><td class="bold">에센셜 (유료)</td><td class="text-right">2명</td><td class="text-right num">335</td><td class="text-right">4.0일</td><td class="text-right bold green">100%</td><td>가장 활발. 지속 사용 패턴</td></tr>
+      <tr><td class="bold">프리미엄 (데모)</td><td class="text-right">1명</td><td class="text-right num">214</td><td class="text-right">5.0일</td><td class="text-right bold green">100%</td><td>번개장터. 반복 사용 확인</td></tr>
+      <tr><td class="bold">베이직 (무료)</td><td class="text-right">17명</td><td class="text-right num">26</td><td class="text-right">1.2일</td><td class="text-right red">12%</td><td>대부분 1일 사용 후 미복귀</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Section 03: 페이지 이탈 분석 -->
+<div class="section">
+  <span class="section-num">03</span>
+  <h2>페이지 퍼널 · 어디서 이탈하는가</h2>
+  <p class="subtitle">GA 기준 페이지 전환 분석 — 가이드→발급 구간이 최대 병목. GPT 앱/클로드 커넥터로 구조적 해소 예상.</p>
+
+  <div class="funnel">
+    <div class="funnel-step">
+      <div class="funnel-bar" style="width:100%;">20,902 PV</div>
+      <div class="funnel-label"><strong>/mcp/main</strong> — 메인 랜딩. "내가 마케터라면 리포트 만들어줘" + 연동 앱 안내 (Kiro, Claude, ChatGPT)</div>
+    </div>
+    <div class="funnel-arrow">↓ 18% 전환</div>
+    <div class="funnel-step">
+      <div class="funnel-bar" style="width:36%; background: linear-gradient(90deg, #42a5f5, #90caf9);">3,795 PV</div>
+      <div class="funnel-label"><strong>/mcp/guide</strong> — 활용 가이드. MCP로 할 수 있는 작업 예시 (업종 분석, 경쟁 비교, 리포트 생성 등)</div>
+    </div>
+    <div class="funnel-arrow">↓ 37% → /mcp/skills (1,415 PV)</div>
+    <div class="funnel-step">
+      <div class="funnel-bar" style="width:5%; background: linear-gradient(90deg, #ef5350, #ef9a9a);">470 PV</div>
+      <div class="funnel-label"><strong>/mcp/connect</strong> — 연동 방법. MCP 키 발급 + 설치 가이드 (계정 준비→키 발급→코드 붙여넣기→사용) <span class="red bold">← 여기까지 도달이 최대 병목</span></div>
+    </div>
+    <div class="funnel-arrow">↓ 79% 전환 (양호)</div>
+    <div class="funnel-step">
+      <div class="funnel-bar" style="width:2%; background: linear-gradient(90deg, #2e7d32, #66bb6a);">발급 완료</div>
+      <div class="funnel-label"><strong>API 키 발급</strong> — 101명</div>
+    </div>
+  </div>
+
+  <h3>페이지별 이탈률 (GA 기준)</h3>
+  <table>
+    <thead>
+      <tr><th>페이지</th><th>세션 소스</th><th class="text-right">조회수</th><th class="text-right">이탈률</th><th>해석</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="bold">/mcp/main</td><td>instagram.com</td><td class="text-right num">1,731</td><td class="text-right red bold">83.4%</td><td>SNS 호기심 유입. 인지 목적(의도적)</td></tr>
+      <tr><td class="bold">/mcp/main</td><td>m.facebook.com</td><td class="text-right num">559</td><td class="text-right red bold">78.1%</td><td>상동</td></tr>
+      <tr><td>/mcp/main</td><td>(direct)</td><td class="text-right num">6,717</td><td class="text-right">41.2%</td><td>직접 유입은 양호</td></tr>
+      <tr><td>/mcp/main</td><td>google</td><td class="text-right num">647</td><td class="text-right green bold">9.9%</td><td>검색 유입 최고 품질</td></tr>
+      <tr><td>/mcp/guide</td><td>(direct)</td><td class="text-right num">3,795</td><td class="text-right">18.7%</td><td>가이드 진입 후 이탈은 낮음</td></tr>
+      <tr><td>/mcp/skills</td><td>(direct)</td><td class="text-right num">1,415</td><td class="text-right">19.3%</td><td>스킬 페이지 관심 존재</td></tr>
+      <tr><td>/mcp/connect</td><td>(direct)</td><td class="text-right num">470</td><td class="text-right green">13.6%</td><td>여기까지 온 유저는 의지 강함</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight bad">
+    <div class="title">최대 병목: 가이드/스킬 탐색 후 → /mcp/connect 미도달 (88% 이탈)</div>
+    <p>가이드 페이지(3,795 PV)에서 "이런 걸 할 수 있구나"를 확인한 유저가 스킬 라이브러리(1,415 PV)까지는 탐색하지만, <strong>실제 연동 페이지(/mcp/connect, 470 PV)까지 가는 유저는 12%뿐.</strong></p>
+    <p>이는 두 가지로 해석 가능:</p>
+    <p><strong>① "할 수 있는 건 알겠는데, 어떻게 시작하는지 모르겠다"</strong> — 가이드/스킬에서 가치는 인지했으나, 연동 페이지로의 동선(CTA)이 약하거나 눈에 띄지 않음</p>
+    <p><strong>② "재밌어 보이지만 나한테 필요한 건 아니다"</strong> — SNS 유입의 일반인이 호기심으로 가이드까지 봤으나, 본인 업무와의 연결점을 못 느끼고 이탈</p>
+    <p>반면 /mcp/connect 도달 후 → 발급 완료(79%)는 매우 양호. <strong>"연동 페이지까지 오게 만드는 것"이 핵심.</strong></p>
+  </div>
+
+  <h3>GPT 앱 / 클로드 커넥터 도입 후 예상 변화</h3>
+  <table>
+    <thead>
+      <tr><th>구간</th><th class="text-right">현재 전환율</th><th class="text-right">예상 전환율</th><th>근거</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="bold">가이드/스킬 → 연동</td>
+        <td class="text-right red">12%</td>
+        <td class="text-right green bold">30~50%</td>
+        <td>현재 /mcp/connect에서 "MCP 키 발급 → AI 클라이언트에 코드 붙여넣기"라는 4단계 설치가 필요. GPT 앱은 스토어에서 추가, 클로드 커넥터는 1클릭 연결. 메인 페이지에 이미 Kiro/Claude/ChatGPT APP 버튼이 있으므로, 이 버튼이 바로 작동하면 /mcp/connect 자체를 건너뛸 수 있음.</td>
+      </tr>
+      <tr>
+        <td class="bold">발급 → 첫 사용</td>
+        <td class="text-right red">44.6%</td>
+        <td class="text-right green bold">70~80%</td>
+        <td>현재 55% 미사용은 "키를 발급받았으나 AI 클라이언트에 설정 못함" 추정. GPT 앱/커넥터는 앱 설치 = 연동 완료이므로 별도 설정 불필요.</td>
+      </tr>
+      <tr>
+        <td class="bold">메인 이탈 (SNS)</td>
+        <td class="text-right">78~83%</td>
+        <td class="text-right green bold">50~60%</td>
+        <td>메인 페이지 첫 화면에서 "GPT에서 바로 써보세요" → GPT 스토어 바로가기를 제공하면, "터미널? MCP?" 모르는 일반인도 1클릭으로 시도 가능. 행동 허들 자체가 없어짐.</td>
+      </tr>
+      <tr>
+        <td class="bold">전체 유입→사용</td>
+        <td class="text-right red">0.39%<br><span class="gray" style="font-size:11px;">(45명/11,522)</span></td>
+        <td class="text-right green bold">3~5%</td>
+        <td>퍼널 2개 구간이 동시에 개선 + 메인→바로 사용 숏컷 가능. 동일 트래픽으로도 활성 유저 수 5~10배 증가 가능.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight good">
+    <div class="title">왜 "구조적 해소"인가</div>
+    <p>현재 메인 페이지에 이미 Kiro, Claude Desktop, Claude Connector, ChatGPT APP 4개 연동 옵션 버튼이 배치되어 있습니다. 문제는 이 버튼을 눌러도 <strong>현재는 수동 설정이 필요</strong>한 것.</p>
+    <p>GPT 앱/클로드 커넥터가 정식 등록되면:</p>
+    <p>• <strong>메인 페이지 "ChatGPT APP" 버튼 → GPT 스토어 직행 → 1클릭 설치 → 바로 사용</strong><br>
+       • <strong>메인 페이지 "Claude Connector" 버튼 → 커넥터 추가 → 바로 사용</strong><br>
+       • 가이드/스킬/커넥트를 거치지 않고도 메인에서 바로 전환 가능한 숏컷 퍼널이 생김</p>
+    <p>즉, <strong>현재 4단계(메인→가이드→스킬→커넥트→발급→설정→사용)가 2단계(메인→GPT 앱 설치→사용)로 축소.</strong></p>
+    <p>단, GPT 앱/커넥터가 도입되어도 <strong>BASIC 1년 데이터 제한 문제는 그대로 남음.</strong> 연동이 쉬워져 더 많은 BASIC 유저가 유입되면, 1년 제한으로 인한 이탈이 오히려 부각될 수 있음.</p>
+  </div>
+</div>
+
+<!-- Section 04 -->
+<div class="section">
+  <span class="section-num">04</span>
+  <h2>사용자별 일별 사용량 히트맵</h2>
+  <p class="subtitle">유료 고객은 간헐적이나 꾸준한 패턴. BASIC은 단발성 뚜렷.</p>
+
+  <div class="heatmap-wrap">
+  <table class="heatmap">
+    <thead>
+      <tr>
+        <th>#</th><th>사용자</th><th>등급</th><th>합계</th>
+        <th>10</th><th>11</th><th>12</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th>21</th><th>22</th><th>23</th><th>24</th><th>25</th><th>26</th>
+        <th>사용일</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td class="user-name">hsad · 차현웅</td><td><span class="user-grade grade-prm">PRM</span></td><td class="bold num">2,085</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-3">122</td><td class="cell-0">-</td><td class="cell-4">317</td><td class="cell-0">-</td><td class="cell-3">137</td><td class="cell-4">205</td><td class="cell-3">143</td><td class="cell-1">47</td><td class="cell-1">1</td><td class="cell-4">252</td><td class="cell-3">192</td><td class="cell-5">430</td><td class="cell-4">222</td><td class="cell-1">17</td>
+        <td class="bold">13일</td></tr>
+      <tr><td>2</td><td class="user-name">한국투자증권</td><td><span class="user-grade grade-prm">PRM</span></td><td class="bold num">1,192</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">12</td><td class="cell-0">-</td><td class="cell-4">320</td><td class="cell-0">-</td><td class="cell-2">72</td><td class="cell-5">500</td><td class="cell-4">228</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-2">60</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td>
+        <td class="bold">6일</td></tr>
+      <tr><td>3</td><td class="user-name">알토스 VC</td><td><span class="user-grade grade-ess">ESS</span></td><td class="bold num">546</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-3">134</td><td class="cell-2">72</td><td class="cell-3">139</td><td class="cell-3">150</td><td class="cell-1">51</td>
+        <td class="bold">5일</td></tr>
+      <tr><td>4</td><td class="user-name">그린브릭스</td><td><span class="user-grade grade-prm">PRM</span></td><td class="num">339</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">13</td><td class="cell-2">98</td><td class="cell-1">39</td><td class="cell-3">189</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td>
+        <td>4일</td></tr>
+      <tr><td>5</td><td class="user-name">휴맥스모빌리티</td><td><span class="user-grade grade-prm">PRM</span></td><td class="num">324</td>
+        <td class="cell-1">13</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">42</td><td class="cell-2">62</td><td class="cell-1">40</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-2">65</td><td class="cell-1">8</td><td class="cell-1">59</td><td class="cell-0">-</td><td class="cell-1">35</td>
+        <td class="bold">8일</td></tr>
+      <tr><td>6</td><td class="user-name">adwitt (와이즈버즈)</td><td><span class="user-grade grade-prm">PRM</span></td><td class="num">252</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-4">252</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td>
+        <td>1일</td></tr>
+      <tr><td>7</td><td class="user-name">번개장터</td><td><span class="user-grade grade-demo">DEMO</span></td><td class="num">214</td>
+        <td class="cell-2">86</td><td class="cell-0">-</td><td class="cell-1">3</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">42</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">42</td><td class="cell-1">32</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">9</td>
+        <td class="bold">6일</td></tr>
+      <tr><td>8</td><td class="user-name">모지세</td><td><span class="user-grade grade-ess">ESS</span></td><td class="num">124</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">53</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-2">65</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">6</td><td class="cell-0">-</td>
+        <td>3일</td></tr>
+      <tr><td>9</td><td class="user-name">네이버 공용계정</td><td><span class="user-grade grade-prm">PRM</span></td><td class="num">115</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-3">104</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">2</td><td class="cell-1">9</td><td class="cell-0">-</td><td class="cell-0">-</td>
+        <td>3일</td></tr>
+      <tr><td>10</td><td class="user-name">이노션</td><td><span class="user-grade grade-prm">PRM</span></td><td class="num">88</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-2">88</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td>
+        <td>1일</td></tr>
+      <tr><td>11</td><td class="user-name">허블</td><td><span class="user-grade grade-prm">PRM</span></td><td class="num">54</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">3</td><td class="cell-1">51</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td>
+        <td>2일</td></tr>
+      <tr><td>12</td><td class="user-name">버즈빌</td><td><span class="user-grade grade-prm">PRM</span></td><td class="num">44</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">41</td><td class="cell-0">-</td><td class="cell-1">2</td><td class="cell-1">1</td>
+        <td>3일</td></tr>
+      <tr><td>13</td><td class="user-name">TBWA</td><td><span class="user-grade grade-prm">PRM</span></td><td class="num">27</td>
+        <td class="cell-1">9</td><td class="cell-1">18</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td>
+        <td>2일</td></tr>
+      <tr><td>14</td><td class="user-name">교보</td><td><span class="user-grade grade-prm">PRM</span></td><td class="num">21</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">21</td><td class="cell-0">-</td><td class="cell-0">-</td>
+        <td>1일</td></tr>
+      <tr style="border-top: 2px solid #ddd;"><td colspan="4" class="gray" style="font-size:11px;">— 베이직(무료) 17명 중 상위 —</td><td colspan="17"></td></tr>
+      <tr><td>-</td><td class="user-name">yanadoo</td><td><span class="user-grade grade-basic">BASIC</span></td><td class="num">51</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">28</td><td class="cell-1">23</td><td class="cell-0">-</td>
+        <td>2일</td></tr>
+      <tr><td>-</td><td class="user-name">tagby</td><td><span class="user-grade grade-basic">BASIC</span></td><td class="num">44</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">14</td><td class="cell-1">30</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td>
+        <td>2일</td></tr>
+      <tr><td>-</td><td class="user-name">카카오</td><td><span class="user-grade grade-basic">BASIC</span></td><td class="num">34</td>
+        <td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-1">30</td><td class="cell-1">4</td><td class="cell-0">-</td><td class="cell-0">-</td><td class="cell-0">-</td>
+        <td>2일</td></tr>
+      <tr><td>-</td><td class="user-name">기타 BASIC 14명</td><td><span class="user-grade grade-basic">BASIC</span></td><td class="num gray">3~30</td>
+        <td colspan="16" class="gray" style="text-align:left; font-size:11px;">전원 1일 사용 후 미복귀</td>
+        <td class="red">1일</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- Section 05 -->
+<div class="section">
+  <span class="section-num">05</span>
+  <h2>등급별 D+N 리텐션 분석</h2>
+  <p class="subtitle">첫 사용일(D+0) 기준, 이후 며칠이나 재사용하는가</p>
+
+  <h3>프리미엄 (유료) 14명 · 첫 사용 후 재방문 패턴</h3>
+  <table>
+    <thead>
+      <tr><th>사용자</th><th>첫 사용</th><th class="text-center">D+1</th><th class="text-center">D+2</th><th class="text-center">D+3</th><th class="text-center">D+5</th><th class="text-center">D+7</th><th class="text-center">D+10+</th><th>패턴</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="bold">hsad · 차현웅</td><td>6/12</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td><span class="tag tag-green">정착</span> 13일 사용. 거의 매일.</td></tr>
+      <tr><td class="bold">한국투자증권</td><td>6/12</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center gray">○</td><td><span class="tag tag-green">집중 활용</span> 6일 집중 후 간헐 복귀</td></tr>
+      <tr><td class="bold">휴맥스모빌리티</td><td>6/10</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td><span class="tag tag-green">간헐 지속</span> 8일. 2~3일 간격 사용</td></tr>
+      <tr><td>그린브릭스</td><td>6/16</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td><span class="tag tag-yellow">4일 집중 후 중단</span> 미팅 직후 활용</td></tr>
+      <tr><td>번개장터 (데모)</td><td>6/10</td><td class="text-center gray">○</td><td class="text-center green">●</td><td class="text-center gray">○</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td><span class="tag tag-green">간헐 지속</span> 6일. 비정기 복귀</td></tr>
+      <tr><td>네이버</td><td>6/19</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center gray">-</td><td><span class="tag tag-yellow">비정기</span> 3일. 간격 두고 사용</td></tr>
+      <tr><td>버즈빌</td><td>6/23</td><td class="text-center gray">○</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center gray">-</td><td class="text-center gray">-</td><td class="text-center gray">-</td><td><span class="tag tag-blue">관찰 중</span> 미팅 직후. 3일 사용</td></tr>
+      <tr><td>adwitt (와이즈버즈)</td><td>6/23</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">-</td><td class="text-center gray">-</td><td class="text-center gray">-</td><td><span class="tag tag-yellow">1일 집중</span> 미팅 직후 단발</td></tr>
+      <tr><td>TBWA</td><td>6/10</td><td class="text-center green">●</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td><span class="tag tag-red">2일 후 중단</span> 즉시 연동 후 미사용</td></tr>
+      <tr><td>이노션</td><td>6/17</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">-</td><td><span class="tag tag-red">1일 후 중단</span></td></tr>
+      <tr><td>허블</td><td>6/15</td><td class="text-center green">●</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td><span class="tag tag-red">2일 후 중단</span></td></tr>
+      <tr><td>교보</td><td>6/24</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">-</td><td class="text-center gray">-</td><td class="text-center gray">-</td><td class="text-center gray">-</td><td><span class="tag tag-gray">관찰 중</span> 최근 사용, 데이터 부족</td></tr>
+      <tr><td>Sun Kim</td><td>6/15</td><td class="text-center green">●</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center green">●</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td><span class="tag tag-yellow">3일 산발</span></td></tr>
+      <tr><td>빅데이터팀</td><td>6/16</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td><span class="tag tag-red">1일 후 중단</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>프리미엄 (유료) D+N 리텐션 요약</h3>
+  <div style="margin: 20px 0;">
+    <div class="retention-bar">
+      <div class="retention-label">D+0 (첫 사용)</div>
+      <div class="retention-track"><div class="retention-fill" style="width:100%; background:#1a73e8;">14명</div></div>
+      <div class="retention-value">100%</div>
+    </div>
+    <div class="retention-bar">
+      <div class="retention-label">D+1 (다음날)</div>
+      <div class="retention-track"><div class="retention-fill" style="width:57%; background:#42a5f5;">8명</div></div>
+      <div class="retention-value">57%</div>
+    </div>
+    <div class="retention-bar">
+      <div class="retention-label">D+3 (3일 후)</div>
+      <div class="retention-track"><div class="retention-fill" style="width:43%; background:#66bb6a;">6명</div></div>
+      <div class="retention-value">43%</div>
+    </div>
+    <div class="retention-bar">
+      <div class="retention-label">D+7 (7일 후)</div>
+      <div class="retention-track"><div class="retention-fill" style="width:36%; background:#2e7d32;">5명</div></div>
+      <div class="retention-value">36%</div>
+    </div>
+    <div class="retention-bar">
+      <div class="retention-label">D+14 (2주 후)</div>
+      <div class="retention-track"><div class="retention-fill" style="width:21%; background:#1b5e20;">3명</div></div>
+      <div class="retention-value">21%</div>
+    </div>
+  </div>
+
+  <h3>에센셜 (유료) 2명 · D+N 패턴</h3>
+  <table>
+    <thead>
+      <tr><th>사용자</th><th>첫 사용</th><th class="text-center">D+1</th><th class="text-center">D+2</th><th class="text-center">D+3</th><th class="text-center">D+4</th><th>패턴</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="bold">알토스 VC</td><td>6/22</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td class="text-center green">●</td><td><span class="tag tag-green">연속 5일 사용</span> 최근 가입 후 매일 활용</td></tr>
+      <tr><td class="bold">모지세</td><td>6/18</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center gray">○</td><td class="text-center green">●</td><td><span class="tag tag-green">간헐 3일</span> 비정기 복귀</td></tr>
+    </tbody>
+  </table>
+
+  <h3>베이직 (무료) 17명 · D+N 패턴</h3>
+  <div style="margin: 20px 0;">
+    <div class="retention-bar">
+      <div class="retention-label">D+0 (첫 사용)</div>
+      <div class="retention-track"><div class="retention-fill" style="width:100%; background:#1a73e8;">17명</div></div>
+      <div class="retention-value">100%</div>
+    </div>
+    <div class="retention-bar">
+      <div class="retention-label">D+1 (다음날)</div>
+      <div class="retention-track"><div class="retention-fill" style="width:18%; background:#ef5350;">3명</div></div>
+      <div class="retention-value red">18%</div>
+    </div>
+    <div class="retention-bar">
+      <div class="retention-label">D+3 이후</div>
+      <div class="retention-track"><div class="retention-fill" style="width:0%; background:#d32f2f;"></div></div>
+      <div class="retention-value red">0%</div>
+    </div>
+  </div>
+
+  <div class="insight bad">
+    <div class="title">BASIC 리텐션 심각</div>
+    <p>17명 중 D+1 복귀는 3명(18%)뿐이며, D+3 이후 재사용자는 <strong>0명</strong>. 복귀한 3명(yanadoo, tagby, 카카오)도 2일 연속 사용 후 중단. 분석 기간 내 30크레딧/일 제공이었으며(6/26 오후 100으로 상향), 30크레딧은 분석 1~2회면 소진되는 양. 이에 더해 <strong>최근 1년 데이터 조회 불가 제약</strong>이 가치 체감을 이중으로 방해.</p>
+  </div>
+</div>
+
+<!-- Section 06 -->
+<div class="section">
+  <span class="section-num">06</span>
+  <h2>사용자 행동 패턴 유형화</h2>
+  <p class="subtitle">5가지 사용 패턴으로 분류</p>
+
+  <table>
+    <thead>
+      <tr><th>패턴</th><th class="text-right">유저 수</th><th class="text-right">비율</th><th>특징</th><th>대표 유저</th><th>건강도</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="bold">A. 정착형</td><td class="text-right">3명</td><td class="text-right">9%</td>
+        <td>5일+ 지속 사용. 업무에 완전 정착</td>
+        <td>hsad, 한국투자증권, 휴맥스</td>
+        <td><span class="tag tag-green">건강</span></td>
+      </tr>
+      <tr>
+        <td class="bold">B. 간헐 활용형</td><td class="text-right">5명</td><td class="text-right">15%</td>
+        <td>3~5일 사용. 필요 시 복귀. 제품 특성상 정상</td>
+        <td>알토스, 번개장터, 모지세, 네이버, 버즈빌</td>
+        <td><span class="tag tag-green">건강</span></td>
+      </tr>
+      <tr>
+        <td class="bold">C. 미팅 직후형</td><td class="text-right">4명</td><td class="text-right">12%</td>
+        <td>미팅 후 1~4일 집중 사용 → 중단. 리마인드 필요</td>
+        <td>그린브릭스, 와이즈버즈, 허블, Sun Kim</td>
+        <td><span class="tag tag-yellow">관찰</span></td>
+      </tr>
+      <tr>
+        <td class="bold">D. 테스트 후 중단형</td><td class="text-right">5명</td><td class="text-right">15%</td>
+        <td>1~2일 사용 후 복귀 없음 (유료 고객)</td>
+        <td>TBWA, 이노션, 교보, 빅데이터팀, bncinema</td>
+        <td><span class="tag tag-red">이탈 위험</span></td>
+      </tr>
+      <tr>
+        <td class="bold">E. 일회성 체험형</td><td class="text-right">17명</td><td class="text-right">50%</td>
+        <td>1일 사용 후 미복귀 (BASIC 전원)</td>
+        <td>BASIC 17명 전원</td>
+        <td><span class="tag tag-red">이탈</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin: 24px 0;">
+    <div class="retention-bar">
+      <div class="retention-label bold">A+B 건강 유저</div>
+      <div class="retention-track"><div class="retention-fill" style="width:24%; background:#2e7d32;">8명 (24%)</div></div>
+      <div class="retention-value green">24%</div>
+    </div>
+    <div class="retention-bar">
+      <div class="retention-label">C 관찰 필요</div>
+      <div class="retention-track"><div class="retention-fill" style="width:12%; background:#f9a825;">4명 (12%)</div></div>
+      <div class="retention-value">12%</div>
+    </div>
+    <div class="retention-bar">
+      <div class="retention-label">D+E 이탈/위험</div>
+      <div class="retention-track"><div class="retention-fill" style="width:65%; background:#e53935;">22명 (65%)</div></div>
+      <div class="retention-value red">65%</div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 07: 미팅 반응 분석 -->
+<div class="section">
+  <span class="section-num">07</span>
+  <h2>기존 고객 아웃바운드 미팅 · 반응 분석</h2>
+  <p class="subtitle">프리미엄 고객 12곳 미팅 · 반응과 실 사용의 상관관계 분석</p>
+
+  <div class="kpi-grid">
+    <div class="kpi-card" style="border-left: 4px solid #2e7d32;">
+      <div class="value">5곳</div>
+      <div class="label">✅ 긍정 / 활용 의지</div>
+    </div>
+    <div class="kpi-card" style="border-left: 4px solid #f9a825;">
+      <div class="value">4곳</div>
+      <div class="label">⚠️ 보류</div>
+    </div>
+    <div class="kpi-card" style="border-left: 4px solid #d32f2f;">
+      <div class="value">3곳</div>
+      <div class="label">❌ 구조적 불가</div>
+    </div>
+  </div>
+
+  <h3>미팅 반응 상세 및 실 사용 대조</h3>
+  <table>
+    <thead>
+      <tr><th>기업명</th><th>미팅일</th><th>반응 상세</th><th class="text-right">실 사용량</th><th>반응 vs 실사용</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="bold">TBWA</td><td>6/11</td>
+        <td>극히 일부 팀만 AI 사용 중. <strong>상당한 관심, 즉시 연동.</strong> 타서비스 연동 2차 가공 예정. 연말 제안 시즌 큰 효율 기대.</td>
+        <td class="text-right num red">27</td>
+        <td><span class="tag tag-red">괴리 큼</span></td></tr>
+      <tr><td class="bold">그린브릭스</td><td>6/15</td>
+        <td>회사 차원 AI툴 지원. 전담자 참석. 프로젝트 수량 줄여 어려웠으나 <strong>MCP로 해결 가능 · 상당히 만족.</strong></td>
+        <td class="text-right num green">339</td>
+        <td><span class="tag tag-green">일치</span></td></tr>
+      <tr><td class="bold">허블</td><td>6/10</td>
+        <td><strong>업무 자동화에 요긴하게 활용</strong>될 것이라는 긍정적 반응.</td>
+        <td class="text-right num">54</td>
+        <td><span class="tag tag-yellow">2일 후 중단</span></td></tr>
+      <tr><td class="bold">엠플랜잇</td><td>6/17</td>
+        <td>프로젝트 수량으로 애를 먹었는데, <strong>문제 해소될 것</strong>으로 긍정적.</td>
+        <td class="text-right num gray">미확인</td>
+        <td><span class="tag tag-gray">미확인</span></td></tr>
+      <tr><td class="bold">와이즈버즈</td><td>6/23</td>
+        <td>20여명 참석. <strong>MCP 연동 경험 전무.</strong> 관심 많고 타대행사 활용 방법 다수 문의.</td>
+        <td class="text-right num">252</td>
+        <td><span class="tag tag-yellow">1일 집중</span></td></tr>
+      <tr style="border-top: 2px solid #eee;"><td class="bold">빗썸</td><td>6/11</td>
+        <td>커넥트 심사 후 예정. <strong>큰 관심 없어 보임.</strong> 팀장 바쁨. 여유 생기면 어느정도 사용 기대.</td>
+        <td class="text-right num gray">0</td>
+        <td><span class="tag tag-yellow">대기</span></td></tr>
+      <tr><td class="bold">이노션</td><td>6/8</td>
+        <td>팀원 클로드 미사용이나 활용도 높을 것으로 기대. <strong>보안 이슈로 연결에 컨펌 필요.</strong></td>
+        <td class="text-right num">88</td>
+        <td><span class="tag tag-yellow">1일 후 중단</span></td></tr>
+      <tr><td class="bold">팀민트</td><td>6/18</td>
+        <td>회사 차원 클로드 제공. 당장 급하지 않음. 심사 후 전사 공유 진행 계획.</td>
+        <td class="text-right num gray">미확인</td>
+        <td><span class="tag tag-yellow">심사 대기</span></td></tr>
+      <tr><td class="bold">버즈빌</td><td>6/22</td>
+        <td>격주 행사 직후 교육. <strong>관심은 있으나 이전 행사로 지쳐 질문 거의 없음.</strong></td>
+        <td class="text-right num">44</td>
+        <td><span class="tag tag-yellow">3일 소량</span></td></tr>
+      <tr style="border-top: 2px solid #eee;"><td class="bold">삼성카드</td><td>6/19</td>
+        <td>SDS 자체 툴 사용, 코파일럿 내재화. 금융권 MCP 연동 어려움. <strong>"모바일인덱스 내 AI 에이전트" 요청.</strong></td>
+        <td class="text-right num gray">-</td>
+        <td><span class="tag tag-red">구조적 불가</span></td></tr>
+      <tr><td class="bold">트리거스</td><td>6/4</td>
+        <td>이미 데이터 다운받아 AI에 활용 중. <strong>"조금 편리한 정도"</strong>로 특별한 것 없다는 반응.</td>
+        <td class="text-right num gray">미확인</td>
+        <td><span class="tag tag-red">니즈 약</span></td></tr>
+      <tr><td class="bold">한국언론진흥재단</td><td>6/15</td>
+        <td>제미나이·GPT만 사용 가능. 클로드 불가. <strong>GPT 가능하면 재미팅.</strong></td>
+        <td class="text-right num gray">-</td>
+        <td><span class="tag tag-red">클로드 불가</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>"말과 행동의 괴리" 분석</h3>
+
+  <div class="insight warn">
+    <div class="title">긍정 반응 5곳 중 실제 지속 사용은 1곳뿐</div>
+    <p>미팅에서 긍정 5곳 중 의미 있는 사용량 + 복수일 사용을 보인 곳은 <strong>그린브릭스(339, 4일)</strong> 1곳. "말"과 "행동"이 일치하지 않는 것은 B2B 영업의 전형적 패턴이나, 원인 분석이 필요.</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>유형</th><th>기업</th><th>실 행동</th><th>원인 분석</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="bold green">말 = 행동</td><td>그린브릭스</td><td class="green">4일 339cr</td>
+        <td>AI 전담자가 미팅 참석 + 즉각적 Pain point(프로젝트 수량 문제) 존재. <strong>전담자 + 명확한 Pain point = 실사용.</strong></td>
+      </tr>
+      <tr>
+        <td class="bold red">말 ≫ 행동</td><td>TBWA</td><td class="red">2일 27cr</td>
+        <td>"즉시 연동, 상당한 관심" → 실 사용 미미. 일부 팀만 AI 가능한 환경에서 <strong>전사 확산이 안 됨.</strong> 또는 연말까지 보류 중.</td>
+      </tr>
+      <tr>
+        <td class="bold red">말 ≫ 행동</td><td>허블</td><td class="red">2일 54cr</td>
+        <td>"업무 자동화에 요긴" → 2일 후 멈춤. <strong>구체적 use case 부재</strong> 또는 예의상 긍정이었을 가능성.</td>
+      </tr>
+      <tr>
+        <td class="bold">미팅 직후 집중</td><td>와이즈버즈</td><td>1일 252cr</td>
+        <td>미팅 당일 대량 사용 = 교육 중 즉석 실습. <strong>이후 복귀 여부가 핵심</strong> (아직 3일밖에 안 지남).</td>
+      </tr>
+      <tr>
+        <td class="bold">보안/승인 막힘</td><td>이노션</td><td>1일 88cr</td>
+        <td>"보안 이슈로 컨펌 필요" → 실제로 1회 후 중단. <strong>보안 승인이 막혔을 가능성</strong> 높음.</td>
+      </tr>
+      <tr>
+        <td class="bold">"급하지 않다"</td><td>빗썸·팀민트</td><td class="gray">미사용</td>
+        <td>"당장 급하지 않다" = 자발적 동기 부재. <strong>Push 없으면 무기한 보류.</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <div class="title">실사용 예측 시그널</div>
+    <p><strong>실사용으로 이어지는 조건:</strong><br>
+      ① AI/데이터 전담자가 미팅에 참석 (그린브릭스 ✓)<br>
+      ② 당장의 구체적 Pain point 존재 (프로젝트 수량 문제, 여러 앱 비교 필요 등)<br>
+      ③ 클로드/MCP 사용 환경이 이미 갖춰져 있음</p>
+    <p><strong>실사용으로 이어지지 않는 시그널:</strong><br>
+      ① "연말에", "나중에", "여유 생기면" = 현재 동기 없음<br>
+      ② "보안 이슈", "컨펌 필요" = 조직 프로세스에 막힘<br>
+      ③ "관심은 있다" + 질문 없음 = 예의상 긍정 (버즈빌)<br>
+      ④ 전사가 아닌 일부 팀만 AI 사용 = 내부 확산 동력 부재 (TBWA)</p>
+  </div>
+
+  <h3>미팅 유저 vs 자발적 유저 비교</h3>
+  <table>
+    <thead>
+      <tr><th>구분</th><th class="text-right">유저 수</th><th class="text-right">평균 사용량</th><th class="text-right">복수일 비율</th><th>해석</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="bold">미팅 후 사용 (8곳)</td><td class="text-right">8곳</td><td class="text-right num">118</td><td class="text-right">50%</td><td>미팅이 사용 트리거 역할은 함</td></tr>
+      <tr><td class="bold">미팅 없이 자발적 사용</td><td class="text-right">~8명</td><td class="text-right num bold">353</td><td class="text-right bold green">75%</td><td><strong>사용량 3배, 지속성 압도적</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <div class="title">해석</div>
+    <p>미팅 없이 자발적으로 사용한 고객(hsad, 한국투자증권, 알토스, 휴맥스, 번개장터 등)이 평균 사용량 3배, 복수일 비율 75%로 월등히 높습니다. <strong>"본인이 필요해서 찾아 온 유저"가 "권유받아 온 유저"보다 훨씬 강한 사용 동기</strong>를 가짐. 미팅은 인지 트리거로는 유효하나, 실사용을 만들려면 "지금 당장 해결할 문제"가 있는 고객을 선별하는 것이 효과적.</p>
+  </div>
+</div>
+
+<!-- Section 08: 종합 판정 -->
+<div class="section">
+  <span class="section-num">08</span>
+  <h2>종합 판정</h2>
+  <p class="subtitle">서비스 건강도 평가</p>
+
+  <div class="insight good">
+    <div class="title">유료 고객 중심으로 보면: 견조하다</div>
+    <p><strong>유료 고객(프리미엄+에센셜) 16명 중 8명(50%)이 복수일 사용</strong>하고 있으며, 이 중 3명은 완전 정착 상태. 매일 쓰는 서비스가 아닌 특성을 감안하면, D+7 리텐션 36%(유료 기준)는 양호한 수치.</p>
+    <p>특히 알토스 VC는 최근 가입(6/22) 후 <strong>5일 연속 사용</strong>으로 가장 건강한 온보딩 패턴을 보여주며, 이는 "여러 앱을 봐야 하는" 유저에게 제품 가치가 작동함을 증명.</p>
+  </div>
+
+  <div class="insight warn">
+    <div class="title">BASIC(무료) 기준으로 보면: 문제 있다</div>
+    <p>D+1 리텐션 18%, D+3 이후 0%는 명확한 이탈 신호. 분석 기간 내 30크레딧/일(6/26 오후부터 100으로 상향)로 운영. 30크레딧은 MCP 분석 1~2회로 소진되는 양이어서 가치 체감 자체가 어려웠음. <strong>최근 1년 데이터 조회 불가 제약</strong>도 이탈 원인으로 추정.</p>
+    <p>100크레딧 상향 후 리텐션 변화를 주시해야 하며, 변화 없으면 1년 제한이 본질적 문제.</p>
+  </div>
+
+  <div class="insight">
+    <div class="title">미팅 직후형(C그룹) 4명: 좀 더 지켜봐야 한다</div>
+    <p>그린브릭스·와이즈버즈·허블은 미팅에서 긍정 반응을 보였으나 이후 중단. 이들은 "시기가 안 맞아서" 일수도 있고 "연동이 귀찮아서" 일수도 있음. GPT 앱/커넥터 출시 시 자연 복귀 여부로 진짜 니즈를 판별 가능.</p>
+    <p><strong>TBWA는 특이 케이스</strong> — "즉시 연동, 상당한 관심"이었으나 2일 사용(총 27크레딧) 후 완전 중단. 연말 제안 시즌까지 기다리는 것인지, 아니면 기대 대비 임팩트가 적었는지 팔로업 필요.</p>
+  </div>
+
+  <h3>최종 건강도 판정</h3>
+  <table>
+    <thead>
+      <tr><th>대상</th><th>판정</th><th>근거</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="bold">유료 고객 (PRM+ESS)</td><td><span class="tag tag-green">견조</span></td><td>50% 복수일 사용. D+7 리텐션 36%. 제품 특성 감안 시 양호. 정착 유저 확보 성공.</td></tr>
+      <tr><td class="bold">데모 고객</td><td><span class="tag tag-green">긍정</span></td><td>번개장터 6일 사용. 데모 → 유료 전환 가능성.</td></tr>
+      <tr><td class="bold">미팅 직후 그룹</td><td><span class="tag tag-yellow">지켜봐야 함</span></td><td>GPT 앱 출시 후 복귀 여부로 판별. TBWA 팔로업 필요.</td></tr>
+      <tr><td class="bold">BASIC (무료)</td><td><span class="tag tag-red">문제</span></td><td>D+3 리텐션 0%. 30크레딧 한계(6/26 100으로 상향). 1년 데이터 제한이 가치 장벽. 상향 후 변화 관찰 필요.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Section 09 -->
+<div class="section">
+  <span class="section-num">09</span>
+  <h2>그랜드 오픈 시 모니터링 포인트</h2>
+
+  <table>
+    <thead>
+      <tr><th>KPI</th><th class="text-right">현재</th><th class="text-right">목표</th><th>측정 방법</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="bold">유료 고객 D+7 리텐션</td><td class="text-right">36%</td><td class="text-right green bold">50%+</td><td>크레딧 로그</td></tr>
+      <tr><td class="bold">BASIC D+1 리텐션</td><td class="text-right red">18%</td><td class="text-right green bold">40%+</td><td>크레딧 로그</td></tr>
+      <tr><td class="bold">주간 신규 정착(A+B) 유저</td><td class="text-right">~1명</td><td class="text-right green bold">3~5명</td><td>사용일 5일+ 유저</td></tr>
+      <tr><td>미팅 C그룹 복귀율</td><td class="text-right gray">-</td><td class="text-right">50%+</td><td>GPT 앱 출시 후 2주 내</td></tr>
+    </tbody>
+  </table>
+
+  <h3>확인이 필요한 것</h3>
+  <table>
+    <thead>
+      <tr><th>#</th><th>항목</th><th>이유</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="text-center">1</td><td class="bold">TBWA 팔로업</td><td>즉시 연동 후 2일만 사용. 연말 대기인지, 기대 미충족인지 확인</td></tr>
+      <tr><td class="text-center">2</td><td class="bold">BASIC 이탈 원인 상세</td><td>100크레딧이 부족한 건지, 1년 데이터 제한이 문제인지, 연동 자체를 못 한 건지</td></tr>
+      <tr><td class="text-center">3</td><td class="bold">이노션·허블 미사용 이유</td><td>미팅 긍정이었으나 1~2일 후 중단. 보안 승인 대기? 연동 실패?</td></tr>
+      <tr><td class="text-center">4</td><td class="bold">GPT 앱/커넥터 심사 현황</td><td>그랜드 오픈 일정 확정용</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Conclusion -->
+<div class="section">
+  <span class="section-num">10</span>
+  <h2>결론</h2>
+
+  <div class="insight good">
+    <div class="title">한 줄 요약</div>
+    <p><strong>유료 고객 기반은 견조하다. 제품 가치는 증명되었다. 무료 유저 리텐션과 기술 허들이 확장의 병목.</strong></p>
+  </div>
+
+  <div class="insight">
+    <div class="title">상세</div>
+    <p><strong>유료 고객 50% 복수일 사용, D+7 리텐션 36%</strong>는 "매일 쓰는 서비스가 아닌" 제품 특성을 감안하면 건강한 초기 지표입니다. hsad(13일), 한국투자증권(6일), 알토스(5일 연속), 휴맥스(8일) 등 정착 유저가 확보되었고, 이들의 사용 패턴은 실질적 업무 활용을 보여줍니다.</p>
+    <p>반면, <strong>BASIC D+3 리텐션 0%</strong>는 크레딧 상향만으로는 해결되지 않는 구조적 문제(1년 데이터 제한 또는 연동 허들)를 시사합니다. 그랜드 오픈 시 GPT 앱으로 연동 허들이 해소되면 BASIC 리텐션 변화를 주시해야 하며, 변화 없으면 1년 데이터 제한 완화를 검토해야 합니다.</p>
+    <p><strong>GPT 앱/커넥터 출시가 핵심 변수</strong>이며, 출시 후 2주 내 ① C그룹(미팅 직후형) 복귀율, ② BASIC D+1 리텐션, ③ 신규 정착 유저 속도를 집중 모니터링할 것을 권장합니다.</p>
+  </div>
+</div>
+
+<div class="report-footer">
+  전사마케팅팀 · MobileIndex INSIGHT<br>
+  데이터 출처: 내부 크레딧 사용 로그 · 아웃바운드 미팅 기록<br>
+  기준일 2026.06.26
+</div>
+
+</body>
+</html>
