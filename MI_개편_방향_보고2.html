@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모바일인덱스(MI) 개편 방향 보고</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --ink:#181A1C;          /* 본문 고대비 */
+    --ink2:#3A3F45;         /* 보조 본문 */
+    --muted:#6B7178;        /* 약한 텍스트 */
+    --navy:#203864;         /* 단일 강조색 */
+    --navy-soft:#33507F;
+    --line:#E2E5EA;
+    --line2:#CDD2DA;
+    --wash:#F4F6F9;         /* 박스 배경 */
+    --chip:#EDEFF3;
+    --sans:'Pretendard',-apple-system,system-ui,'Malgun Gothic',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16.5px;
+    line-height:1.78;
+    letter-spacing:-0.003em;
+    -webkit-font-smoothing:antialiased;
+    word-break:keep-all;        /* 한글 단어 단위 줄바꿈 → 가독성 */
+  }
+  .doc{max-width:860px;margin:0 auto;padding:0 30px 90px}
+
+  /* ── 표제부 ── */
+  .meta-top{text-align:right;color:var(--muted);font-size:13px;padding-top:34px}
+  .mast{text-align:center;padding:18px 0 8px;border-bottom:2.5px solid var(--navy);margin-bottom:34px}
+  .mast h1{font-size:clamp(26px,4.6vw,36px);font-weight:800;letter-spacing:-0.03em;color:var(--ink);line-height:1.25}
+  .mast .subtitle{margin-top:10px;font-size:clamp(15px,2.3vw,18px);color:var(--navy);font-weight:600;letter-spacing:-0.01em}
+  .mast .docmeta{margin:14px 0 16px;font-size:13.5px;color:var(--muted)}
+
+  /* ── 박스(요지/맺음) ── */
+  .box{
+    background:var(--wash);
+    border:1px solid var(--line);
+    border-left:5px solid var(--navy);
+    border-radius:8px;
+    padding:22px 26px;
+    margin:26px 0;
+  }
+  .box .box-title{font-size:18px;font-weight:800;color:var(--navy);letter-spacing:-0.02em;margin-bottom:12px}
+  .box p{color:var(--ink2)}
+  .box .ko{font-size:16px;line-height:1.8}
+  .box strong{color:var(--ink);font-weight:700}
+
+  /* ── 섹션 제목 ── */
+  section{margin-top:42px}
+  h2.sec{
+    font-size:clamp(19px,3vw,23px);font-weight:800;color:var(--navy);
+    letter-spacing:-0.025em;line-height:1.3;
+    padding-bottom:9px;border-bottom:2px solid var(--navy);
+    display:flex;gap:10px;align-items:baseline;
+  }
+  h2.sec .rn{font-weight:800;flex:none}
+
+  /* 강조 도입 문구 */
+  .intro{
+    margin:16px 0 6px;font-weight:700;color:var(--ink);font-size:16.5px;
+    padding-left:14px;border-left:3px solid var(--line2);
+  }
+
+  /* ── 개조식 위계 ── */
+  .lv{display:flex;gap:10px;align-items:flex-start}
+  .lv .mk{flex:none;color:var(--navy);font-weight:700;line-height:1.78}
+  .lv .tx{flex:1}
+  .lv strong{font-weight:700;color:var(--ink)}
+
+  .l0{margin-top:15px}
+  .l0 .mk{font-size:11px;transform:translateY(7px)}
+  .l0 .tx{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-0.01em}
+
+  .l1{margin-top:5px;padding-left:24px}
+  .l1 .mk{color:var(--navy-soft);font-size:13px;transform:translateY(3px)}
+  .l1 .tx{color:var(--ink2)}
+
+  .l2{margin-top:3px;padding-left:48px}
+  .l2 .mk{color:var(--muted);transform:translateY(0)}
+  .l2 .tx{color:var(--ink2);font-size:15.5px}
+
+  .l3{margin-top:3px;padding-left:72px}
+  .l3 .mk{color:var(--muted);font-size:13px;transform:translateY(3px)}
+  .l3 .tx{color:var(--muted);font-size:15px}
+
+  /* 단계/유형 칩 */
+  .chip{
+    display:inline-block;background:var(--chip);color:var(--navy);
+    font-size:12.5px;font-weight:700;letter-spacing:-0.01em;
+    padding:1px 9px;border-radius:5px;margin-right:8px;vertical-align:0.05em;
+    white-space:nowrap;
+  }
+
+  /* ── 표 ── */
+  .tbl{width:100%;border-collapse:collapse;margin:18px 0 6px;font-size:15px}
+  .tbl th{
+    background:#EBEEF2;color:var(--ink);font-weight:700;
+    border:1px solid var(--line2);padding:9px 13px;text-align:center;letter-spacing:-0.01em;
+  }
+  .tbl td{border:1px solid var(--line);padding:11px 14px;vertical-align:top;color:var(--ink2);line-height:1.62}
+  .tbl td.c{text-align:center;font-weight:700;color:var(--navy);width:54px;font-size:17px}
+  .tbl .pt{font-weight:700;color:var(--ink);font-size:15.5px;display:block;margin-bottom:3px}
+  .tbl .ps{display:block;color:var(--ink2);font-size:14px;line-height:1.55}
+  .tbl .when{font-weight:800;color:var(--navy);white-space:nowrap}
+  .tbl .note{display:block;color:var(--muted);font-size:12.5px;font-weight:500;margin-top:3px}
+  .tbl .tag{font-weight:700;color:var(--ink)}
+  .tbl td.task{font-size:14.5px;line-height:1.85}
+  .tbl td.task div{margin:1px 0}
+
+  /* 매출 전망 표·산식 */
+  .tbl td.k{font-weight:700;color:var(--navy);background:#F7F8FA}
+  .tbl td.ctr{text-align:center}
+  .tbl td.b{font-weight:700;color:var(--ink)}
+  .tbl td.nv{color:var(--navy)}
+  .tbl td.sub{color:var(--muted);font-weight:400;background:#FCFCFD}
+  .formula{
+    background:var(--wash);border:1px solid var(--line);border-left:4px solid var(--navy);
+    border-radius:8px;padding:16px 20px;margin:12px 0 22px;
+    font-size:15px;line-height:1.95;color:var(--ink2);
+  }
+  .formula div{margin:2px 0}
+
+  /* 맺음 */
+  .closing{text-align:center;color:var(--muted);font-size:14px;margin-top:30px;letter-spacing:0.06em}
+
+  footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);
+    text-align:center;color:var(--muted);font-size:12.5px;letter-spacing:0.01em}
+
+  /* 반응형 */
+  @media (max-width:600px){
+    body{font-size:15.5px}
+    .doc{padding:0 18px 70px}
+    .l1{padding-left:18px}.l2{padding-left:34px}.l3{padding-left:50px}
+    .tbl{font-size:14px}.tbl td,.tbl th{padding:8px 9px}
+  }
+  @media print{
+    body{font-size:11.5pt}
+    .box,section,.tbl tr{break-inside:avoid}
+    h2.sec{break-after:avoid}
+    .meta-top{padding-top:0}
+  }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <div class="mast">
+    <h1>모바일인덱스(MI) 개편 방향 보고</h1>
+    <div class="subtitle">― 시장 변화를 가장 먼저 읽는 ‘의사결정 인텔리전스’로 ―</div>
+    <div class="docmeta">2026 하반기 초도 보고 &nbsp;|&nbsp; 2026. 6. &nbsp;|&nbsp; 작성: 모바일인덱스 전략</div>
+  </div>
+
+  <!-- 보고 요지 -->
+  <div class="box">
+    <div class="box-title">보고 요지</div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">MI를 <strong>‘지표를 보는 서비스’에서 ‘의사결정을 돕는 인텔리전스’로 개편</strong></span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">개편의 동력은 데이터의 확장·통합, 그 위에서 작동하는 변화 포착·해석 능력</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">① 내부 데이터 통합 → ② 외부 데이터 결합 → ③ 시장 변화 포착 → ④ 보유 데이터 기반 해석</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">네 단계를 거쳐 <strong>‘의사결정 인텔리전스’로 포지셔닝</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">향후 <strong>1st 파티 데이터 결합 시 진정한 의미의 의사결정 도구로 진화</strong></span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">MI 3.0의 핵심 업무 = 3단계의 반복</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">① 변화를 발견 → ② 원인·의미를 분석 → ③ 정기 보고·의사결정 자료로 자동화</span></div>
+  </div>
+
+  <!-- Ⅰ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅰ.</span><span>개편의 본질 ― 지표에서 의사결정으로</span></h2>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">현 위상 ― 정확하나 개별적으로 분리된 지표</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">고객은 숫자는 확인하나, 숫자 간의 인과·맥락은 확인 불가</span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">개편 목표 ― 기업의 의사결정 도구 수준으로 격상</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">‘무엇이 일어났는가’를 넘어 ‘왜 일어났고 무엇을 해야 하는가’까지 제공</span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">3대 전환 방향</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">분석 도구(Why) ― 시장 심층 분석</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">모니터링 도구(When) ― 시장 변화의 시의적 포착·해석</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">실행 도구(Action) ― <strong>MI 직접 미수행</strong>, MI Ads(광고)·디파이너리(CRM) 연계</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">MI 본체 = 분석 + 모니터링을 담당하는 <strong>의사결정 인텔리전스</strong></span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">MI 3.0의 일하는 방식 ― 3단계 반복</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">1단계 변화 발견 / 2단계 원인·의미 분석 / 3단계 정기 보고·의사결정 자료로 자동화</span></div>
+    <div class="lv l2"><span class="mk">–</span><span class="tx">이 3단계가 MI 3.0의 모든 기능을 관통하는 기준</span></div>
+  </section>
+
+  <!-- Ⅱ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅱ.</span><span>개편의 동력 ― 데이터의 확장과 통합</span></h2>
+    <p class="intro">개편은 네 단계의 데이터 진화를 따라 진행 ― 각 단계가 다음 단계의 토대</p>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">1단계</span>내부 데이터 통합 ― 흩어진 자사 데이터를 하나로</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">보유 자산 ― 5대 이종 인덱스(앱 사용량·카드 결제·앱마켓 매출·TV 시청·게임)</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">현 문제 ― 각각 별도 상품으로 분리, 교차 분석이 번거로워 현실에서 미실현</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">해법 ― <strong>MCP가 흩어진 데이터를 하나의 분석 체계로 만드는 기반</strong></span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx">MCP ― 통합의 방식</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">모든 서비스를 하나의 거대한 데이터베이스로 다시 만드는 방식이 아님</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">각 데이터 상품을 MCP로 연결, <strong>AI가 필요한 데이터를 호출·조합해 분석</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">현재 모바일인덱스 MCP 출시, TV인덱스·소비인덱스·앱마켓 인덱스 순차 확대</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">각 MCP 연결 시 <strong>고객은 서비스별 메뉴·데이터 구조를 이해할 필요 없음</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">예) “경쟁사 A의 최근 성장이 광고 때문인지, 서비스 자체의 성장인지 분석” ― 한 질문으로 다음이 함께 활용</span></div>
+    <div class="lv l2"><span class="mk">–</span><span class="tx">앱 사용자·사용시간 변화 / TV 광고 집행량 / 앱마켓 매출 / 소비 데이터 / 앱 리뷰·주요 뉴스</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">MCP의 가치 ― 개별 데이터를 <strong>하나의 ‘시장 분석 언어’로 연결</strong></span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">2단계</span>외부 데이터 결합 ― 관점의 확장</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">공공·공시 데이터(주가·DART·통계청·국토부·기상청), SNS·커뮤니티·쇼핑몰 리뷰 결합</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">무료 MCP/스킬셋 동반 공급 ― 자사 데이터와 외부 신호의 결합 용이화</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">합성 소비자 인텔리전스(SCI, 알파 완료) 결합 시 분석 확장력 증대</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">3단계</span>시장 변화 포착 ― 상시 작동하는 레이더</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">통합 데이터로 시장을 상시 감시</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">급격한 변화 + 데일리·먼슬리로 미포착되는 완만한 구조 변화까지 포착</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">4단계</span>변화의 해석 ― 보유 데이터로 원인 설명</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">포착에 그치지 않고 통합 데이터로 원인을 즉시 해석</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">‘무엇 때문에, 어디서 변동했는가’를 제시 → <strong>의사결정 인텔리전스의 본체</strong></span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">진화</span>1st 파티 데이터 결합</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">애드브릭스·디파이너리 연계로 고객의 1st 파티 데이터(설치·행동·광고 성과) 결합</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">시장 전체의 관점 위에 자사 고객의 실제 반응이 포개짐</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">시장 해석을 넘어 <strong>‘우리 회사는 무엇을 해야 하는가’에 답하는 의사결정 도구로 진화</strong></span></div>
+  </section>
+
+  <!-- Ⅲ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅲ.</span><span>통합·결합으로 가능한 분석 (사례)</span></h2>
+    <p class="intro">단일 지표로는 도출 불가, 데이터 통합·결합 시에만 가능한 분석</p>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">내부 통합</span>광고 효과의 전 과정 추적</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">TV 광고 집행 →(TV인덱스) 도달 →(앱인덱스) 신규 설치·사용 증가 →(소비·앱마켓) 결제·매출 변화</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">‘광고비의 매출 전환’ ― 기존에 답하기 어려웠던 질문에 대응</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">내부 통합</span>사회적 사건의 수요 영향 해석</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">스타벅스 ‘탱크데이’ 불매 →(앱인덱스) 사용 급감 →(소비인덱스) 결제 위축 →(경쟁사) 반사이익을 연결</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">월별 지표 변동의 원인을 데이터로 규명</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">공공·공시 결합</span>실적 발표 전 기업 체력의 선행 추정</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">상장 유통사의 (앱인덱스) 사용자·(소비인덱스) 결제액 추세를 (DART 공시·주가)와 결합</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">분기 실적 발표 이전 매출 방향을 선행 추정 → IR·투자·경쟁 대응의 근거 제공</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">공공·공시 결합</span>외부 변수 기반 수요 변동 설명</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">(기상청) 기온·(통계청) 물가·소비심리를 (앱·소비 인덱스)와 결합</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">예) 폭염·장마에 따른 배달·여행·패션 업종의 사용·결제 변동을 외부 충격으로 설명</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">업종 분석</span>시장 구조의 종합 해설</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">여행 업종을 종합플랫폼·항공권·호텔/리조트로 분해, 소비·앱마켓·TV 결합 딥다이브</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">자사뿐 아니라 소속 시장 전체의 구조를 제공</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx">소결</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">상기 분석은 이론상 가능하나 데이터 분산으로 현실에서 미실현</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">통합·결합 능력이 곧 차별점 ― <strong>같은 데이터를 가져도 엮는 능력이 MI의 무기</strong></span></div>
+  </section>
+
+  <!-- Ⅳ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅳ.</span><span>서비스 구현 ― MI 3.0 제품 구조</span></h2>
+    <p class="intro">‘변화 발견 → 원인 분석 → 자동화’ 3단계를 따라 다음 구조로 구성</p>
+
+    <table class="tbl">
+      <thead><tr><th style="width:54px">구분</th><th>구성</th></tr></thead>
+      <tbody>
+        <tr><td class="c">①</td><td><span class="pt">Today ― 로그인 첫 화면</span><span class="ps">오늘의 중요 변화 / 자사·경쟁사·업종 요약</span><span class="ps">전일·전주 대비 핵심 지표 / 추가 확인이 필요한 변화 / 최근 생성된 리포트</span></td></tr>
+        <tr><td class="c">②</td><td><span class="pt">Monitor ― 변화의 감시 (커스텀)</span><span class="ps">관심 기업·앱·브랜드·업종의 변화 이력 등 커스텀 대시보드</span><span class="ps">이상징후 및 알림 설정</span></td></tr>
+        <tr><td class="c">③</td><td><span class="pt">Analyze ― 원인의 분석</span><span class="ps">이상징후·주요 변화에 대한 분석 / MCP 기반 비정형 대화형 분석</span><span class="ps">분석 결과 저장 및 공유</span></td></tr>
+        <tr><td class="c">④</td><td><span class="pt">Reports ― 정기 보고의 자동화</span><span class="ps">데일리 · 위클리 · 월간 · 분기 · 업종 연간 리포트</span><span class="ps">분기·연간 리포트는 애널리스트 검수를 거치며, 업종 연간 리포트는 200만~500만원 백서 수준 리포트로 발간</span></td></tr>
+        <tr><td class="c">⑤</td><td><span class="pt">Data / Classic MI ― 기존 데이터 메뉴</span><span class="ps">모바일인덱스 인사이트 · 소비인덱스 · 앱마켓 인덱스 · TV 인덱스 · 게임 인덱스</span></td></tr>
+        <tr><td class="c">⑥</td><td><span class="pt">Connect (추후) ― 실행으로의 연결</span><span class="ps">디파이너리·애드브릭스 연계 / 외부 광고·CRM 솔루션</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="lv l0" style="margin-top:20px"><span class="mk">■</span><span class="tx">전달·확장</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">데일리·위클리·월간 요약을 음성/영상으로 Push</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">모바일인덱스 모바일 앱 출시</span></div>
+  </section>
+
+  <!-- Ⅴ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅴ.</span><span>해자(Moat)</span></h2>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">데이터의 다종성·독점성</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">앱 사용량·카드 결제·앱마켓 매출·TV 시청 데이터를 <strong>동시에 보유한 사업자는 국내에서 사실상 MI가 유일</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">핵심이 되는 배타적 데이터는 공공·공개 데이터와 결합해도 그 독점성을 잃지 않음</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx">1st 파티 결합의 가능성</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">어떤 유사 지표 서비스도 1st party 데이터를 자체 수급할 채널을 보유하지 못함 ― 그 역(逆) 또한 마찬가지</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">디파이너리(DFN) MCP와 결합 시 <strong>강력한 경쟁력 확보 기대</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">시장 데이터(공통) + 고객 데이터(개별)의 결합은 MI-DFN의 고유 영역</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx">SCI 데이터 결합 가능성</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">특이사항·특이점을 드러낸 수치의 정량 해석을 넘어</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">변화된 유저의 <strong>Signal과 Prediction</strong>이라는 정성적 영역까지 확장할 경우, 매우 강력한 해자로 작용 기대</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx">요약</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">MI의 핵심 경쟁력은 기존에 결합이 어렵거나 불가능하던 <strong>데이터를 연결해 시장을 설명하는 강력한 능력</strong></span></div>
+  </section>
+
+  <!-- Ⅵ 매출 전망 -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅵ.</span><span>기대 효과 ― 매출 전망</span></h2>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx">기준선(현재) ― ARR 48억</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">구독 ARR 45억 + 1회성 커스텀 데이터 3억 = 총 48억</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">고객 120사 / 평균 구독 객단가 약 3,750만 / 연 이탈률 10~15%</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">과거 3년 매출 연 15%↑의 동력은 1회성 커스텀 판매와 신규 라인 추가(게임·소비)였으며, <strong>기존 라인 간 크로스셀은 미미</strong> → 개편으로 풀려는 과제</span></div>
+
+    <div class="lv l0" style="margin-top:18px"><span class="mk">■</span><span class="tx">산출 전제 (기준 시나리오)</span></div>
+    <table class="tbl">
+      <thead><tr><th style="width:150px">항목</th><th>내용 / 근거</th></tr></thead>
+      <tbody>
+        <tr><td class="k">연 이탈률</td><td>11% (보수 13% / 공격 9%) ― 구독 ARR에 적용</td></tr>
+        <tr><td class="k">크로스셀</td><td>분모 = 인사이트 단독 100사 / 누적 전환 1년 15%·3년 30% / 1사 증분 +2,400만(패키지 전환 6,000−3,600)</td></tr>
+        <tr><td class="k">신규 순증</td><td>1년 +40사 / 2년 +45 / 3년 +50 / 객단가 3,750만(현 평균 구독 객단가)</td></tr>
+        <tr><td class="k">신규 달성 방식</td><td>유입 증가가 아니라 단발→구독 전환↑·이탈↓ (월 3~5개사 신규 유입은 이미 지속)</td></tr>
+        <tr><td class="k">1회성 커스텀</td><td>연 3억, 연 15% 성장 (반복 매출 아님, 별도 인식)</td></tr>
+        <tr><td class="k">크레딧(종량)</td><td>1년 0 → 2년 구독의 5% → 3년 10%</td></tr>
+        <tr><td class="k">인식 기준</td><td>신규·전환은 연중 분산 유입 → 그해 매출은 약 0.5년치만 인식</td></tr>
+      </tbody>
+    </table>
+
+    <div class="lv l0" style="margin-top:18px"><span class="mk">■</span><span class="tx">매출 전망 (기준 시나리오)</span></div>
+    <table class="tbl">
+      <thead><tr><th>구분</th><th style="width:108px">현재</th><th style="width:108px">1년차</th><th style="width:108px">2년차</th><th style="width:108px">3년차</th></tr></thead>
+      <tbody>
+        <tr><td class="k">연말 ARR (런레이트)</td><td class="ctr b">48억</td><td class="ctr b nv">62억</td><td class="ctr b nv">79억</td><td class="ctr b nv">97억</td></tr>
+        <tr><td class="k sub">그해 인식 매출</td><td class="ctr sub">48억</td><td class="ctr sub">53억</td><td class="ctr sub">67억</td><td class="ctr sub">82억</td></tr>
+        <tr><td class="k sub">│ 신규 고객 증분</td><td class="ctr sub">—</td><td class="ctr sub">+15.0</td><td class="ctr sub">+16.9</td><td class="ctr sub">+18.8</td></tr>
+        <tr><td class="k sub">│ 크로스셀 증분</td><td class="ctr sub">—</td><td class="ctr sub">+3.6</td><td class="ctr sub">+1.9</td><td class="ctr sub">+1.7</td></tr>
+        <tr><td class="k sub">│ 크레딧(종량) 매출</td><td class="ctr sub">—</td><td class="ctr sub">0</td><td class="ctr sub">+3.5</td><td class="ctr sub">+8.4</td></tr>
+        <tr><td class="k sub">│ 1회성 커스텀</td><td class="ctr sub">3.0</td><td class="ctr sub">3.4</td><td class="ctr sub">4.0</td><td class="ctr sub">4.6</td></tr>
+      </tbody>
+    </table>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">증분 행은 연말 ARR(런레이트) 기준 / 신규·크로스셀은 연중 분산 유입으로 그해 인식 매출은 런레이트보다 낮음</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">공격 시나리오 가정 시 <strong>3년차 ARR 약 122억</strong></span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx">성장 동력 우선순위</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx"><strong>① 단발→구독 전환·이탈 감소</strong> (1년차 주력) ― 데이터 가치 상승으로 누수 차단</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx"><strong>② TV인덱스發 신규 클라이언트군 + 크로스셀</strong> ― TV는 기존 디지털과 고객군이 달라 크로스셀 유효성 기대</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx"><strong>③ 크레딧 종량 매출</strong> (2년차~) ― 사용량 기반 추가 과금</span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx">가정의 한계 (검증 전제)</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">순증 +40은 목표치(가설) ― 단발→구독 전환율·이탈률 개선 달성이 전제</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">크레딧(종량) 매출은 모델 미확정 ― 2년차 이후 종량 과금 설계 필요</span></div>
+  </section>
+
+  <!-- Ⅶ 시장 수요 근거 -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅶ.</span><span>시장 수요 근거</span></h2>
+    <div class="lv l0"><span class="mk">■</span><span class="tx" style="color:var(--navy)">지속적 신규 유입 ― 시장 수요는 이미 입증됨</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">현재도 <strong>매월 3~5개사가 꾸준히 신규 유입</strong> ― 10년 누적된 브랜드와 영업력 위에서 수요가 끊이지 않음</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">다만 유입사 중 절반은 1개월 단발성, 1~2개사는 구독 이탈 → 순증이 0으로 보이던 구조</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">즉 문제는 ‘수요 부족’이 아니라 <strong>‘들어온 수요를 구독으로 묶지 못한 것’</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">개편의 표적 = <strong>단발→구독 전환 + 이탈 감소(누수 차단)</strong> → 같은 유입으로도 순증 전환 가능</span></div>
+    <div class="lv l2"><span class="mk">–</span><span class="tx">데이터 이용 가치가 오르면 단발 고객의 구독화·기존 고객의 잔존이 동시에 개선</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">신규 고객 유치 기여도(예상) ― <strong>서비스 강화에 따른 추가 유입 약 40%, 구독 전환·이탈 감소 효과 약 60%</strong></span></div>
+
+    <div class="lv l0"><span class="mk">■</span><span class="tx" style="color:var(--navy)">신규 세그먼트 신호 ― 대행사·투자사에서 수요 확인</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">MI MCP 출시 직후 <strong>대행사·투자사가 가장 큰 관심을 표명</strong> ― 다차원 데이터 결합의 최대 수요처로 부상 (= HSAS, TBWA, 그린브릭스, Altos 등)</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">수요의 구조적 이유</span></div>
+    <div class="lv l2"><span class="mk">–</span><span class="tx">광고주: 자사·경쟁사 몇 곳만 추적(좁고 깊게)</span></div>
+    <div class="lv l2"><span class="mk">–</span><span class="tx">대행사·투자사: 시장 전체를 스캔(넓게) → 시장 분석·모니터링 니즈가 본질적으로 가장 높음</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">개편 방향(시장 분석·모니터링 도구)과 최대 수요처가 정확히 일치 → <strong>초기 타겟으로 설정</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">대행사·투자사는 다수 브랜드·포트폴리오를 동시에 분석 → <strong>계정·사용량 확장 및 크레딧 수요의 핵심 채널</strong></span></div>
+  </section>
+
+  <!-- Ⅷ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅷ.</span><span>추진 방식 및 일정</span></h2>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">MCP를 출발점으로, 기존 서비스를 덮으며 점진 교체</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">MCP 기반 신(新)기능이 기존 서비스와 오버랩되며 자연스럽게 대체</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">고객 단절 없이 ‘지표 서비스’에서 ‘의사결정 인텔리전스’로 이행</span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">개발 일정 (현 리소스: 프론트 2 · 백엔드 3 · 디자인 1 · 기획 1)</span></div>
+
+    <table class="tbl">
+      <thead><tr><th style="width:128px">시기</th><th>주요 과업</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="when">2026. 7</span></td>
+          <td class="task">
+            <div><span class="tag">[TVI]</span> TV인덱스 광고 1차(QA)·2차 개발 병행</div>
+            <div><span class="tag">[TVI]</span> TV인덱스 MCP 출시</div>
+            <div><span class="tag">[TVI]</span> PP 편성표 기반 데이터 재적재·범위 확대</div>
+            <div><span class="tag">[TVI]</span> 백오피스 데일리 데이터 자동 발송</div>
+            <div><span class="tag">[MI]</span> MCP 신규 API ― 앱 3개 교·합집합</div>
+            <div><span class="tag">[INF]</span> DMP 인수인계</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="when">2026. 8</span></td>
+          <td class="task">
+            <div><span class="tag">[TVI]</span> TV인덱스 광고 1차 출시·2차 병행</div>
+            <div><span class="tag">[MI]</span> 소비 인덱스 MCP</div>
+            <div><span class="tag">[MI]</span> 데일리 리포트</div>
+            <div><span class="tag">[MI]</span> MI 3.0 (기획)</div>
+            <div><span class="tag">[INF]</span> DMP → 스노우플레이크 이전</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="when">2026. 9</span></td>
+          <td class="task">
+            <div><span class="tag">[공통]</span> 소비+TVI 결합 스킬·가이드 제작</div>
+            <div><span class="tag">[TVI]</span> TV인덱스 광고 2차(QA)</div>
+            <div><span class="tag">[MI]</span> 앱마켓+게임 MCP</div>
+            <div><span class="tag">[MI]</span> MI 3.0 (기획)</div>
+            <div><span class="tag">[INF]</span> DMP → 스노우플레이크 이전 완료</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="when">2026. 10</span><span class="note">MCP 4종 출시 완료</span></td>
+          <td class="task">
+            <div><span class="tag">[MI]</span> MI 3.0 개발 킥오프</div>
+            <div><span class="tag">[MI]</span> 외부 데이터 연동 (기획)</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="when">2027. 1Q</span><span class="note">MI 3.0 출시 목표</span></td>
+          <td class="task"><div><span class="tag">[MI]</span> MI 3.0 정식 출시</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="closing">― 이 상 ―</div>
+
+  <footer>IGAWorks · Mobile Index &nbsp;|&nbsp; 2026 하반기 MI 개편 방향 보고 (초도)</footer>
+
+</div>
+</body>
+</html>
