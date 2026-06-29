@@ -1,1062 +1,352 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>모바일인덱스 3.0 전략 기획안 | 대표 보고</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f8f9fa;
-            color: #1a1a2e;
-            line-height: 1.9;
-            font-size: 18px;
-        }
-
-        .cover {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 60px 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cover::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 70%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 30%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
-            animation: float 20s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-20px, -20px); }
-        }
-
-        .cover-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .cover .badge {
-            display: inline-block;
-            background: rgba(99, 102, 241, 0.2);
-            border: 1px solid rgba(99, 102, 241, 0.4);
-            color: #a78bfa;
-            padding: 10px 24px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-        }
-
-        .cover h1 {
-            color: #ffffff;
-            font-size: 64px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-        }
-
-        .cover h1 span {
-            background: linear-gradient(135deg, #6366f1, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .cover .subtitle {
-            color: #94a3b8;
-            font-size: 26px;
-            font-weight: 300;
-            margin-bottom: 60px;
-        }
-
-        .cover .meta {
-            color: #64748b;
-            font-size: 17px;
-        }
-
-        .cover .meta span {
-            margin: 0 12px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 100px 60px;
-        }
-
-        .section {
-            margin-bottom: 120px;
-        }
-
-        .section-number {
-            display: inline-block;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            text-align: center;
-            line-height: 42px;
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            font-size: 42px;
-            font-weight: 800;
-            color: #1a1a2e;
-            margin-bottom: 16px;
-            letter-spacing: -0.5px;
-        }
-
-        h2 .highlight {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .section-desc {
-            color: #64748b;
-            font-size: 20px;
-            margin-bottom: 48px;
-        }
-
-        h3 {
-            font-size: 26px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 20px;
-            margin-top: 48px;
-        }
-
-        p {
-            color: #475569;
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
-
-        /* Executive Summary */
-        .exec-summary {
-            background: white;
-            border-radius: 20px;
-            padding: 56px;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.06);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 70px;
-        }
-
-        .exec-summary h3 {
-            margin-top: 0;
-            color: #6366f1;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 24px;
-        }
-
-        .exec-summary .summary-text {
-            font-size: 22px;
-            line-height: 1.9;
-            color: #334155;
-            font-weight: 400;
-        }
-
-        .exec-summary .summary-text strong {
-            color: #1e293b;
-            font-weight: 700;
-        }
-
-        /* Three Pillars */
-        .pillars {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin: 40px 0;
-        }
-
-        .pillar-card {
-            background: white;
-            border-radius: 16px;
-            padding: 40px 32px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-            text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .pillar-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.12);
-        }
-
-        .pillar-card .icon {
-            width: 72px;
-            height: 72px;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            font-size: 32px;
-        }
-
-        .pillar-card:nth-child(1) .icon { background: #ede9fe; }
-        .pillar-card:nth-child(2) .icon { background: #e0f2fe; }
-        .pillar-card:nth-child(3) .icon { background: #fce7f3; }
-
-        .pillar-card h4 {
-            font-size: 21px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 10px;
-        }
-
-        .pillar-card .role {
-            font-size: 14px;
-            color: #6366f1;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 14px;
-        }
-
-        .pillar-card p {
-            font-size: 16px;
-            color: #64748b;
-            line-height: 1.6;
-        }
-
-        /* Data Ecosystem */
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin: 30px 0;
-        }
-
-        .data-item {
-            background: white;
-            border-radius: 12px;
-            padding: 28px;
-            border: 1px solid #e2e8f0;
-            display: flex;
-            align-items: flex-start;
-            gap: 18px;
-        }
-
-        .data-item .num {
-            background: #f1f5f9;
-            color: #6366f1;
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .data-item h5 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 6px;
-        }
-
-        .data-item p {
-            font-size: 15px;
-            color: #64748b;
-            margin: 0;
-        }
-
-        /* Fusion Diagram */
-        .fusion-box {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            border: 2px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 48px;
-            text-align: center;
-            margin: 48px 0;
-        }
-
-        .fusion-box .formula {
-            font-size: 20px;
-            color: #334155;
-            margin-bottom: 20px;
-        }
-
-        .fusion-box .result {
-            font-size: 24px;
-            font-weight: 700;
-            color: #6366f1;
-        }
-
-        .fusion-box .arrow {
-            font-size: 28px;
-            margin: 14px 0;
-            color: #94a3b8;
-        }
-
-        /* MCP Strategy */
-        .mcp-highlight {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            border-radius: 16px;
-            padding: 48px;
-            color: white;
-            margin: 36px 0;
-        }
-
-        .mcp-highlight h4 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 14px;
-        }
-
-        .mcp-highlight p {
-            color: rgba(255,255,255,0.85);
-            font-size: 18px;
-        }
-
-        .mcp-highlight ul {
-            list-style: none;
-            padding: 0;
-            margin-top: 20px;
-        }
-
-        .mcp-highlight ul li {
-            padding: 10px 0;
-            color: rgba(255,255,255,0.9);
-            font-size: 17px;
-            padding-left: 28px;
-            position: relative;
-        }
-
-        .mcp-highlight ul li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #a5f3fc;
-            font-weight: 700;
-        }
-
-        /* Monitoring Section */
-        .monitor-framework {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .monitor-item {
-            background: white;
-            border-radius: 12px;
-            padding: 32px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .monitor-item .tag {
-            display: inline-block;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 5px 12px;
-            border-radius: 6px;
-            margin-bottom: 14px;
-        }
-
-        .monitor-item .tag.detect { background: #fef3c7; color: #92400e; }
-        .monitor-item .tag.interpret { background: #dbeafe; color: #1e40af; }
-
-        .monitor-item h5 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 10px;
-        }
-
-        .monitor-item p {
-            font-size: 16px;
-            color: #64748b;
-            margin: 0;
-            line-height: 1.7;
-        }
-
-        /* Product Structure */
-        .product-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin: 30px 0;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
-
-        .product-table th {
-            background: #1e293b;
-            color: white;
-            padding: 18px 28px;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align: left;
-        }
-
-        .product-table td {
-            padding: 18px 28px;
-            font-size: 16px;
-            color: #475569;
-            border-bottom: 1px solid #f1f5f9;
-            background: white;
-        }
-
-        .product-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .product-table .freq {
-            font-weight: 700;
-            color: #6366f1;
-        }
-
-        .product-table .feature-tag {
-            display: inline-block;
-            background: #f1f5f9;
-            color: #475569;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            margin: 3px 4px 3px 0;
-        }
-
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 40px;
-            margin: 40px 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 15px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, #6366f1, #a78bfa, #c4b5fd);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 40px;
-            background: white;
-            border-radius: 12px;
-            padding: 32px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -33px;
-            top: 32px;
-            width: 12px;
-            height: 12px;
-            background: #6366f1;
-            border-radius: 50%;
-            border: 3px solid #ede9fe;
-        }
-
-        .timeline-item .month {
-            display: inline-block;
-            background: #ede9fe;
-            color: #6366f1;
-            padding: 6px 16px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 14px;
-        }
-
-        .timeline-item .milestone {
-            display: inline-block;
-            background: #fef3c7;
-            color: #92400e;
-            padding: 6px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-
-        .timeline-item ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .timeline-item ul li {
-            padding: 8px 0;
-            font-size: 16px;
-            color: #475569;
-            padding-left: 24px;
-            position: relative;
-        }
-
-        .timeline-item ul li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: #6366f1;
-        }
-
-        .timeline-item ul li .tag-tvi {
-            display: inline-block;
-            background: #dcfce7;
-            color: #166534;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-right: 8px;
-        }
-
-        .timeline-item ul li .tag-mi {
-            display: inline-block;
-            background: #dbeafe;
-            color: #1e40af;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-right: 8px;
-        }
-
-        .timeline-item ul li .tag-common {
-            display: inline-block;
-            background: #fce7f3;
-            color: #9d174d;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-right: 8px;
-        }
-
-        /* Resources */
-        .resource-bar {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin: 20px 0 40px;
-        }
-
-        .resource-chip {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 14px 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .resource-chip .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .resource-chip:nth-child(1) .dot { background: #6366f1; }
-        .resource-chip:nth-child(2) .dot { background: #10b981; }
-        .resource-chip:nth-child(3) .dot { background: #f59e0b; }
-        .resource-chip:nth-child(4) .dot { background: #ef4444; }
-
-        .resource-chip span {
-            font-size: 16px;
-            color: #475569;
-            font-weight: 500;
-        }
-
-        /* Key Message */
-        .key-message {
-            background: linear-gradient(135deg, #1e293b, #334155);
-            border-radius: 20px;
-            padding: 72px;
-            text-align: center;
-            margin: 80px 0;
-        }
-
-        .key-message h3 {
-            color: #a78bfa;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-top: 0;
-            margin-bottom: 24px;
-        }
-
-        .key-message .msg {
-            color: white;
-            font-size: 32px;
-            font-weight: 700;
-            line-height: 1.6;
-        }
-
-        .key-message .msg em {
-            font-style: normal;
-            color: #a78bfa;
-        }
-
-        /* SCI callout */
-        .sci-callout {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            border-radius: 12px;
-            padding: 24px 28px;
-            margin: 24px 0;
-        }
-
-        .sci-callout h5 {
-            font-size: 17px;
-            font-weight: 700;
-            color: #92400e;
-            margin-bottom: 10px;
-        }
-
-        .sci-callout p {
-            font-size: 16px;
-            color: #78350f;
-            margin: 0;
-            line-height: 1.7;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 48px;
-            color: #94a3b8;
-            font-size: 15px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        /* Print styles */
-        @media print {
-            .cover { min-height: auto; padding: 80px 40px; }
-            .section { page-break-inside: avoid; }
-            body { background: white; }
-        }
-
-        @media (max-width: 768px) {
-            .pillars { grid-template-columns: 1fr; }
-            .data-grid { grid-template-columns: 1fr; }
-            .monitor-framework { grid-template-columns: 1fr; }
-            .cover h1 { font-size: 36px; }
-            h2 { font-size: 28px; }
-            .container { padding: 40px 20px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모바일인덱스(MI) 개편 방향 보고</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --ink:#181A1C;          /* 본문 고대비 */
+    --ink2:#3A3F45;         /* 보조 본문 */
+    --muted:#6B7178;        /* 약한 텍스트 */
+    --navy:#203864;         /* 단일 강조색 */
+    --navy-soft:#33507F;
+    --line:#E2E5EA;
+    --line2:#CDD2DA;
+    --wash:#F4F6F9;         /* 박스 배경 */
+    --chip:#EDEFF3;
+    --sans:'Pretendard',-apple-system,system-ui,'Malgun Gothic',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16.5px;
+    line-height:1.78;
+    letter-spacing:-0.003em;
+    -webkit-font-smoothing:antialiased;
+    word-break:keep-all;        /* 한글 단어 단위 줄바꿈 → 가독성 */
+  }
+  .doc{max-width:860px;margin:0 auto;padding:0 30px 90px}
+
+  /* ── 표제부 ── */
+  .meta-top{text-align:right;color:var(--muted);font-size:13px;padding-top:34px}
+  .mast{text-align:center;padding:18px 0 8px;border-bottom:2.5px solid var(--navy);margin-bottom:34px}
+  .mast h1{font-size:clamp(26px,4.6vw,36px);font-weight:800;letter-spacing:-0.03em;color:var(--ink);line-height:1.25}
+  .mast .subtitle{margin-top:10px;font-size:clamp(15px,2.3vw,18px);color:var(--navy);font-weight:600;letter-spacing:-0.01em}
+  .mast .docmeta{margin:14px 0 16px;font-size:13.5px;color:var(--muted)}
+
+  /* ── 박스(요지/맺음) ── */
+  .box{
+    background:var(--wash);
+    border:1px solid var(--line);
+    border-left:5px solid var(--navy);
+    border-radius:8px;
+    padding:22px 26px;
+    margin:26px 0;
+  }
+  .box .box-title{font-size:18px;font-weight:800;color:var(--navy);letter-spacing:-0.02em;margin-bottom:12px}
+  .box p{color:var(--ink2)}
+  .box .ko{font-size:16px;line-height:1.8}
+  .box strong{color:var(--ink);font-weight:700}
+
+  /* ── 섹션 제목 ── */
+  section{margin-top:42px}
+  h2.sec{
+    font-size:clamp(19px,3vw,23px);font-weight:800;color:var(--navy);
+    letter-spacing:-0.025em;line-height:1.3;
+    padding-bottom:9px;border-bottom:2px solid var(--navy);
+    display:flex;gap:10px;align-items:baseline;
+  }
+  h2.sec .rn{font-weight:800;flex:none}
+
+  /* 강조 도입 문구 */
+  .intro{
+    margin:16px 0 6px;font-weight:700;color:var(--ink);font-size:16.5px;
+    padding-left:14px;border-left:3px solid var(--line2);
+  }
+
+  /* ── 개조식 위계 ── */
+  .lv{display:flex;gap:10px;align-items:flex-start}
+  .lv .mk{flex:none;color:var(--navy);font-weight:700;line-height:1.78}
+  .lv .tx{flex:1}
+  .lv strong{font-weight:700;color:var(--ink)}
+
+  .l0{margin-top:15px}
+  .l0 .mk{font-size:11px;transform:translateY(7px)}
+  .l0 .tx{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-0.01em}
+
+  .l1{margin-top:5px;padding-left:24px}
+  .l1 .mk{color:var(--navy-soft);font-size:13px;transform:translateY(3px)}
+  .l1 .tx{color:var(--ink2)}
+
+  .l2{margin-top:3px;padding-left:48px}
+  .l2 .mk{color:var(--muted);transform:translateY(0)}
+  .l2 .tx{color:var(--ink2);font-size:15.5px}
+
+  .l3{margin-top:3px;padding-left:72px}
+  .l3 .mk{color:var(--muted);font-size:13px;transform:translateY(3px)}
+  .l3 .tx{color:var(--muted);font-size:15px}
+
+  /* 단계/유형 칩 */
+  .chip{
+    display:inline-block;background:var(--chip);color:var(--navy);
+    font-size:12.5px;font-weight:700;letter-spacing:-0.01em;
+    padding:1px 9px;border-radius:5px;margin-right:8px;vertical-align:0.05em;
+    white-space:nowrap;
+  }
+
+  /* ── 표 ── */
+  .tbl{width:100%;border-collapse:collapse;margin:18px 0 6px;font-size:15px}
+  .tbl th{
+    background:#EBEEF2;color:var(--ink);font-weight:700;
+    border:1px solid var(--line2);padding:9px 13px;text-align:center;letter-spacing:-0.01em;
+  }
+  .tbl td{border:1px solid var(--line);padding:11px 14px;vertical-align:top;color:var(--ink2);line-height:1.62}
+  .tbl td.c{text-align:center;font-weight:700;color:var(--navy);width:54px;font-size:17px}
+  .tbl .pt{font-weight:700;color:var(--ink);font-size:15.5px;display:block;margin-bottom:3px}
+  .tbl .ps{display:block;color:var(--ink2);font-size:14px;line-height:1.55}
+  .tbl .when{font-weight:800;color:var(--navy);white-space:nowrap}
+  .tbl .note{display:block;color:var(--muted);font-size:12.5px;font-weight:500;margin-top:3px}
+  .tbl .tag{font-weight:700;color:var(--ink)}
+  .tbl td.task{font-size:14.5px;line-height:1.85}
+  .tbl td.task div{margin:1px 0}
+
+  /* 맺음 */
+  .closing{text-align:center;color:var(--muted);font-size:14px;margin-top:30px;letter-spacing:0.06em}
+
+  footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);
+    text-align:center;color:var(--muted);font-size:12.5px;letter-spacing:0.01em}
+
+  /* 반응형 */
+  @media (max-width:600px){
+    body{font-size:15.5px}
+    .doc{padding:0 18px 70px}
+    .l1{padding-left:18px}.l2{padding-left:34px}.l3{padding-left:50px}
+    .tbl{font-size:14px}.tbl td,.tbl th{padding:8px 9px}
+  }
+  @media print{
+    body{font-size:11.5pt}
+    .box,section,.tbl tr{break-inside:avoid}
+    h2.sec{break-after:avoid}
+    .meta-top{padding-top:0}
+  }
+</style>
 </head>
 <body>
+<div class="doc">
 
-<!-- Cover -->
-<section class="cover">
-    <div class="cover-content">
-        <div class="badge">Strategic Planning 2026 H2</div>
-        <h1>모바일인덱스 <span>3.0</span></h1>
-        <p class="subtitle">지표 서비스에서 의사결정 플랫폼으로의 전환</p>
-        <p class="meta">
-            <span>IGAW</span>
-            <span>|</span>
-            <span>대표 보고용</span>
-            <span>|</span>
-            <span>2026년 6월</span>
-        </p>
-    </div>
-</section>
+  <div class="mast">
+    <h1>모바일인덱스(MI) 개편 방향 보고</h1>
+    <div class="subtitle">― 시장 변화를 가장 먼저 읽는 ‘의사결정 인텔리전스’로 ―</div>
+    <div class="docmeta">2026 하반기 초도 보고 &nbsp;|&nbsp; 2026. 6. &nbsp;|&nbsp; 작성: 모바일인덱스 전략</div>
+  </div>
 
-<!-- Main Content -->
-<div class="container">
+  <!-- 보고 요지 -->
+  <div class="box">
+    <div class="box-title">보고 요지</div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">MI를 <strong>‘지표를 보는 서비스’에서 ‘의사결정을 돕는 인텔리전스’로 개편</strong></span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">개편의 동력은 데이터의 확장·통합, 그 위에서 작동하는 변화 포착·해석 능력</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">① 내부 데이터 통합 → ② 외부 데이터 결합 → ③ 시장 변화 포착 → ④ 보유 데이터 기반 해석</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">네 단계를 거쳐 <strong>‘의사결정 인텔리전스’로 포지셔닝</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">향후 <strong>1st 파티 데이터 결합 시 진정한 의미의 의사결정 도구로 진화</strong></span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">MI 3.0의 핵심 업무 = 3단계의 반복</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">① 변화를 발견 → ② 원인·의미를 분석 → ③ 정기 보고·의사결정 자료로 자동화</span></div>
+  </div>
 
-    <!-- Executive Summary -->
-    <div class="exec-summary">
-        <h3>Executive Summary</h3>
-        <p class="summary-text">
-            모바일인덱스는 현재 시장에서 <strong>'지표 서비스'</strong>로 인식되고 있습니다. 
-            본 기획안은 이를 <strong>기업의 의사결정 도구</strong> 수준으로 격상시키기 위한 전략 방향을 제시합니다.<br><br>
-            핵심 전환 축은 <strong>① 시장 분석 툴</strong>, <strong>② 시장 모니터링 도구</strong>, 
-            <strong>③ 액션 툴(MI Ads·디파이너리 연계)</strong>의 3가지이며, 
-            MI 자체는 <strong>분석 + 모니터링</strong>에 집중합니다.<br><br>
-            MCP(Model Context Protocol) 기반 데이터 융합을 통해 파편화된 이종 데이터를 통합하고,
-            2027년 1월 MI 3.0 출시를 목표로 합니다.
-        </p>
-    </div>
+  <!-- Ⅰ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅰ.</span><span>개편의 본질 ― 지표에서 의사결정으로</span></h2>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">현 위상 ― 정확하나 개별적으로 분리된 지표</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">고객은 숫자는 확인하나, 숫자 간의 인과·맥락은 확인 불가</span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">개편 목표 ― 기업의 의사결정 도구 수준으로 격상</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">‘무엇이 일어났는가’를 넘어 ‘왜 일어났고 무엇을 해야 하는가’까지 제공</span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">3대 전환 방향</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">분석 도구(Why) ― 시장 심층 분석</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">모니터링 도구(When) ― 시장 변화의 시의적 포착·해석</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">실행 도구(Action) ― <strong>MI 직접 미수행</strong>, MI Ads(광고)·디파이너리(CRM) 연계</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">MI 본체 = 분석 + 모니터링을 담당하는 <strong>의사결정 인텔리전스</strong></span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">MI 3.0의 일하는 방식 ― 3단계 반복</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">1단계 변화 발견 / 2단계 원인·의미 분석 / 3단계 정기 보고·의사결정 자료로 자동화</span></div>
+    <div class="lv l2"><span class="mk">–</span><span class="tx">이 3단계가 MI 3.0의 모든 기능을 관통하는 기준</span></div>
+  </section>
 
-    <!-- Section 1: Vision -->
-    <div class="section">
-        <div class="section-number">1</div>
-        <h2>전략 <span class="highlight">비전</span></h2>
-        <p class="section-desc">지표 서비스 → 의사결정 플랫폼으로의 전환을 위한 3대 축</p>
+  <!-- Ⅱ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅱ.</span><span>개편의 동력 ― 데이터의 확장과 통합</span></h2>
+    <p class="intro">개편은 네 단계의 데이터 진화를 따라 진행 ― 각 단계가 다음 단계의 토대</p>
 
-        <div class="pillars">
-            <div class="pillar-card">
-                <div class="icon">🔬</div>
-                <div class="role">Why 담당</div>
-                <h4>시장 분석 툴</h4>
-                <p>다차원 데이터 기반 심층 시장 분석. 의사결정의 근거와 이유를 제공</p>
-            </div>
-            <div class="pillar-card">
-                <div class="icon">📡</div>
-                <div class="role">When 담당</div>
-                <h4>모니터링 도구</h4>
-                <p>시장 변화의 포착과 해석. 의사결정의 적시성을 제공</p>
-            </div>
-            <div class="pillar-card">
-                <div class="icon">🚀</div>
-                <div class="role">Action 담당</div>
-                <h4>액션 툴</h4>
-                <p>MI Ads(광고) + 디파이너리(CRM)와 연계하여 분석 결과를 즉시 실행</p>
-            </div>
-        </div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">1단계</span>내부 데이터 통합 ― 흩어진 자사 데이터를 하나로</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">보유 자산 ― 5대 이종 인덱스(앱 사용량·카드 결제·앱마켓 매출·TV 시청·게임)</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">현 문제 ― 각각 별도 상품으로 분리, 교차 분석이 번거로워 현실에서 미실현</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">해법 ― <strong>MCP가 흩어진 데이터를 하나의 분석 체계로 만드는 기반</strong></span></div>
 
-        <div class="key-message">
-            <h3>MI의 포지셔닝</h3>
-            <p class="msg">MI 자체는 <em>시장 분석</em> + <em>시장 모니터링</em> 도구로서<br>확실히 자리잡는 것을 목표로 합니다</p>
-        </div>
-    </div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">MCP ― 통합의 방식</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">모든 서비스를 하나의 거대한 데이터베이스로 다시 만드는 방식이 아님</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">각 데이터 상품을 MCP로 연결, <strong>AI가 필요한 데이터를 호출·조합해 분석</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">현재 모바일인덱스 MCP 출시, TV인덱스·소비인덱스·앱마켓 인덱스 순차 확대</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">각 MCP 연결 시 <strong>고객은 서비스별 메뉴·데이터 구조를 이해할 필요 없음</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">예) “경쟁사 A의 최근 성장이 광고 때문인지, 서비스 자체의 성장인지 분석” ― 한 질문으로 다음이 함께 활용</span></div>
+    <div class="lv l2"><span class="mk">–</span><span class="tx">앱 사용자·사용시간 변화 / TV 광고 집행량 / 앱마켓 매출 / 소비 데이터 / 앱 리뷰·주요 뉴스</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">MCP의 가치 ― 개별 데이터를 <strong>하나의 ‘시장 분석 언어’로 연결</strong></span></div>
 
-    <!-- Section 2: Analysis Tool -->
-    <div class="section">
-        <div class="section-number">2</div>
-        <h2>시장 <span class="highlight">분석 툴</span> 전략</h2>
-        <p class="section-desc">퀄리티 높은 다차원 데이터의 융합이 핵심</p>
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">2단계</span>외부 데이터 결합 ― 관점의 확장</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">공공·공시 데이터(주가·DART·통계청·국토부·기상청), SNS·커뮤니티·쇼핑몰 리뷰 결합</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">무료 MCP/스킬셋 동반 공급 ― 자사 데이터와 외부 신호의 결합 용이화</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">합성 소비자 인텔리전스(SCI, 알파 완료) 결합 시 분석 확장력 증대</span></div>
 
-        <h3>현황: 파편화된 데이터 생태계</h3>
-        <p>모바일인덱스는 다양한 이종 데이터를 보유하고 있으나, 각각 별도 상품으로 서비스되어 종합적 검토가 어려운 상황입니다.</p>
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">3단계</span>시장 변화 포착 ― 상시 작동하는 레이더</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">통합 데이터로 시장을 상시 감시</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">급격한 변화 + 데일리·먼슬리로 미포착되는 완만한 구조 변화까지 포착</span></div>
 
-        <div class="data-grid">
-            <div class="data-item">
-                <div class="num">1</div>
-                <div>
-                    <h5>모바일인덱스 인사이트</h5>
-                    <p>앱 사용량 데이터 (MAU, DAU, 사용시간 등)</p>
-                </div>
-            </div>
-            <div class="data-item">
-                <div class="num">2</div>
-                <div>
-                    <h5>소비 인덱스</h5>
-                    <p>카드 결제 데이터</p>
-                </div>
-            </div>
-            <div class="data-item">
-                <div class="num">3</div>
-                <div>
-                    <h5>앱 마켓 인덱스</h5>
-                    <p>구글 플레이·앱스토어 매출 데이터</p>
-                </div>
-            </div>
-            <div class="data-item">
-                <div class="num">4</div>
-                <div>
-                    <h5>TV 인덱스</h5>
-                    <p>TV 시청 데이터 (광고 포함)</p>
-                </div>
-            </div>
-            <div class="data-item">
-                <div class="num">5</div>
-                <div>
-                    <h5>게임 인덱스</h5>
-                    <p>80개 모바일 게임 카테고리 세분화 지표</p>
-                </div>
-            </div>
-            <div class="data-item">
-                <div class="num">+</div>
-                <div>
-                    <h5>1st Party 데이터 연결</h5>
-                    <p>애드브릭스·디파이너리 연계 시 광고 성과 데이터 등</p>
-                </div>
-            </div>
-        </div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">4단계</span>변화의 해석 ― 보유 데이터로 원인 설명</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">포착에 그치지 않고 통합 데이터로 원인을 즉시 해석</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">‘무엇 때문에, 어디서 변동했는가’를 제시 → <strong>의사결정 인텔리전스의 본체</strong></span></div>
 
-        <div class="fusion-box">
-            <div class="formula">TV 광고 집행량 + 앱 사용량 변화 + 카드 결제액(앱마켓 매출) 변화</div>
-            <div class="arrow">⬇</div>
-            <div class="result">광고 → 사용자 유입 → 매출 전환까지 종합 분석 가능</div>
-            <p style="margin-top: 16px; color: #94a3b8; font-size: 14px;">그러나 현재는 데이터 파편화로 인해 현실적으로 이루어지지 않고 있음</p>
-        </div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">진화</span>1st 파티 데이터 결합</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">애드브릭스·디파이너리 연계로 고객의 1st 파티 데이터(설치·행동·광고 성과) 결합</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">시장 전체의 관점 위에 자사 고객의 실제 반응이 포개짐</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">시장 해석을 넘어 <strong>‘우리 회사는 무엇을 해야 하는가’에 답하는 의사결정 도구로 진화</strong></span></div>
+  </section>
 
-        <h3>해법: MCP 기반 데이터 융합</h3>
-        
-        <div class="mcp-highlight">
-            <h4>MCP(Model Context Protocol)가 해결하는 것</h4>
-            <p>MCP화 되는 순간 데이터들의 융합이 매우 수월해지며, 확장된 관점 제시가 손쉽게 가능해집니다.</p>
-            <ul>
-                <li>모바일인덱스 MCP — 출시 완료 (앱 사용량)</li>
-                <li>TV 인덱스 MCP — 7월 중순 출시 예정</li>
-                <li>소비 인덱스 MCP — 8월 개발</li>
-                <li>앱 마켓 인덱스 + 게임 인덱스 MCP — 9월 개발</li>
-            </ul>
-        </div>
+  <!-- Ⅲ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅲ.</span><span>통합·결합으로 가능한 분석 (사례)</span></h2>
+    <p class="intro">단일 지표로는 도출 불가, 데이터 통합·결합 시에만 가능한 분석</p>
 
-        <h3>추가 데이터 확장: 외부 공공/민간 데이터 연동</h3>
-        <p>당사 MCP와 결합 가능한 무료 MCP 또는 스킬셋을 함께 공급하여, 분석의 범위를 대폭 확장합니다.</p>
-        
-        <div class="data-grid">
-            <div class="data-item">
-                <div class="num">📊</div>
-                <div>
-                    <h5>공공 데이터</h5>
-                    <p>주가, DART 공시, 통계청, 국토부, 기상청</p>
-                </div>
-            </div>
-            <div class="data-item">
-                <div class="num">💬</div>
-                <div>
-                    <h5>민간 데이터</h5>
-                    <p>SNS/커뮤니티, 쇼핑몰 리뷰 데이터</p>
-                </div>
-            </div>
-        </div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">내부 통합</span>광고 효과의 전 과정 추적</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">TV 광고 집행 →(TV인덱스) 도달 →(앱인덱스) 신규 설치·사용 증가 →(소비·앱마켓) 결제·매출 변화</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">‘광고비의 매출 전환’ ― 기존에 답하기 어려웠던 질문에 대응</span></div>
 
-        <div class="sci-callout">
-            <h5>🧪 합성 소비자 인텔리전스(SCI) — Alpha 개발 완료</h5>
-            <p>현재 IGAW에서 SCI 알파 버전 개발을 완료한 상태로, 이 데이터가 추가될 경우 
-            시장 분석 역량의 비약적 확장이 기대됩니다.</p>
-        </div>
-    </div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">내부 통합</span>사회적 사건의 수요 영향 해석</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">스타벅스 ‘탱크데이’ 불매 →(앱인덱스) 사용 급감 →(소비인덱스) 결제 위축 →(경쟁사) 반사이익을 연결</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">월별 지표 변동의 원인을 데이터로 규명</span></div>
 
-    <!-- Section 3: Monitoring Tool -->
-    <div class="section">
-        <div class="section-number">3</div>
-        <h2>시장 <span class="highlight">모니터링</span> 도구 전략</h2>
-        <p class="section-desc">시장 변화의 포착과 해석 — 의사결정의 When을 담당</p>
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">공공·공시 결합</span>실적 발표 전 기업 체력의 선행 추정</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">상장 유통사의 (앱인덱스) 사용자·(소비인덱스) 결제액 추세를 (DART 공시·주가)와 결합</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">분기 실적 발표 이전 매출 방향을 선행 추정 → IR·투자·경쟁 대응의 근거 제공</span></div>
 
-        <h3>모니터링의 2대 기능</h3>
-        <div class="monitor-framework">
-            <div class="monitor-item">
-                <div class="tag detect">Detection</div>
-                <h5>변화의 포착</h5>
-                <p>즉각 인지가 필요한 급변화부터, 데일리·먼슬리 지표만으로는 파악이 안 되는 완만한 구조적 변화까지 포착</p>
-            </div>
-            <div class="monitor-item">
-                <div class="tag interpret">Interpretation</div>
-                <h5>변화의 해석 제시</h5>
-                <p>분석 툴(다차원 데이터)을 적극 활용하여 변화의 원인과 영향을 자동 해석</p>
-            </div>
-        </div>
-    </div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">공공·공시 결합</span>외부 변수 기반 수요 변동 설명</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">(기상청) 기온·(통계청) 물가·소비심리를 (앱·소비 인덱스)와 결합</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">예) 폭염·장마에 따른 배달·여행·패션 업종의 사용·결제 변동을 외부 충격으로 설명</span></div>
 
-    <!-- Section 4: MI 3.0 Product Structure -->
-    <div class="section">
-        <div class="section-number">4</div>
-        <h2>MI 3.0 <span class="highlight">제품 구성</span>(안)</h2>
-        <p class="section-desc">분석 + 모니터링을 결합한 통합 의사결정 플랫폼</p>
+    <div class="lv l0"><span class="mk">■</span><span class="tx"><span class="chip">업종 분석</span>시장 구조의 종합 해설</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">여행 업종을 종합플랫폼·항공권·호텔/리조트로 분해, 소비·앱마켓·TV 결합 딥다이브</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">자사뿐 아니라 소속 시장 전체의 구조를 제공</span></div>
 
-        <table class="product-table">
-            <thead>
-                <tr>
-                    <th>구성 요소</th>
-                    <th>주기</th>
-                    <th>핵심 기능</th>
-                    <th>비고</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>데일리 리포트</strong></td>
-                    <td class="freq">Daily</td>
-                    <td>
-                        <span class="feature-tag">변화량 중심</span>
-                        <span class="feature-tag">모니터링</span>
-                        <span class="feature-tag">스냅샷</span>
-                    </td>
-                    <td>클라이언트·경쟁사·업종</td>
-                </tr>
-                <tr>
-                    <td><strong>위클리 리포트</strong></td>
-                    <td class="freq">Weekly</td>
-                    <td>
-                        <span class="feature-tag">데일리 확장</span>
-                        <span class="feature-tag">주간 트렌드</span>
-                    </td>
-                    <td>데일리 리포트의 확장 버전</td>
-                </tr>
-                <tr>
-                    <td><strong>월간 리포트</strong></td>
-                    <td class="freq">Monthly</td>
-                    <td>
-                        <span class="feature-tag">스냅샷 분석</span>
-                        <span class="feature-tag">트렌드 분석</span>
-                        <span class="feature-tag">변화 원인 해석</span>
-                    </td>
-                    <td>전월 대비 + 전년 동기 대비</td>
-                </tr>
-                <tr>
-                    <td><strong>분기 리포트</strong></td>
-                    <td class="freq">Quarterly</td>
-                    <td>
-                        <span class="feature-tag">트렌드 분석</span>
-                        <span class="feature-tag">원인 해석</span>
-                    </td>
-                    <td>업종 단위 심층 분석</td>
-                </tr>
-                <tr>
-                    <td><strong>연간 리포트</strong></td>
-                    <td class="freq">Yearly</td>
-                    <td>
-                        <span class="feature-tag">딥다이브 분석</span>
-                        <span class="feature-tag">소비·앱마켓·TV 통합</span>
-                    </td>
-                    <td>유료 판매 (200~400만원)</td>
-                </tr>
-                <tr>
-                    <td><strong>커스텀 대시보드</strong></td>
-                    <td class="freq">On-Demand</td>
-                    <td>
-                        <span class="feature-tag">대화형 셀프 구성</span>
-                        <span class="feature-tag">계정당 n개 페이지</span>
-                    </td>
-                    <td>대화형으로 자유 구성</td>
-                </tr>
-                <tr>
-                    <td><strong>MCP 비정형 분석툴</strong></td>
-                    <td class="freq">On-Demand</td>
-                    <td>
-                        <span class="feature-tag">대화창</span>
-                        <span class="feature-tag">AI 분석</span>
-                    </td>
-                    <td>자유로운 질의 기반 분석</td>
-                </tr>
-                <tr>
-                    <td><strong>구버전 보기</strong></td>
-                    <td class="freq">Legacy</td>
-                    <td>
-                        <span class="feature-tag">메뉴별 페이지</span>
-                    </td>
-                    <td>기존 사용자 호환</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">소결</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">상기 분석은 이론상 가능하나 데이터 분산으로 현실에서 미실현</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">통합·결합 능력이 곧 차별점 ― <strong>같은 데이터를 가져도 엮는 능력이 MI의 무기</strong></span></div>
+  </section>
 
-        <div class="mcp-highlight" style="background: linear-gradient(135deg, #0f766e, #14b8a6);">
-            <h4>📱 추가 계획</h4>
-            <ul>
-                <li>데일리·위클리·월간 리포트를 요약 음성/영상으로 Push 전달</li>
-                <li>모바일인덱스 전용 앱 출시</li>
-            </ul>
-        </div>
-    </div>
+  <!-- Ⅳ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅳ.</span><span>서비스 구현 ― MI 3.0 제품 구조</span></h2>
+    <p class="intro">‘변화 발견 → 원인 분석 → 자동화’ 3단계를 따라 다음 구조로 구성</p>
 
-    <!-- Section 5: Timeline -->
-    <div class="section">
-        <div class="section-number">5</div>
-        <h2>개발 <span class="highlight">타임라인</span></h2>
-        <p class="section-desc">MI 3.0 출시 목표: 2027년 1월</p>
+    <table class="tbl">
+      <thead><tr><th style="width:54px">구분</th><th>구성</th></tr></thead>
+      <tbody>
+        <tr><td class="c">①</td><td><span class="pt">Today ― 로그인 첫 화면</span><span class="ps">오늘의 중요 변화 / 자사·경쟁사·업종 요약</span><span class="ps">전일·전주 대비 핵심 지표 / 추가 확인이 필요한 변화 / 최근 생성된 리포트</span></td></tr>
+        <tr><td class="c">②</td><td><span class="pt">Monitor ― 변화의 감시 (커스텀)</span><span class="ps">관심 기업·앱·브랜드·업종의 변화 이력 등 커스텀 대시보드</span><span class="ps">이상징후 및 알림 설정</span></td></tr>
+        <tr><td class="c">③</td><td><span class="pt">Analyze ― 원인의 분석</span><span class="ps">이상징후·주요 변화에 대한 분석 / MCP 기반 비정형 대화형 분석</span><span class="ps">분석 결과 저장 및 공유</span></td></tr>
+        <tr><td class="c">④</td><td><span class="pt">Reports ― 정기 보고의 자동화</span><span class="ps">데일리 · 위클리 · 월간 · 분기 · 업종 연간 리포트</span><span class="ps">분기·연간 리포트는 애널리스트 검수를 거치며, 업종 연간 리포트는 200만~500만원 백서 수준 리포트로 발간</span></td></tr>
+        <tr><td class="c">⑤</td><td><span class="pt">Data / Classic MI ― 기존 데이터 메뉴</span><span class="ps">모바일인덱스 인사이트 · 소비인덱스 · 앱마켓 인덱스 · TV 인덱스 · 게임 인덱스</span></td></tr>
+        <tr><td class="c">⑥</td><td><span class="pt">Connect (추후) ― 실행으로의 연결</span><span class="ps">디파이너리·애드브릭스 연계 / 외부 광고·CRM 솔루션</span></td></tr>
+      </tbody>
+    </table>
 
-        <h3>투입 리소스</h3>
-        <div class="resource-bar">
-            <div class="resource-chip"><div class="dot"></div><span>프론트엔드 2명</span></div>
-            <div class="resource-chip"><div class="dot"></div><span>백엔드 3명</span></div>
-            <div class="resource-chip"><div class="dot"></div><span>디자인 1명</span></div>
-            <div class="resource-chip"><div class="dot"></div><span>기획 1명</span></div>
-        </div>
+    <div class="lv l0" style="margin-top:20px"><span class="mk">■</span><span class="tx">전달·확장</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">데일리·위클리·월간 요약을 음성/영상으로 Push</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">모바일인덱스 모바일 앱 출시</span></div>
+  </section>
 
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="month">2026년 7월</div>
-                <ul>
-                    <li><span class="tag-tvi">TVI</span>TV INDEX 광고 1차 (QA)</li>
-                    <li><span class="tag-tvi">TVI</span>TV INDEX 광고 2차 개발 (병행)</li>
-                    <li><span class="tag-tvi">TVI</span>TV INDEX MCP 출시</li>
-                    <li><span class="tag-tvi">TVI</span>PP 편성표 기반 데이터 재적재 및 범위 확대</li>
-                    <li><span class="tag-tvi">TVI</span>백오피스 데일리 데이터 자동 발송 기능 추가</li>
-                    <li><span class="tag-mi">MI</span>모바일인덱스 MCP 신규 API 추가 — 앱 3개 교/합집합</li>
-                    <li><span class="tag-common">공통</span>DMP 인수인계</li>
-                </ul>
-            </div>
+  <!-- Ⅴ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅴ.</span><span>해자(Moat)</span></h2>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">데이터의 다종성·독점성</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">앱 사용량·카드 결제·앱마켓 매출·TV 시청 데이터를 <strong>동시에 보유한 사업자는 국내에서 사실상 MI가 유일</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">핵심이 되는 배타적 데이터는 공공·공개 데이터와 결합해도 그 독점성을 잃지 않음</span></div>
 
-            <div class="timeline-item">
-                <div class="month">2026년 8월</div>
-                <ul>
-                    <li><span class="tag-tvi">TVI</span>TV INDEX 광고 1차 (출시)</li>
-                    <li><span class="tag-tvi">TVI</span>TV INDEX 광고 2차 (병행)</li>
-                    <li><span class="tag-mi">MI</span>모바일인덱스 MCP 신규 API 추가 — 소비인덱스 MCP</li>
-                    <li><span class="tag-mi">MI</span>데일리 리포트 개발</li>
-                    <li><span class="tag-mi">MI</span>MI 3.0 기획</li>
-                    <li><span class="tag-common">공통</span>DMP → 스노플레이크 이전</li>
-                </ul>
-            </div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">1st 파티 결합의 가능성</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">어떤 유사 지표 서비스도 1st party 데이터를 자체 수급할 채널을 보유하지 못함 ― 그 역(逆) 또한 마찬가지</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">디파이너리(DFN) MCP와 결합 시 <strong>강력한 경쟁력 확보 기대</strong></span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">시장 데이터(공통) + 고객 데이터(개별)의 결합은 MI-DFN의 고유 영역</span></div>
 
-            <div class="timeline-item">
-                <div class="month">2026년 9월</div>
-                <ul>
-                    <li><span class="tag-common">공통</span>MI + 소비 + TVI 결합 스킬 및 사용 가이드 제작</li>
-                    <li><span class="tag-tvi">TVI</span>TV INDEX 광고 2차 (QA)</li>
-                    <li><span class="tag-mi">MI</span>모바일인덱스 MCP 신규 API 추가 — 앱 마켓 + 게임</li>
-                    <li><span class="tag-mi">MI</span>MI 3.0 기획 계속</li>
-                    <li><span class="tag-common">공통</span>DMP → 스노플레이크 이전 완료</li>
-                </ul>
-            </div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">SCI 데이터 결합 가능성</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">특이사항·특이점을 드러낸 수치의 정량 해석을 넘어</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">변화된 유저의 <strong>Signal과 Prediction</strong>이라는 정성적 영역까지 확장할 경우, 매우 강력한 해자로 작용 기대</span></div>
 
-            <div class="timeline-item">
-                <div class="month">2026년 10월</div>
-                <div class="milestone">⭐ MCP 4종 출시 완료</div>
-                <ul>
-                    <li><span class="tag-mi">MI</span>MI 3.0 개발 킥오프</li>
-                    <li><span class="tag-mi">MI</span>외부 데이터 연동 기획</li>
-                </ul>
-            </div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">요약</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">MI의 핵심 경쟁력은 기존에 결합이 어렵거나 불가능하던 <strong>데이터를 연결해 시장을 설명하는 강력한 능력</strong></span></div>
+  </section>
 
-            <div class="timeline-item">
-                <div class="month">2027년 1월</div>
-                <div class="milestone">🚀 MI 3.0 출시</div>
-                <ul>
-                    <li><span class="tag-mi">MI</span>모바일인덱스 3.0 정식 출시</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+  <!-- Ⅵ -->
+  <section>
+    <h2 class="sec"><span class="rn">Ⅵ.</span><span>추진 방식 및 일정</span></h2>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">MCP를 출발점으로, 기존 서비스를 덮으며 점진 교체</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">MCP 기반 신(新)기능이 기존 메뉴와 오버랩되며 자연스럽게 대체</span></div>
+    <div class="lv l1"><span class="mk">○</span><span class="tx">고객 단절 없이 ‘지표 서비스’에서 ‘의사결정 인텔리전스’로 이행</span></div>
+    <div class="lv l0"><span class="mk">■</span><span class="tx">개발 일정 (현 리소스: 프론트 2 · 백엔드 3 · 디자인 1 · 기획 1)</span></div>
 
-    <!-- Closing -->
-    <div class="key-message">
-        <h3>Goal</h3>
-        <p class="msg">
-            MCP 기반 <em>데이터 융합</em>으로 파편화를 해소하고,<br>
-            <em>분석 + 모니터링</em>의 통합 의사결정 플랫폼으로<br>
-            모바일인덱스를 재정의합니다.
-        </p>
-    </div>
+    <table class="tbl">
+      <thead><tr><th style="width:128px">시기</th><th>주요 과업</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="when">2026. 7</span></td>
+          <td class="task">
+            <div><span class="tag">[TVI]</span> TV인덱스 광고 1차(QA)·2차 개발 병행</div>
+            <div><span class="tag">[TVI]</span> TV인덱스 MCP 출시</div>
+            <div><span class="tag">[TVI]</span> PP 편성표 기반 데이터 재적재·범위 확대</div>
+            <div><span class="tag">[TVI]</span> 백오피스 데일리 데이터 자동 발송</div>
+            <div><span class="tag">[MI]</span> MCP 신규 API ― 앱 3개 교·합집합</div>
+            <div><span class="tag">[INF]</span> DMP 인수인계</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="when">2026. 8</span></td>
+          <td class="task">
+            <div><span class="tag">[TVI]</span> TV인덱스 광고 1차 출시·2차 병행</div>
+            <div><span class="tag">[MI]</span> 소비 인덱스 MCP</div>
+            <div><span class="tag">[MI]</span> 데일리 리포트</div>
+            <div><span class="tag">[MI]</span> MI 3.0 (기획)</div>
+            <div><span class="tag">[INF]</span> DMP → 스노우플레이크 이전</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="when">2026. 9</span></td>
+          <td class="task">
+            <div><span class="tag">[공통]</span> 소비+TVI 결합 스킬·가이드 제작</div>
+            <div><span class="tag">[TVI]</span> TV인덱스 광고 2차(QA)</div>
+            <div><span class="tag">[MI]</span> 앱마켓+게임 MCP</div>
+            <div><span class="tag">[MI]</span> MI 3.0 (기획)</div>
+            <div><span class="tag">[INF]</span> DMP → 스노우플레이크 이전 완료</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="when">2026. 10</span><span class="note">MCP 4종 출시 완료</span></td>
+          <td class="task">
+            <div><span class="tag">[MI]</span> MI 3.0 개발 킥오프</div>
+            <div><span class="tag">[MI]</span> 외부 데이터 연동 (기획)</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="when">2027. 1Q</span><span class="note">MI 3.0 출시 목표</span></td>
+          <td class="task"><div><span class="tag">[MI]</span> MI 3.0 정식 출시</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="closing">― 이 상 ―</div>
+
+  <footer>IGAWorks · Mobile Index &nbsp;|&nbsp; 2026 하반기 MI 개편 방향 보고 (초도)</footer>
 
 </div>
-
-<div class="footer">
-    <p>IGAW · 모바일인덱스 3.0 전략 기획안 · 2026년 6월 · 대표 보고용 · Confidential</p>
-</div>
-
 </body>
 </html>
