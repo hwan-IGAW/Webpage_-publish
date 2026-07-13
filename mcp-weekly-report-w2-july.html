@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모바일인덱스 MCP · 7월 2주차 리포트</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif; max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; line-height: 1.7; color: #1a1a1a; background: #fff; }
+  .header { margin-bottom: 40px; }
+  .header .brand { font-size: 11px; color: #888; letter-spacing: 1px; text-transform: uppercase; }
+  .header h1 { font-size: 26px; font-weight: 700; margin: 8px 0; }
+  .header .meta { font-size: 12px; color: #666; }
+  .header .meta span { margin-right: 14px; }
+  .header .note { font-size: 11px; color: #aaa; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+  .sec { margin-top: 48px; }
+  .sec-num { display: inline-block; font-size: 10px; font-weight: 700; color: #fff; background: #111; border-radius: 3px; padding: 2px 7px; margin-bottom: 10px; }
+  .sec h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .sec .sub { font-size: 13px; color: #666; margin-bottom: 20px; }
+  .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 20px 0; }
+  .kpi-c { background: #f8f9fa; border-radius: 8px; padding: 16px; text-align: center; border: 1px solid #eee; }
+  .kpi-c .v { font-size: 22px; font-weight: 700; }
+  .kpi-c .l { font-size: 11px; color: #666; margin-top: 2px; }
+  .kpi-c .d { font-size: 11px; margin-top: 4px; font-weight: 600; }
+  .up { color: #2e7d32; }
+  .dn { color: #d32f2f; }
+  .flat { color: #888; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+  thead th { background: #f8f9fa; padding: 10px 8px; border-bottom: 2px solid #ddd; text-align: left; font-weight: 600; font-size: 11px; }
+  tbody td { padding: 8px; border-bottom: 1px solid #eee; }
+  tbody tr:hover { background: #fafbfc; }
+  .tr { text-align: right; }
+  .tc { text-align: center; }
+  .num { font-variant-numeric: tabular-nums; }
+  .b { font-weight: 600; }
+  .tag { display: inline-block; font-size: 10px; padding: 2px 5px; border-radius: 3px; font-weight: 500; }
+  .tg { background: #e8f5e9; color: #2e7d32; }
+  .ty { background: #fff8e1; color: #f57f17; }
+  .tr2 { background: #fbe9e7; color: #d32f2f; }
+  .tb { background: #e3f2fd; color: #1565c0; }
+  .tn { background: #ede7f6; color: #4527a0; }
+  .tgr { background: #f5f5f5; color: #666; }
+  .box { background: #f8f9fa; border-radius: 8px; padding: 16px 20px; margin: 20px 0; border-left: 4px solid #1a73e8; }
+  .box.good { border-left-color: #2e7d32; }
+  .box.warn { border-left-color: #f9a825; }
+  .box.info { border-left-color: #1a73e8; }
+  .box .bt { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+  .box p { font-size: 13px; color: #444; margin-bottom: 4px; }
+  .box p:last-child { margin-bottom: 0; }
+  .hm-wrap { overflow-x: auto; margin: 16px 0; }
+  .hm { border-collapse: collapse; font-size: 10px; min-width: 900px; }
+  .hm th, .hm td { padding: 5px 6px; text-align: center; border: 1px solid #f0f0f0; }
+  .hm th { background: #f8f9fa; font-weight: 600; }
+  .hm .nm { text-align: left; font-size: 11px; font-weight: 500; white-space: nowrap; }
+  .c0 { background: #fff; color: #ccc; }
+  .c1 { background: #e3f2fd; }
+  .c2 { background: #90caf9; }
+  .c3 { background: #42a5f5; color: #fff; }
+  .c4 { background: #1a73e8; color: #fff; }
+  .c5 { background: #0d47a1; color: #fff; }
+  .bar-row { display: flex; align-items: center; margin-bottom: 6px; }
+  .bar-l { width: 120px; font-size: 11px; color: #555; flex-shrink: 0; }
+  .bar-t { flex: 1; height: 22px; background: #eee; border-radius: 4px; overflow: hidden; position: relative; }
+  .bar-f { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 10px; font-weight: 600; color: #fff; }
+  .bar-prev { position: absolute; top: 0; height: 100%; background: rgba(0,0,0,0.08); border-right: 2px dashed #999; }
+  .bar-v { font-size: 11px; font-weight: 600; width: 80px; text-align: right; margin-left: 8px; }
+  h3 { font-size: 14px; margin: 24px 0 12px; }
+  .footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid #eee; font-size: 11px; color: #aaa; }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .compare-card { background: #f8f9fa; border-radius: 8px; padding: 14px 16px; border: 1px solid #eee; }
+  .compare-card .title { font-size: 11px; color: #888; margin-bottom: 4px; }
+  .compare-card .val { font-size: 18px; font-weight: 700; }
+  .compare-card .change { font-size: 11px; font-weight: 600; margin-top: 2px; }
+  @media (max-width: 640px) { body { padding: 20px 16px 60px; } .header h1 { font-size: 21px; } .kpi { grid-template-columns: repeat(2, 1fr); } .compare-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">MOBILEINDEX INSIGHT · MCP 주간 리포트</div>
+  <h1>7월 2주차 · MCP 사용 현황</h1>
+  <div class="meta">
+    <span>누적 06.03 ~ 07.13</span>
+    <span>금주 7/4 ~ 7/13</span>
+    <span>전주 비교 6/27 ~ 7/3</span>
+  </div>
+  <div class="note">내부(digitaltrinity 등) 제외 · BASIC 100cr/일 · 사용량 데이터 기준일 2026.07.13</div>
+</div>
+
+<!-- 01 KPI -->
+<div class="sec">
+  <span class="sec-num">01</span>
+  <h2>주간 KPI</h2>
+  <div class="kpi">
+    <div class="kpi-c"><div class="v">71명</div><div class="l">외부 사용자 (누적)</div><div class="d up">+20 vs 전주(51)</div></div>
+    <div class="kpi-c"><div class="v">26명</div><div class="l">유료 (PRM+ESS)</div><div class="d up">+2 (야놀자, 닥터나우)</div></div>
+    <div class="kpi-c"><div class="v">12명</div><div class="l">정착 유저 (5일+)</div><div class="d up">전주 8명 → +50%</div></div>
+    <div class="kpi-c"><div class="v">58%</div><div class="l">유료 D+21 리텐션</div><div class="d up">전주 50%(D+14)</div></div>
+  </div>
+
+  <div class="box good">
+    <div class="bt">핵심 성과</div>
+    <p>BASIC 100cr 상향 효과 본격화 — nm-neo(우고은) 10일 연속 사용, 무료 사용자 정착 첫 사례 확인.</p>
+    <p>그린브릭스가 7/1~7/13 <strong>13일 연속 사용</strong>으로 최장 연속 사용 기록 경신.</p>
+  </div>
+</div>
+
+<!-- 02 GA 웹 트래픽 -->
+<div class="sec">
+  <span class="sec-num">02</span>
+  <h2>웹 트래픽 (페이지별 변화)</h2>
+  <div class="sub">전주 누적(6/4~7/3) vs 이번주 누적(6/3~7/13). 증분 = 최근 10일(7/4~7/13).</div>
+
+  <table>
+    <thead>
+      <tr><th>페이지</th><th class="tr">전주 누적</th><th class="tr">이번주 누적</th><th class="tr">증분</th><th class="tr">증가율</th><th>평가</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="b">/mcp/main</td><td class="tr num">17,722</td><td class="tr num">22,088</td><td class="tr num up">+4,366</td><td class="tr up">+24.6%</td><td><span class="tag tg">가속</span></td></tr>
+      <tr><td class="b">/mcp/connect</td><td class="tr num">1,338</td><td class="tr num">1,770</td><td class="tr num up">+432</td><td class="tr up">+32.3%</td><td><span class="tag tg">급성장</span></td></tr>
+      <tr><td class="b">/mcp/tools</td><td class="tr num">316</td><td class="tr num">510</td><td class="tr num up">+194</td><td class="tr up">+61.4%</td><td><span class="tag tn">최고 성장률</span></td></tr>
+      <tr><td>/mcp/guide (최상위)</td><td class="tr num">4,427</td><td class="tr num">4,665</td><td class="tr num">+238</td><td class="tr">+5.4%</td><td><span class="tag tgr">안정</span></td></tr>
+      <tr><td>/mcp/skills</td><td class="tr num">1,796</td><td class="tr num">1,920</td><td class="tr num">+124</td><td class="tr">+6.9%</td><td><span class="tag tgr">안정</span></td></tr>
+      <tr class="b"><td>전체 합계</td><td class="tr num">26,695</td><td class="tr num">33,763</td><td class="tr num up">+7,068</td><td class="tr up">+26.5%</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>가이드 하위 페이지 변화</h3>
+  <table>
+    <thead>
+      <tr><th>가이드</th><th class="tr">전주</th><th class="tr">이번주</th><th class="tr">증분</th><th>상태</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>industry_analysis_guide</td><td class="tr">910</td><td class="tr">912</td><td class="tr flat">+2</td><td><span class="tag tgr">포화</span></td></tr>
+      <tr><td>template_report_guide</td><td class="tr">909</td><td class="tr">912</td><td class="tr flat">+3</td><td><span class="tag tgr">포화</span></td></tr>
+      <tr><td>proposal_data_guide</td><td class="tr">876</td><td class="tr">880</td><td class="tr flat">+4</td><td><span class="tag tgr">포화</span></td></tr>
+      <tr><td class="b">mi-mcp-ott-report</td><td class="tr">80</td><td class="tr">101</td><td class="tr up">+21</td><td><span class="tag tg">활성</span></td></tr>
+      <tr><td class="b">commerce_report_skill_guide</td><td class="tr">100</td><td class="tr">120</td><td class="tr up">+20</td><td><span class="tag tg">활성</span></td></tr>
+      <tr><td class="b">investment_review_guide</td><td class="tr">25</td><td class="tr">42</td><td class="tr up">+17</td><td><span class="tag tb">신규 유입</span></td></tr>
+      <tr><td>custom_ranking_guide</td><td class="tr">22</td><td class="tr">29</td><td class="tr">+7</td><td></td></tr>
+      <tr><td>mi-mcp-intro</td><td class="tr">40</td><td class="tr">47</td><td class="tr">+7</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>신규 트래픽 소스</h3>
+  <div class="box info">
+    <div class="bt">github.com 유입 등장 🆕</div>
+    <p>tools(40건), connect(25건), main(26건) — 개발자 커뮤니티에서의 자연 확산 시그널.</p>
+    <p>tagassistant.google.com 유입(34건) — GTM 태깅 작업 진행 확인.</p>
+    <p>/mcp/connect-v2 페이지 36건 등장 — 신규 연동 플로우 런칭.</p>
+  </div>
+</div>
+
+<!-- 03 사용량 변화 -->
+<div class="sec">
+  <span class="sec-num">03</span>
+  <h2>유료 고객 사용량 (누적 → 금주 증분)</h2>
+  <div class="sub">전주까지(회색 점선) vs 전체 누적(컬러 바). 금주(7/4~7/13) 증분 표시.</div>
+
+  <div style="margin:20px 0;">
+    <div class="bar-row">
+      <div class="bar-l b">hsad 차현웅</div>
+      <div class="bar-t"><div class="bar-prev" style="width:77%;"></div><div class="bar-f" style="width:100%; background:#1a73e8;">2,967</div></div>
+      <div class="bar-v up">+786 🔥</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">한국투자증권</div>
+      <div class="bar-t"><div class="bar-prev" style="width:76%;"></div><div class="bar-f" style="width:90%; background:#1a73e8;">2,681</div></div>
+      <div class="bar-v up">+642</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">하나금융</div>
+      <div class="bar-t"><div class="bar-prev" style="width:76%;"></div><div class="bar-f" style="width:44%; background:#7c4dff;">1,310</div></div>
+      <div class="bar-v up">+296</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">허블</div>
+      <div class="bar-t"><div class="bar-prev" style="width:100%;"></div><div class="bar-f" style="width:36%; background:#66bb6a;">1,072</div></div>
+      <div class="bar-v flat">±0 (휴식)</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">그린브릭스</div>
+      <div class="bar-t"><div class="bar-prev" style="width:59%;"></div><div class="bar-f" style="width:35%; background:#2e7d32;">1,030</div></div>
+      <div class="bar-v up">+420 🔥</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">nm-neo 우고은 🆕</div>
+      <div class="bar-t"><div class="bar-prev" style="width:10%;"></div><div class="bar-f" style="width:34%; background:#ff7043;">1,012</div></div>
+      <div class="bar-v up">+912 🔥</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">와이즈버즈</div>
+      <div class="bar-t"><div class="bar-prev" style="width:67%;"></div><div class="bar-f" style="width:26%; background:#42a5f5;">783</div></div>
+      <div class="bar-v up">+274</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">알토스</div>
+      <div class="bar-t"><div class="bar-prev" style="width:97%;"></div><div class="bar-f" style="width:23%; background:#90caf9;">681</div></div>
+      <div class="bar-v flat">+11 (감속)</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">버즈빌</div>
+      <div class="bar-t"><div class="bar-prev" style="width:8%;"></div><div class="bar-f" style="width:21%; background:#42a5f5;">636</div></div>
+      <div class="bar-v up">+581 🔥</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">모지세</div>
+      <div class="bar-t"><div class="bar-prev" style="width:44%;"></div><div class="bar-f" style="width:21%; background:#90caf9;">625</div></div>
+      <div class="bar-v up">+334</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">휴맥스</div>
+      <div class="bar-t"><div class="bar-prev" style="width:76%;"></div><div class="bar-f" style="width:20%; background:#90caf9;">592</div></div>
+      <div class="bar-v up">+142</div>
+    </div>
+  </div>
+
+  <div class="box good">
+    <div class="bt">금주 주목 포인트</div>
+    <p><strong>nm-neo 우고은 (BASIC)</strong>: 7/3부터 10일 연속 사용(일 96~100cr). BASIC 100cr 상향 이후 첫 정착 사례.</p>
+    <p><strong>버즈빌</strong>: 전주까지 미미(55cr) → 금주 +581. 7/7 하루 500cr 사용 후 연속 활동. 재활성 확인.</p>
+    <p><strong>그린브릭스</strong>: 7/1~7/13 13일 연속 매일 42cr 이상 사용. 완전 정착.</p>
+  </div>
+</div>
+
+<!-- 04 히트맵 -->
+<div class="sec">
+  <span class="sec-num">04</span>
+  <h2>상위 유저 일별 히트맵</h2>
+  <div class="sub">금주(7/4~7/13) 영역. 색 진할수록 사용량 높음.</div>
+
+  <div class="hm-wrap">
+  <table class="hm">
+    <thead>
+      <tr>
+        <th>사용자</th><th>누적</th>
+        <th colspan="5" style="background:#f0f0f0;">전주 (6/27~7/3)</th>
+        <th colspan="8" style="background:#e8f5e9;">금주 (7/4~7/13)</th>
+      </tr>
+      <tr>
+        <th></th><th></th>
+        <th>27</th><th>28</th><th>30</th><th>1</th><th>3</th>
+        <th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="nm b">hsad 차현웅</td><td class="b">2,967</td>
+        <td class="c1">7</td><td class="c1">39</td><td class="c1">37</td><td class="c0">6</td><td class="c0">5</td>
+        <td class="c0">-</td><td class="c0">11</td><td class="c0">21</td><td class="c0">7</td><td class="c1">58</td><td class="c0">8</td><td class="c2">176</td><td class="c4">500</td></tr>
+      <tr><td class="nm b">한국투자증권</td><td class="b">2,681</td>
+        <td class="c1">60</td><td class="c1">60</td><td class="c3">300</td><td class="c2">180</td><td class="c3">220</td>
+        <td class="c0">-</td><td class="c0">-</td><td class="c3">243</td><td class="c1">97</td><td class="c1">78</td><td class="c1">67</td><td class="c1">77</td><td class="c0">-</td></tr>
+      <tr><td class="nm b" style="color:#4527a0;">하나금융</td><td class="b">1,310</td>
+        <td class="c3">207</td><td class="c0">-</td><td class="c1">83</td><td class="c0">-</td><td class="c0">-</td>
+        <td class="c0">-</td><td class="c1">37</td><td class="c0">-</td><td class="c0">-</td><td class="c0">-</td><td class="c0">-</td><td class="c0">-</td><td class="c2">165</td></tr>
+      <tr><td class="nm up b">그린브릭스 🔥</td><td class="b">1,030</td>
+        <td class="c2">145</td><td class="c1">84</td><td class="c1">42</td><td class="c1">42</td><td class="c1">42</td>
+        <td class="c1">42</td><td class="c1">42</td><td class="c1">42</td><td class="c1">42</td><td class="c1">42</td><td class="c1">42</td><td class="c1">42</td><td class="c1">42</td></tr>
+      <tr><td class="nm up" style="color:#ff5722;">nm-neo 우고은 🆕</td><td class="b">1,012</td>
+        <td class="c0">-</td><td class="c0">-</td><td class="c0">-</td><td class="c0">-</td><td class="c2">100</td>
+        <td class="c2">100</td><td class="c2">100</td><td class="c2">100</td><td class="c1">96</td><td class="c1">96</td><td class="c1">96</td><td class="c1">96</td><td class="c1">96</td></tr>
+      <tr><td class="nm">와이즈버즈</td><td>783</td>
+        <td class="c2">102</td><td class="c1">97</td><td class="c1">23</td><td class="c1">40</td><td class="c0">-</td>
+        <td class="c0">-</td><td class="c0">-</td><td class="c0">-</td><td class="c2">127</td><td class="c2">102</td><td class="c0">-</td><td class="c1">40</td><td class="c0">-</td></tr>
+      <tr><td class="nm up b">버즈빌 🔥</td><td class="b">636</td>
+        <td class="c0">6</td><td class="c0">-</td><td class="c0">-</td><td class="c0">5</td><td class="c0">-</td>
+        <td class="c0">-</td><td class="c0">-</td><td class="c0">-</td><td class="c5">500</td><td class="c1">37</td><td class="c0">-</td><td class="c1">44</td><td class="c0">-</td></tr>
+      <tr><td class="nm">모지세</td><td>625</td>
+        <td class="c1">28</td><td class="c1">40</td><td class="c1">80</td><td class="c0">-</td><td class="c1">53</td>
+        <td class="c0">-</td><td class="c0">-</td><td class="c1">24</td><td class="c0">-</td><td class="c1">55</td><td class="c3">200</td><td class="c0">21</td><td class="c0">-</td></tr>
+      <tr><td class="nm">휴맥스</td><td>592</td>
+        <td class="c1">35</td><td class="c0">-</td><td class="c0">-</td><td class="c1">77</td><td class="c0">-</td>
+        <td class="c0">-</td><td class="c0">-</td><td class="c1">81</td><td class="c0">-</td><td class="c1">61</td><td class="c0">-</td><td class="c0">-</td><td class="c0">-</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:11px; color:#888; margin-top:8px;">그린브릭스: 7/1~7/13 연속 13일 사용(일 42cr 고정). nm-neo 우고은: BASIC 100cr 상향 후 7/3~7/13 연속 10일 사용.</p>
+</div>
+
+<!-- 05 리텐션 업데이트 -->
+<div class="sec">
+  <span class="sec-num">05</span>
+  <h2>유료 고객 리텐션 (D+21 업데이트)</h2>
+  <div class="sub">전주(D+14 50%) → 이번 주(D+21 58%). 3주 경과 후에도 과반 이상 유지.</div>
+
+  <div style="margin:20px 0;">
+    <div class="bar-row"><div class="bar-l">D+0</div><div class="bar-t"><div class="bar-f" style="width:100%; background:#1a73e8;">26명</div></div><div class="bar-v">100%</div></div>
+    <div class="bar-row"><div class="bar-l">D+3</div><div class="bar-t"><div class="bar-f" style="width:69%; background:#42a5f5;">18명</div></div><div class="bar-v">69%</div></div>
+    <div class="bar-row"><div class="bar-l">D+7</div><div class="bar-t"><div class="bar-f" style="width:62%; background:#66bb6a;">16명</div></div><div class="bar-v up">62%</div></div>
+    <div class="bar-row"><div class="bar-l">D+14</div><div class="bar-t"><div class="bar-f" style="width:54%; background:#2e7d32;">14명</div></div><div class="bar-v up">54%</div></div>
+    <div class="bar-row"><div class="bar-l">D+21</div><div class="bar-t"><div class="bar-f" style="width:58%; background:#1b5e20;">15명</div></div><div class="bar-v up">58% ↑</div></div>
+  </div>
+
+  <div class="box good">
+    <div class="bt">D+21 > D+14 역전 현상</div>
+    <p>D+14 시점 미사용이었던 버즈빌·이노션이 D+21 시점에 복귀하면서 리텐션이 오히려 상승. "보고 시기형" 사용 패턴이 수치로 입증됨.</p>
+    <p><strong>MCP는 주 단위가 아닌 월 단위 리텐션으로 평가해야 함.</strong></p>
+  </div>
+</div>
+
+<!-- 06 전주 관전 포인트 결과 -->
+<div class="sec">
+  <span class="sec-num">06</span>
+  <h2>전주 관전 포인트 결과</h2>
+  <table>
+    <thead><tr><th>항목</th><th>결과</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td class="b">BASIC 100cr 상향 후 리텐션</td><td><span class="tag tg">✅ 효과 확인</span></td><td>nm-neo 우고은 10일 연속 사용 (일 96~100cr). knbank 장현우·김석희도 재방문.</td></tr>
+      <tr><td class="b">야놀자·하나금융 지속 여부</td><td><span class="tag ty">△ 간헐</span></td><td>하나금융 7/5(37), 7/11(165). 야놀자 7/2(8), 7/3(54), 7/7(4) 후 중단.</td></tr>
+      <tr><td class="b">TBWA 팔로업</td><td><span class="tag tr2">❌ 미복귀</span></td><td>6/12 이후 사용 없음. 3주 공백. 직접 팔로업 필요.</td></tr>
+      <tr><td class="b">GPT 앱 / 클로드 커넥터 심사</td><td><span class="tag ty">⏳ 대기 중</span></td><td>아직 승인 미완료. 계속 대기.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 07 신규 유저 & 세그먼트 -->
+<div class="sec">
+  <span class="sec-num">07</span>
+  <h2>이번 주 신규/재활성 유저</h2>
+
+  <h3>🆕 신규 진입</h3>
+  <table>
+    <thead><tr><th>사용자</th><th>등급</th><th>금주 사용량</th><th>패턴</th></tr></thead>
+    <tbody>
+      <tr><td class="b">nm-neo 우고은</td><td><span class="tag ty">BASIC</span></td><td class="num">912</td><td>7/3~7/13 연속 10일. 완전 정착. <span class="tag tg">BASIC 성공</span></td></tr>
+      <tr><td>nm-neo 강대희</td><td><span class="tag ty">BASIC</span></td><td class="num">91</td><td>7/3(53), 7/9(38). 같은 회사 2명째.</td></tr>
+      <tr><td>W컨셉</td><td><span class="tag tb">PREMIUM</span></td><td class="num">215</td><td>7/9 단일일 215cr. 이커머스 신규.</td></tr>
+      <tr><td>스마일게이트자산운용</td><td><span class="tag tn">ESSENTIAL</span></td><td class="num">200</td><td>7/9 단일일. 뉴스레터 클릭 top 도메인에서 전환!</td></tr>
+      <tr><td>카카오엔터</td><td><span class="tag tb">PREMIUM</span></td><td class="num">2</td><td>7/10 연동 테스트. 관찰 필요.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>🔥 재활성</h3>
+  <table>
+    <thead><tr><th>사용자</th><th>이전 상태</th><th>금주 사용량</th><th>판정 변경</th></tr></thead>
+    <tbody>
+      <tr><td class="b">버즈빌</td><td>미온적 (55cr 정체)</td><td class="num up">+581</td><td><span class="tag tr2">보류</span> → <span class="tag tg">정착 전환 중</span></td></tr>
+      <tr><td class="b">모지세</td><td>간헐 (291cr)</td><td class="num up">+334</td><td><span class="tag ty">간헐</span> → <span class="tag tg">활성</span></td></tr>
+      <tr><td>이노션</td><td>간헐 (141cr)</td><td class="num up">+68</td><td>6/30(25), 7/1(28) 후 7/3(68). 간격 좁아짐.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>⚠️ 감속/이탈 관찰</h3>
+  <table>
+    <thead><tr><th>사용자</th><th>상태</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td>알토스</td><td><span class="tag ty">감속</span></td><td>전주 175cr → 금주 11cr. 7/7(11) 이후 중단. VC 특성상 보고시기 종료 추정.</td></tr>
+      <tr><td>허블</td><td><span class="tag tgr">휴식</span></td><td>7/1~2 집중 사용(1,000cr) 후 금주 0. 보고시기형 확정.</td></tr>
+      <tr><td>TBWA</td><td><span class="tag tr2">이탈 우려</span></td><td>6/12 이후 3주+ 미사용. 팔로업 필수.</td></tr>
+      <tr><td>야놀자</td><td><span class="tag ty">관찰</span></td><td>7/7(4cr) 이후 중단. 아직 온보딩 초기.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 08 BASIC 100cr 효과 분석 -->
+<div class="sec">
+  <span class="sec-num">08</span>
+  <h2>BASIC 100cr 상향 효과</h2>
+  <div class="sub">6/29 상향 이후 2주 경과. 첫 정착 사례와 복귀 패턴 확인.</div>
+
+  <table>
+    <thead><tr><th>사용자</th><th>사용 시작</th><th>금주 사용량</th><th>패턴</th></tr></thead>
+    <tbody>
+      <tr><td class="b">nm-neo 우고은</td><td>7/3</td><td class="num">912</td><td>10일 연속 (일 96~100). <strong>완전 정착</strong></td></tr>
+      <tr><td>nm-neo 강대희</td><td>7/3</td><td class="num">91</td><td>2일 사용. 같은 회사.</td></tr>
+      <tr><td>knbank 김석희</td><td>6/30</td><td class="num">152</td><td>100+52. 2일 사용.</td></tr>
+      <tr><td>knbank 장현우</td><td>6/30</td><td class="num">80</td><td>1일 80cr.</td></tr>
+      <tr><td>nm-neo 박진수</td><td>7/10</td><td class="num">15</td><td>같은 회사 3명째. 테스트 수준.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box good">
+    <div class="bt">판단: BASIC 상향은 효과적</div>
+    <p>100cr 상향 전에는 BASIC 정착 사례 0건. 상향 후 2주 만에 <strong>nm-neo 1명 완전 정착 + 같은 회사 2명 추가 유입</strong>.</p>
+    <p>100cr이면 의미 있는 분석 3~5회 가능 → 가치 체감 임계치를 넘긴 것으로 판단.</p>
+    <p>knbank(경남은행)도 100cr 하루 소진 패턴 → "무료로도 업무에 쓸 수 있다"는 인식 형성.</p>
+  </div>
+</div>
+
+<!-- 09 전주 대비 종합 비교 -->
+<div class="sec">
+  <span class="sec-num">09</span>
+  <h2>전주 대비 종합 비교</h2>
+
+  <table>
+    <thead><tr><th>지표</th><th class="tr">전주 (6/27~7/3)</th><th class="tr">금주 (7/4~7/13)</th><th>변화</th></tr></thead>
+    <tbody>
+      <tr><td>GA 일평균 조회수</td><td class="tr">694/일</td><td class="tr num">707/일</td><td class="up">+1.9%</td></tr>
+      <tr><td>main 증분</td><td class="tr">+3,147</td><td class="tr num">+4,366</td><td class="up">+38.7% 가속</td></tr>
+      <tr><td>connect 증분</td><td class="tr">+241</td><td class="tr num">+432</td><td class="up">+79.3% 가속</td></tr>
+      <tr><td>tools 증분</td><td class="tr">+66</td><td class="tr num">+194</td><td class="up">+194% (3배)</td></tr>
+      <tr><td>MCP 총 사용량</td><td class="tr">~6,800cr</td><td class="tr num">~7,200cr</td><td class="up">+5.9%</td></tr>
+      <tr><td>활성 유저 (주간)</td><td class="tr">22명</td><td class="tr num">28명</td><td class="up">+27%</td></tr>
+      <tr><td>정착 유저 (5일+)</td><td class="tr">8명</td><td class="tr num">12명</td><td class="up">+50%</td></tr>
+      <tr><td>신규 유입 유저</td><td class="tr">4명</td><td class="tr num">6명</td><td class="up">+50%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 10 종합 -->
+<div class="sec">
+  <span class="sec-num">10</span>
+  <h2>종합 · 다음 주 포인트</h2>
+
+  <div class="box good">
+    <div class="bt">건강도: 성장 가속 중</div>
+    <p>정착 12명(+50%), D+21 리텐션 58%, BASIC 정착 첫 사례 확인, 버즈빌·모지세 재활성. 소프트 런칭 5주 차에 "관심→실사용 전환" 명확.</p>
+    <p>웹 트래픽에서 tools(+61%), connect(+32%)가 급성장하며 개발자 실사용 파이프라인 확대 중. github.com 자연 유입은 커뮤니티 바이럴 시작 시그널.</p>
+  </div>
+
+  <div class="box warn">
+    <div class="bt">주의 사항</div>
+    <p>TBWA 3주+ 미사용 — 연말 제안 시즌 전 이탈 고착화 방지를 위해 즉시 팔로업 필요.</p>
+    <p>야놀자 온보딩 초기 감속 — 사내 AI 정책 확인 및 담당자 리마인드 권장.</p>
+    <p>hsad 7/11 500cr 집중 사용 후 잔여 기간 관찰 — 보고서 작성 시기였을 가능성.</p>
+  </div>
+
+  <h3>다음 주 관전 포인트</h3>
+  <table>
+    <thead><tr><th>#</th><th>항목</th></tr></thead>
+    <tbody>
+      <tr><td class="tc">1</td><td>nm-neo(BASIC) 3주 연속 사용 여부 → BASIC 정착 확정 판정 기준</td></tr>
+      <tr><td class="tc">2</td><td>카카오엔터·W컨셉·스마일게이트자산운용 D+7 재방문 여부</td></tr>
+      <tr><td class="tc">3</td><td>GPT 앱 / 클로드 커넥터 심사 결과 (계속 대기)</td></tr>
+      <tr><td class="tc">4</td><td>TBWA 팔로업 결과</td></tr>
+      <tr><td class="tc">5</td><td>github.com 유입이 실제 발급/사용으로 전환되는지</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer">전사마케팅팀 · MobileIndex INSIGHT · 기준일 2026.07.13</div>
+</body>
+</html>
