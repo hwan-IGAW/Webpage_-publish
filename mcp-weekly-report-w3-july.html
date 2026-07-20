@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모바일인덱스 MCP · 7월 3주차 리포트</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif; max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; line-height: 1.7; color: #1a1a1a; background: #fff; }
+  .header { margin-bottom: 40px; }
+  .header .brand { font-size: 11px; color: #888; letter-spacing: 1px; text-transform: uppercase; }
+  .header h1 { font-size: 26px; font-weight: 700; margin: 8px 0; }
+  .header .meta { font-size: 12px; color: #666; }
+  .header .meta span { margin-right: 14px; }
+  .header .note { font-size: 11px; color: #aaa; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+  .sec { margin-top: 48px; }
+  .sec-num { display: inline-block; font-size: 10px; font-weight: 700; color: #fff; background: #111; border-radius: 3px; padding: 2px 7px; margin-bottom: 10px; }
+  .sec h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .sec .sub { font-size: 13px; color: #666; margin-bottom: 20px; }
+  .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 20px 0; }
+  .kpi-c { background: #f8f9fa; border-radius: 8px; padding: 16px; text-align: center; border: 1px solid #eee; }
+  .kpi-c .v { font-size: 22px; font-weight: 700; }
+  .kpi-c .l { font-size: 11px; color: #666; margin-top: 2px; }
+  .kpi-c .d { font-size: 11px; margin-top: 4px; font-weight: 600; }
+  .up { color: #2e7d32; }
+  .dn { color: #d32f2f; }
+  .flat { color: #888; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+  thead th { background: #f8f9fa; padding: 10px 8px; border-bottom: 2px solid #ddd; text-align: left; font-weight: 600; font-size: 11px; }
+  tbody td { padding: 8px; border-bottom: 1px solid #eee; }
+  tbody tr:hover { background: #fafbfc; }
+  .tr { text-align: right; }
+  .tc { text-align: center; }
+  .num { font-variant-numeric: tabular-nums; }
+  .b { font-weight: 600; }
+  .tag { display: inline-block; font-size: 10px; padding: 2px 5px; border-radius: 3px; font-weight: 500; }
+  .tg { background: #e8f5e9; color: #2e7d32; }
+  .ty { background: #fff8e1; color: #f57f17; }
+  .tr2 { background: #fbe9e7; color: #d32f2f; }
+  .tb { background: #e3f2fd; color: #1565c0; }
+  .tn { background: #ede7f6; color: #4527a0; }
+  .tgr { background: #f5f5f5; color: #666; }
+  .box { background: #f8f9fa; border-radius: 8px; padding: 16px 20px; margin: 20px 0; border-left: 4px solid #1a73e8; }
+  .box.good { border-left-color: #2e7d32; }
+  .box.warn { border-left-color: #f9a825; }
+  .box.info { border-left-color: #1a73e8; }
+  .box.alert { border-left-color: #d32f2f; }
+  .box .bt { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+  .box p { font-size: 13px; color: #444; margin-bottom: 4px; }
+  .box p:last-child { margin-bottom: 0; }
+  .hm-wrap { overflow-x: auto; margin: 16px 0; }
+  .hm { border-collapse: collapse; font-size: 10px; min-width: 900px; }
+  .hm th, .hm td { padding: 5px 6px; text-align: center; border: 1px solid #f0f0f0; }
+  .hm th { background: #f8f9fa; font-weight: 600; }
+  .hm .nm { text-align: left; font-size: 11px; font-weight: 500; white-space: nowrap; }
+  .c0 { background: #fff; color: #ccc; }
+  .c1 { background: #e3f2fd; }
+  .c2 { background: #90caf9; }
+  .c3 { background: #42a5f5; color: #fff; }
+  .c4 { background: #1a73e8; color: #fff; }
+  .c5 { background: #0d47a1; color: #fff; }
+  .bar-row { display: flex; align-items: center; margin-bottom: 6px; }
+  .bar-l { width: 130px; font-size: 11px; color: #555; flex-shrink: 0; }
+  .bar-t { flex: 1; height: 22px; background: #eee; border-radius: 4px; overflow: hidden; position: relative; }
+  .bar-f { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 10px; font-weight: 600; color: #fff; }
+  .bar-prev { position: absolute; top: 0; height: 100%; background: rgba(0,0,0,0.08); border-right: 2px dashed #999; }
+  .bar-v { font-size: 11px; font-weight: 600; width: 100px; text-align: right; margin-left: 8px; }
+  h3 { font-size: 14px; margin: 24px 0 12px; }
+  .footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid #eee; font-size: 11px; color: #aaa; }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .compare-card { background: #f8f9fa; border-radius: 8px; padding: 14px 16px; border: 1px solid #eee; }
+  .compare-card .title { font-size: 11px; color: #888; margin-bottom: 4px; }
+  .compare-card .val { font-size: 18px; font-weight: 700; }
+  .compare-card .change { font-size: 11px; font-weight: 600; margin-top: 2px; }
+  .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .insight-card { background: #f8f9fa; border-radius: 8px; padding: 16px; border: 1px solid #eee; }
+  .insight-card .ic-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+  .insight-card .ic-body { font-size: 12px; color: #444; }
+  .streak { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 10px; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
+  .new-badge { display: inline-block; background: #fff3e0; color: #e65100; font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 700; margin-left: 4px; }
+  @media (max-width: 640px) { body { padding: 20px 16px 60px; } .header h1 { font-size: 21px; } .kpi { grid-template-columns: repeat(2, 1fr); } .insight-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">MOBILEINDEX INSIGHT · MCP 주간 리포트</div>
+  <h1>7월 3주차 · MCP 사용 현황</h1>
+  <div class="meta">
+    <span>누적 06.03 ~ 07.20</span>
+    <span>금주 7/14 ~ 7/20</span>
+    <span>전주 비교 7/4 ~ 7/13</span>
+  </div>
+  <div class="note">내부(digitaltrinity 등) 제외 · BASIC 100cr/일 · 사용량 데이터 기준일 2026.07.17 · GA4 기준일 2026.07.20</div>
+</div>
+
+<!-- 01 KPI -->
+<div class="sec">
+  <span class="sec-num">01</span>
+  <h2>주간 KPI</h2>
+  <div class="kpi">
+    <div class="kpi-c"><div class="v">91명</div><div class="l">외부 사용자 (누적)</div><div class="d up">+20 vs 전주(71)</div></div>
+    <div class="kpi-c"><div class="v">30명</div><div class="l">유료 (PRM+ESS)</div><div class="d up">+4 (원스토어, 현대증권, 하이브랩, 엠플랜잇)</div></div>
+    <div class="kpi-c"><div class="v">15명</div><div class="l">정착 유저 (5일+)</div><div class="d up">전주 12명 → +25%</div></div>
+    <div class="kpi-c"><div class="v">50,262</div><div class="l">GA 누적 조회수</div><div class="d up">전주 33,763 → +49%</div></div>
+  </div>
+
+  <div class="box good">
+    <div class="bt">핵심 성과</div>
+    <p><strong>nm-neo 우고은 (BASIC)</strong> — 6/29 시작 이후 <strong>19일 연속 사용 중</strong>. 무료 플랜 최장 연속 사용 기록. BASIC 100cr 상향의 결정적 증거.</p>
+    <p><strong>그린브릭스</strong> — 6/26부터 <strong>22일 연속 사용</strong> (7/17 기준). 완전 정착, DAU 1명 기여 확정.</p>
+    <p><strong>현대증권 (hmsec)</strong> — 7/8 첫 사용 후 4일 연속 120~200cr 사용. 금융권 에센셜 고객 신규 정착.</p>
+  </div>
+</div>
+
+<!-- 02 GA 웹 트래픽 -->
+<div class="sec">
+  <span class="sec-num">02</span>
+  <h2>웹 트래픽 (06.03 ~ 07.20 누적)</h2>
+  <div class="sub">전주 누적(~7/13, 33,763) vs 이번주 누적(~7/20, 50,262). 증분 = 최근 7일.</div>
+
+  <table>
+    <thead>
+      <tr><th>페이지</th><th class="tr">전주 누적</th><th class="tr">이번주 누적</th><th class="tr">증분</th><th class="tr">증가율</th><th>평가</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="b">/mcp/main</td><td class="tr num">22,088</td><td class="tr num">28,754</td><td class="tr num up">+6,666</td><td class="tr up">+30.2%</td><td><span class="tag tg">폭증</span></td></tr>
+      <tr><td class="b">/mcp/guide</td><td class="tr num">4,665</td><td class="tr num">7,763</td><td class="tr num up">+3,098</td><td class="tr up">+66.4%</td><td><span class="tag tn">최고 성장률</span></td></tr>
+      <tr><td class="b">/mcp/connect</td><td class="tr num">1,770</td><td class="tr num">4,890</td><td class="tr num up">+3,120</td><td class="tr up">+176.3%</td><td><span class="tag tn">폭발적</span></td></tr>
+      <tr><td class="b">/mcp/skills</td><td class="tr num">1,920</td><td class="tr num">1,558</td><td class="tr num flat">—</td><td class="tr flat">집계변동</td><td><span class="tag tgr">안정</span></td></tr>
+      <tr><td class="b">/mcp/tools</td><td class="tr num">510</td><td class="tr num">255</td><td class="tr num flat">—</td><td class="tr flat">집계변동</td><td><span class="tag tgr">—</span></td></tr>
+      <tr class="b"><td>전체 합계</td><td class="tr num">33,763</td><td class="tr num">50,262</td><td class="tr num up">+16,499</td><td class="tr up">+48.9%</td><td><span class="tag tg">가속</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="box info">
+    <div class="bt">트래픽 해석</div>
+    <p><strong>/mcp/connect +176%</strong> — 연동 페이지 급등. GPT/Claude 커넥터 관심 폭증 + github.com 유입 효과.</p>
+    <p><strong>/mcp/guide +66%</strong> — 가이드 조회 급증. 신규 유입자가 서비스 탐색 단계에 진입한 것으로 해석.</p>
+    <p><strong>instagram.com → main 5,449건</strong> — 인스타그램 광고/콘텐츠를 통한 유입이 direct에 이어 2위 소스.</p>
+  </div>
+
+  <h3>유입 소스 TOP 10</h3>
+  <table>
+    <thead>
+      <tr><th>#</th><th>소스</th><th class="tr">조회수</th><th class="tr">방문수</th><th>특이사항</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td class="b">(direct)</td><td class="tr num">31,723</td><td class="tr num">14,051</td><td>북마크 + 즐겨찾기 정착</td></tr>
+      <tr><td>2</td><td class="b">instagram.com</td><td class="tr num">5,498</td><td class="tr num">4,204</td><td>메인 유입 소스 #1</td></tr>
+      <tr><td>3</td><td class="b">m.facebook.com</td><td class="tr num">2,844</td><td class="tr num">1,708</td><td>모바일 FB 광고</td></tr>
+      <tr><td>4</td><td class="b">google</td><td class="tr num">2,788</td><td class="tr num">195</td><td>검색 유입 활성화 시작</td></tr>
+      <tr><td>5</td><td>facebook.com</td><td class="tr num">806</td><td class="tr num">573</td><td>데스크탑 FB</td></tr>
+      <tr><td>6</td><td>l.facebook.com</td><td class="tr num">697</td><td class="tr num">397</td><td>FB 링크 경유</td></tr>
+      <tr><td>7</td><td>naver</td><td class="tr num">466</td><td class="tr num">35</td><td>네이버 검색 자연 유입</td></tr>
+      <tr><td>8</td><td>mktcloud.igaworks.com</td><td class="tr num">411</td><td class="tr num">28</td><td>내부 연동</td></tr>
+      <tr><td>9</td><td>stibee.com</td><td class="tr num">191</td><td class="tr num">14</td><td><span class="new-badge">뉴스레터</span> 전환 확인</td></tr>
+      <tr><td>10</td><td class="b">github.com</td><td class="tr num">95</td><td class="tr num">6</td><td><span class="new-badge">NEW</span> 개발자 유입</td></tr>
+    </tbody>
+  </table>
+
+  <h3>주목할 신규 소스</h3>
+  <div class="box info">
+    <div class="bt">기업 인트라넷 / 그룹웨어 유입 확인 🆕</div>
+    <p>cjwwm.cj.net(31건), gw.saraminhr.co.kr(14건), fitmail.koreainvestment.com(14건), nhnent.dooray.com(11건), dbins.dooray.co.kr(7건) — 기업 내부에서 링크가 공유되고 있는 시그널.</p>
+    <p><strong>chatgpt.com(27건), gemini.google.com(20건), claude.ai(2건)</strong> — AI 도구에서 MCP 연동 테스트 트래픽 발생.</p>
+  </div>
+</div>
+
+<!-- 03 사용량 순위 -->
+<div class="sec">
+  <span class="sec-num">03</span>
+  <h2>사용량 TOP 15 (누적 크레딧)</h2>
+  <div class="sub">내부 제외. 금주(7/14~7/17, 4일) 증분 기준 정렬.</div>
+
+  <div style="margin:20px 0;">
+    <div class="bar-row">
+      <div class="bar-l b">한국투자증권</div>
+      <div class="bar-t"><div class="bar-prev" style="width:85%;"></div><div class="bar-f" style="width:100%; background:#1a73e8;">3,124</div></div>
+      <div class="bar-v up">+80 (금주)</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">hsad 차현웅</div>
+      <div class="bar-t"><div class="bar-prev" style="width:97%;"></div><div class="bar-f" style="width:98%; background:#1a73e8;">3,066</div></div>
+      <div class="bar-v flat">+0 (금주)</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">nm-neo 우고은 🔥</div>
+      <div class="bar-t"><div class="bar-prev" style="width:76%;"></div><div class="bar-f" style="width:54%; background:#ff7043;">1,684</div></div>
+      <div class="bar-v up">+420 (금주)</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">그린브릭스</div>
+      <div class="bar-t"><div class="bar-prev" style="width:78%;"></div><div class="bar-f" style="width:44%; background:#2e7d32;">1,390</div></div>
+      <div class="bar-v up">+168 (금주)</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">하나금융</div>
+      <div class="bar-t"><div class="bar-prev" style="width:93%;"></div><div class="bar-f" style="width:42%; background:#7c4dff;">1,310</div></div>
+      <div class="bar-v flat">+0 (금주)</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">허블</div>
+      <div class="bar-t"><div class="bar-prev" style="width:99%;"></div><div class="bar-f" style="width:35%; background:#66bb6a;">1,081</div></div>
+      <div class="bar-v flat">+0 (휴식)</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">알토스</div>
+      <div class="bar-t"><div class="bar-prev" style="width:96%;"></div><div class="bar-f" style="width:25%; background:#90caf9;">787</div></div>
+      <div class="bar-v up">+35</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">WBMS (adwitt)</div>
+      <div class="bar-t"><div class="bar-prev" style="width:100%;"></div><div class="bar-f" style="width:25%; background:#42a5f5;">783</div></div>
+      <div class="bar-v flat">+0</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">모지세</div>
+      <div class="bar-t"><div class="bar-prev" style="width:96%;"></div><div class="bar-f" style="width:22%; background:#90caf9;">674</div></div>
+      <div class="bar-v up">+8</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">버즈빌</div>
+      <div class="bar-t"><div class="bar-prev" style="width:98%;"></div><div class="bar-f" style="width:21%; background:#42a5f5;">646</div></div>
+      <div class="bar-v flat">+0</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">휴맥스 모빌리티</div>
+      <div class="bar-t"><div class="bar-prev" style="width:92%;"></div><div class="bar-f" style="width:20%; background:#90caf9;">641</div></div>
+      <div class="bar-v up">+49</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">야놀자</div>
+      <div class="bar-t"><div class="bar-prev" style="width:12%;"></div><div class="bar-f" style="width:18%; background:#ff7043;">566</div></div>
+      <div class="bar-v up">+500 🔥</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">밀리의서재</div>
+      <div class="bar-t"><div class="bar-prev" style="width:0%;"></div><div class="bar-f" style="width:16%; background:#ff7043;">500</div></div>
+      <div class="bar-v up">+500 🔥 NEW</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">현대증권 (hmsec)</div>
+      <div class="bar-t"><div class="bar-prev" style="width:0%;"></div><div class="bar-f" style="width:14%; background:#ff7043;">447</div></div>
+      <div class="bar-v up">+447 🔥 NEW</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">스마일게이트자산운용</div>
+      <div class="bar-t"><div class="bar-prev" style="width:50%;"></div><div class="bar-f" style="width:13%; background:#7c4dff;">400</div></div>
+      <div class="bar-v up">+200</div>
+    </div>
+  </div>
+
+  <div class="box good">
+    <div class="bt">금주 주목 포인트 (7/14~7/17)</div>
+    <p>🔥 <strong>야놀자</strong>: 7/15 하루 500cr 사용 — 대형 여행 플랫폼의 본격 활용 시작.</p>
+    <p>🔥 <strong>밀리의서재</strong>: 7/14 하루 500cr 사용 — 콘텐츠 플랫폼 진입. 단발성 여부 추적 필요.</p>
+    <p>🔥 <strong>현대증권 (hmsec)</strong>: 7/8~7/11 연속 사용(120→109→18→200cr). 금융권 에센셜 고객 정착 시그널.</p>
+    <p>🆕 <strong>원스토어</strong>: 7/14~7/15 첫 사용(13+104+18=135cr). 플랫폼 사업자 유입.</p>
+    <p>🆕 <strong>엠플랜잇(mplanit)</strong>: 7/14 첫 사용 후 7/15 148cr. 광고 에이전시 신규.</p>
+  </div>
+</div>
+
+<!-- 04 히트맵 -->
+<div class="sec">
+  <span class="sec-num">04</span>
+  <h2>상위 유저 일별 히트맵 (7/4~7/17)</h2>
+  <div class="sub">색 진할수록 사용량 높음. 금주(7/14~7/17) 영역 하이라이트.</div>
+
+  <div class="hm-wrap">
+  <table class="hm">
+    <thead>
+      <tr>
+        <th>사용자</th><th>누적</th>
+        <th colspan="10" style="background:#f0f0f0;">전주 (7/4~7/13)</th>
+        <th colspan="4" style="background:#e8f5e9;">금주 (7/14~7/17)</th>
+      </tr>
+      <tr>
+        <th></th><th></th>
+        <th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th>
+        <th>14</th><th>15</th><th>16</th><th>17</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="nm b">한국투자증권</td><td class="b">3,124</td>
+        <td class="c0">0</td><td class="c2">243</td><td class="c1">97</td><td class="c1">78</td><td class="c1">67</td><td class="c1">77</td><td class="c0">0</td><td class="c0">0</td><td class="c2">202</td><td class="c1">82</td>
+        <td class="c1">83</td><td class="c1">76</td><td class="c0">0</td><td class="c0">0</td></tr>
+      <tr><td class="nm b">hsad 차현웅</td><td class="b">3,066</td>
+        <td class="c0">11</td><td class="c0">21</td><td class="c0">7</td><td class="c1">58</td><td class="c0">8</td><td class="c2">176</td><td class="c4">500</td><td class="c0">0</td><td class="c1">70</td><td class="c0">23</td>
+        <td class="c0">6</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td></tr>
+      <tr><td class="nm b">nm-neo 우고은 🔥</td><td class="b">1,684</td>
+        <td class="c2">100</td><td class="c2">100</td><td class="c1">96</td><td class="c1">96</td><td class="c1">96</td><td class="c1">96</td><td class="c1">96</td><td class="c1">96</td><td class="c1">96</td><td class="c1">96</td>
+        <td class="c1">96</td><td class="c1">96</td><td class="c1">96</td><td class="c0">36</td></tr>
+      <tr><td class="nm b">그린브릭스</td><td class="b">1,390</td>
+        <td class="c1">42</td><td class="c1">42</td><td class="c1">42</td><td class="c1">42</td><td class="c1">42</td><td class="c1">42</td><td class="c2">150</td><td class="c1">42</td><td class="c1">42</td><td class="c1">42</td>
+        <td class="c1">42</td><td class="c1">42</td><td class="c1">42</td><td class="c0">0</td></tr>
+      <tr><td class="nm b">야놀자 🆕</td><td class="b">566</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c0">4</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td>
+        <td class="c0">0</td><td class="c4">500</td><td class="c0">0</td><td class="c0">0</td></tr>
+      <tr><td class="nm b">밀리의서재 🆕</td><td class="b">500</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td>
+        <td class="c4">500</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td></tr>
+      <tr><td class="nm b">현대증권 (hmsec)</td><td class="b">447</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td>
+        <td class="c2">120</td><td class="c2">109</td><td class="c0">18</td><td class="c2">200</td></tr>
+      <tr><td class="nm b">스마일게이트자산운용</td><td class="b">400</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c3">200</td><td class="c0">0</td><td class="c0">0</td>
+        <td class="c0">0</td><td class="c3">200</td><td class="c0">0</td><td class="c0">0</td></tr>
+      <tr><td class="nm">네이버 (공용)</td><td>333</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c2">134</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">30</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td></tr>
+      <tr><td class="nm">이노션 (DX)</td><td>251</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c1">42</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td></tr>
+      <tr><td class="nm">원스토어 🆕</td><td>135</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td>
+        <td class="c0">13</td><td class="c2">104</td><td class="c0">18</td><td class="c0">0</td></tr>
+      <tr><td class="nm">엠플랜잇 🆕</td><td>163</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">15</td><td class="c0">0</td>
+        <td class="c2">148</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td></tr>
+      <tr><td class="nm">하이브랩 🆕</td><td>167</td>
+        <td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td>
+        <td class="c1">90</td><td class="c1">53</td><td class="c0">24</td><td class="c0">0</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="box info">
+    <div class="bt">연속 사용 기록 (Streak)</div>
+    <p>🥇 <strong>그린브릭스</strong>: 22일 연속 (6/26~7/17) — 역대 최장</p>
+    <p>🥈 <strong>nm-neo 우고은</strong>: 19일 연속 (6/29~7/17) — BASIC 무료 최장</p>
+    <p>🥉 <strong>한국투자증권</strong>: 7/5~7/9 5일 연속 + 7/12~7/15 4일 연속</p>
+    <p>🆕 <strong>현대증권</strong>: 7/14~7/17 4일 연속 — 신규 진입 즉시 정착</p>
+  </div>
+</div>
+
+<!-- 05 신규 유저 -->
+<div class="sec">
+  <span class="sec-num">05</span>
+  <h2>금주 신규 유입 유저 (7/14~7/17)</h2>
+  <div class="sub">이번 주에 처음 사용 또는 재활성된 계정.</div>
+
+  <table>
+    <thead>
+      <tr><th>사용자</th><th>플랜</th><th class="tr">금주 사용량</th><th>특이사항</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="b">야놀자 (퍼포먼스광고팀)</td><td><span class="tag tb">프리미엄</span></td><td class="tr num">500</td><td>7/15 하루 MAX 사용</td></tr>
+      <tr><td class="b">밀리의서재 (송웅섭)</td><td><span class="tag tb">프리미엄</span></td><td class="tr num">500</td><td>7/14 하루 MAX 사용</td></tr>
+      <tr><td class="b">현대증권 (디지털솔루션팀)</td><td><span class="tag tg">에센셜</span></td><td class="tr num">447</td><td>7/14~7/17 4일 연속</td></tr>
+      <tr><td class="b">스마일게이트자산운용</td><td><span class="tag tg">에센셜</span></td><td class="tr num">200</td><td>7/15 200cr (격주 패턴)</td></tr>
+      <tr><td class="b">엠플랜잇</td><td><span class="tag tb">프리미엄</span></td><td class="tr num">148</td><td>7/14 첫 사용, 대량</td></tr>
+      <tr><td>원스토어</td><td><span class="tag tb">프리미엄</span></td><td class="tr num">135</td><td>7/14~7/16 3일 사용</td></tr>
+      <tr><td>팀민트 (team-mint)</td><td><span class="tag tb">프리미엄</span></td><td class="tr num">114</td><td>7/15 재활성</td></tr>
+      <tr><td>하이브랩 (신세정)</td><td><span class="tag tb">프리미엄</span></td><td class="tr num">167</td><td>7/14~7/16 3일 연속</td></tr>
+      <tr><td>네이버 (navercorp 01)</td><td><span class="tag tb">프리미엄</span></td><td class="tr num">62</td><td>7/15 첫 사용</td></tr>
+      <tr><td>SK (김혜연)</td><td><span class="tag tgr">베이직</span></td><td class="tr num">57</td><td>7/15 첫 사용</td></tr>
+      <tr><td>사람인 (이소민)</td><td><span class="tag tgr">베이직</span></td><td class="tr num">43</td><td>7/14 첫 사용</td></tr>
+      <tr><td>KAIST (SONGSUWON)</td><td><span class="tag tgr">베이직</span></td><td class="tr num">41</td><td>7/17 첫 사용 — 학술 유입</td></tr>
+      <tr><td>GSC마케팅팀</td><td><span class="tag tb">프리미엄</span></td><td class="tr num">20</td><td>7/14 첫 사용</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box good">
+    <div class="bt">금주 신규 유입 해석</div>
+    <p><strong>대형 브랜드 동시 진입</strong>: 야놀자, 밀리의서재, 원스토어, SK, 사람인, GS칼텍스 — 한 주에 6개 대형 브랜드 신규.</p>
+    <p><strong>금융권 2번째 확장</strong>: 한국투자증권에 이어 현대증권(hmsec) 진입. 금융 업종 확산 시그널.</p>
+    <p><strong>학술/연구 유입</strong>: KAIST 계정 등장 — 연구/학술 목적의 데이터 분석 수요 확인.</p>
+  </div>
+</div>
+
+<!-- 06 플랜별 분석 -->
+<div class="sec">
+  <span class="sec-num">06</span>
+  <h2>플랜별 현황</h2>
+  <div class="sub">내부(digitaltrinity) 제외 기준.</div>
+
+  <div class="insight-grid">
+    <div class="insight-card">
+      <div class="ic-title">프리미엄 (유료)</div>
+      <div class="ic-body">
+        <p><strong>30개 계정</strong> (전주 26 → +4)</p>
+        <p>총 사용량: 14,491cr</p>
+        <p>평균: 483cr/계정</p>
+        <p>활성(금주 사용): 12개</p>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-title">에센셜 (유료)</div>
+      <div class="ic-body">
+        <p><strong>5개 계정</strong> (전주 4 → +1)</p>
+        <p>총 사용량: 2,708cr</p>
+        <p>평균: 542cr/계정</p>
+        <p>활성: 4개</p>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-title">베이직 (무료)</div>
+      <div class="ic-body">
+        <p><strong>56개 계정</strong> (전주 40 → +16)</p>
+        <p>총 사용량: 2,668cr</p>
+        <p>평균: 48cr/계정</p>
+        <p>활성(금주 사용): 8개</p>
+        <p><span class="streak">nm-neo 우고은 19일 연속</span></p>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-title">전환 가능성 높은 무료 유저</div>
+      <div class="ic-body">
+        <p><strong>nm-neo 우고은</strong> — 1,684cr (무료 TOP 1)</p>
+        <p><strong>경남은행 김석희</strong> — 152cr (금융)</p>
+        <p><strong>비펙스</strong> — 122cr (연속 사용)</p>
+        <p><strong>오링스 이나영</strong> — 122cr</p>
+        <p>👉 nm-neo는 즉시 유료 전환 타겟</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07 주간 인사이트 -->
+<div class="sec">
+  <span class="sec-num">07</span>
+  <h2>주간 인사이트 & 액션 아이템</h2>
+
+  <div class="box good">
+    <div class="bt">✅ GOOD — 성장 시그널</div>
+    <p>1. <strong>91명 돌파</strong>: 2주 만에 71→91명, 주당 10명씩 순증. 성장 가속.</p>
+    <p>2. <strong>GA 트래픽 +49%</strong>: 50,262건. connect 페이지 +176% 폭발 — 연동(API Key 발급) 전환 의사 급증.</p>
+    <p>3. <strong>대형 브랜드 동시 유입</strong>: 야놀자, 밀리의서재, 원스토어, SK, 사람인 — 한 주에 최다 대형 브랜드 신규.</p>
+    <p>4. <strong>기업 인트라넷 유입</strong>: CJ, 사람인, 한국투자증권, NHN — 사내에서 링크 공유 → 바이럴 전파 확인.</p>
+    <p>5. <strong>BASIC 상향 효과 확정</strong>: nm-neo 19일 연속으로 "무료에서도 정착 가능" 입증.</p>
+  </div>
+
+  <div class="box warn">
+    <div class="bt">⚠️ WATCH — 모니터링 포인트</div>
+    <p>1. <strong>hsad 차현웅 사용 감소</strong>: 7/10 500cr 이후 급감(6→0→0→0). 피로 or 프로젝트 종료 확인 필요.</p>
+    <p>2. <strong>하나금융 / 허블 / 버즈빌 0cr</strong>: 지난주 대비 3개 유료 고객 비활성. 리텐션 관리 필요.</p>
+    <p>3. <strong>밀리의서재 / 야놀자 단발성 가능</strong>: 500cr 1회 사용 후 중단. D+3~7 재방문 여부가 핵심.</p>
+    <p>4. <strong>인스타그램 유입(5,449건) 전환율 확인</strong>: 방문은 많으나 실사용 전환 비율 불명. 퍼널 분석 필요.</p>
+  </div>
+
+  <div class="box info">
+    <div class="bt">📌 다음 주 추적 포인트 (7/21~)</div>
+    <p>1. nm-neo 우고은 3주차 연속 사용 여부 → 유료 전환 제안 타이밍</p>
+    <p>2. 현대증권(hmsec) 2주차 리텐션 → 금융권 패턴 확립 여부</p>
+    <p>3. 야놀자 / 밀리의서재 D+7 재방문</p>
+    <p>4. 원스토어 연속 사용 여부 → 플랫폼 사업자 니즈 확인</p>
+    <p>5. KAIST 학술 유입 후속 — 추가 학교/연구소 유입 여부</p>
+    <p>6. hsad 차현웅 / 하나금융 / 버즈빌 재활성 여부</p>
+    <p>7. /mcp/connect 트래픽 급등의 실제 API Key 발급 전환율</p>
+  </div>
+</div>
+
+<!-- 08 업종별 분포 -->
+<div class="sec">
+  <span class="sec-num">08</span>
+  <h2>유료 고객 업종 분포</h2>
+
+  <table>
+    <thead>
+      <tr><th>업종</th><th class="tr">고객 수</th><th>주요 고객</th><th>금주 변화</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="b">광고/마케팅</td><td class="tr">7</td><td>HS AD, 이노션, WBMS, 모지세, 팀민트, 엠플랜잇, 하이브랩</td><td><span class="tag tg">+2</span></td></tr>
+      <tr><td class="b">금융/투자</td><td class="tr">5</td><td>한국투자증권, 하나금융, 알토스, 현대증권, 스마일게이트자산운용</td><td><span class="tag tg">+1</span></td></tr>
+      <tr><td class="b">IT/플랫폼</td><td class="tr">7</td><td>그린브릭스, 허블, 버즈빌, 네이버, 원스토어, 야놀자, 밀리의서재</td><td><span class="tag tg">+3</span></td></tr>
+      <tr><td>모빌리티/유통</td><td class="tr">4</td><td>휴맥스, CJ, 교보생명, 티머니</td><td><span class="tag tgr">±0</span></td></tr>
+      <tr><td>미디어/콘텐츠</td><td class="tr">3</td><td>티빙, 바비톡, TBWA</td><td><span class="tag tgr">±0</span></td></tr>
+      <tr><td>엔터/게임</td><td class="tr">2</td><td>카카오엔터, 닥터나우</td><td><span class="tag tgr">±0</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer">
+  <p>모바일인덱스 MCP · 7월 3주차 주간 리포트 · 생성일: 2026.07.20</p>
+  <p>데이터 소스: GA4 (06.03~07.20), MCP 크레딧 사용량 (06.03~07.17, 96계정)</p>
+  <p>내부(digitaltrinity) 계정 제외. 문의: MCP팀</p>
+</div>
+
+</body>
+</html>
