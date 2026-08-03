@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모바일인덱스 MCP · 8월 1주차 리포트</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif; max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; line-height: 1.7; color: #1a1a1a; background: #fff; }
+  .header { margin-bottom: 40px; }
+  .header .brand { font-size: 11px; color: #888; letter-spacing: 1px; text-transform: uppercase; }
+  .header h1 { font-size: 26px; font-weight: 700; margin: 8px 0; }
+  .header .meta { font-size: 12px; color: #666; }
+  .header .meta span { margin-right: 14px; }
+  .header .note { font-size: 11px; color: #aaa; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+  .sec { margin-top: 48px; }
+  .sec-num { display: inline-block; font-size: 10px; font-weight: 700; color: #fff; background: #111; border-radius: 3px; padding: 2px 7px; margin-bottom: 10px; }
+  .sec h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .sec .sub { font-size: 13px; color: #666; margin-bottom: 20px; }
+</style>
+<style>
+  .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 20px 0; }
+  .kpi-c { background: #f8f9fa; border-radius: 8px; padding: 16px; text-align: center; border: 1px solid #eee; }
+  .kpi-c .v { font-size: 22px; font-weight: 700; }
+  .kpi-c .l { font-size: 11px; color: #666; margin-top: 2px; }
+  .kpi-c .d { font-size: 11px; margin-top: 4px; font-weight: 600; }
+  .up { color: #2e7d32; }
+  .dn { color: #d32f2f; }
+  .flat { color: #888; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+  thead th { background: #f8f9fa; padding: 10px 8px; border-bottom: 2px solid #ddd; text-align: left; font-weight: 600; font-size: 11px; }
+  tbody td { padding: 8px; border-bottom: 1px solid #eee; }
+  tbody tr:hover { background: #fafbfc; }
+  .tr { text-align: right; }
+  .tc { text-align: center; }
+  .num { font-variant-numeric: tabular-nums; }
+  .b { font-weight: 600; }
+  .tag { display: inline-block; font-size: 10px; padding: 2px 5px; border-radius: 3px; font-weight: 500; }
+  .tg { background: #e8f5e9; color: #2e7d32; }
+  .ty { background: #fff8e1; color: #f57f17; }
+  .tr2 { background: #fbe9e7; color: #d32f2f; }
+  .tb { background: #e3f2fd; color: #1565c0; }
+  .tn { background: #ede7f6; color: #4527a0; }
+  .tgr { background: #f5f5f5; color: #666; }
+  .box { background: #f8f9fa; border-radius: 8px; padding: 16px 20px; margin: 20px 0; border-left: 4px solid #1a73e8; }
+  .box.good { border-left-color: #2e7d32; }
+  .box.warn { border-left-color: #f9a825; }
+  .box.info { border-left-color: #1a73e8; }
+  .box.alert { border-left-color: #d32f2f; }
+  .box .bt { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+  .box p { font-size: 13px; color: #444; margin-bottom: 4px; }
+  .box p:last-child { margin-bottom: 0; }
+  .hm-wrap { overflow-x: auto; margin: 16px 0; }
+  .hm { border-collapse: collapse; font-size: 10px; min-width: 900px; }
+  .hm th, .hm td { padding: 5px 6px; text-align: center; border: 1px solid #f0f0f0; }
+  .hm th { background: #f8f9fa; font-weight: 600; }
+  .hm .nm { text-align: left; font-size: 11px; font-weight: 500; white-space: nowrap; }
+  .c0 { background: #fff; color: #ccc; }
+  .cx { background: #d0d0d0; color: #999; font-size: 9px; }
+  .c1 { background: #e3f2fd; }
+  .c2 { background: #90caf9; }
+  .c3 { background: #42a5f5; color: #fff; }
+  .c4 { background: #1a73e8; color: #fff; }
+  .c5 { background: #0d47a1; color: #fff; }
+  .bar-row { display: flex; align-items: center; margin-bottom: 6px; }
+  .bar-l { width: 130px; font-size: 11px; color: #555; flex-shrink: 0; }
+  .bar-t { flex: 1; height: 22px; background: #eee; border-radius: 4px; overflow: hidden; position: relative; }
+  .bar-f { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 10px; font-weight: 600; color: #fff; }
+  .bar-v { font-size: 11px; font-weight: 600; width: 100px; text-align: right; margin-left: 8px; }
+  h3 { font-size: 14px; margin: 24px 0 12px; }
+  .footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid #eee; font-size: 11px; color: #aaa; }
+  .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .insight-card { background: #f8f9fa; border-radius: 8px; padding: 16px; border: 1px solid #eee; }
+  .insight-card .ic-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+  .insight-card .ic-body { font-size: 12px; color: #444; }
+  .streak { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 10px; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
+  .new-badge { display: inline-block; background: #fff3e0; color: #e65100; font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 700; margin-left: 4px; }
+  @media (max-width: 640px) { body { padding: 20px 16px 60px; } .header h1 { font-size: 21px; } .kpi { grid-template-columns: repeat(2, 1fr); } .insight-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">MOBILEINDEX INSIGHT · MCP 주간 리포트</div>
+  <h1>8월 1주차 (W9) · MCP 사용 현황</h1>
+  <div class="meta">
+    <span>누적 06.02 ~ 08.03</span>
+    <span>금주 7/28 ~ 8/3</span>
+    <span>전주 비교 7/21 ~ 7/27</span>
+  </div>
+  <div class="note">내부(digitaltrinity 등) 제외 · BASIC 100cr/일 · 사용량 데이터 기준일 2026.08.03 · GA4 기준일 2026.08.03</div>
+</div>
+
+<!-- 01 KPI -->
+<div class="sec">
+  <span class="sec-num">01</span>
+  <h2>주간 KPI</h2>
+  <div class="kpi">
+    <div class="kpi-c"><div class="v">126명</div><div class="l">외부 사용자 (누적)</div><div class="d up">+13 vs 전주(113)</div></div>
+    <div class="kpi-c"><div class="v">35명</div><div class="l">유료 (PRM+ESS)</div><div class="d flat">유지 (KDI 신규, GSSHOP 신규)</div></div>
+    <div class="kpi-c"><div class="v">26명</div><div class="l">금주 활성 유저</div><div class="d up">전주 대비 유지</div></div>
+    <div class="kpi-c"><div class="v">67,765</div><div class="l">GA 누적 조회수</div><div class="d up">전주 63,717 → +6.4%</div></div>
+  </div>
+
+  <div class="box good">
+    <div class="bt">핵심 성과</div>
+    <p><strong>WBMS (adwitt)</strong> — W9에 755cr로 최고 사용량. 2주 연속 폭발(W8 611 → W9 755). 완전 재활성 확정.</p>
+    <p><strong>한국투자증권</strong> — W9 755cr, 9주 연속 사용 중. 누적 4,696cr 전체 1위. 안정적 정착 고객.</p>
+    <p><strong>nm-neo 우고은 (BASIC)</strong> — 36일 연속 사용 기록 경신 (중간 1일 0cr 후 바로 재개). 누적 2,866cr.</p>
+    <p><strong>스마일게이트자산운용</strong> — 3주 휴면 후 W9에 286cr 재활성. 에센셜 유료 유지 확인.</p>
+    <p><strong>신규 진입</strong>: 동원(유진아 131cr), 쿠로게임즈(100cr), KDI(선유택 41cr) — 대기업+게임사+정부연구기관 동시 유입.</p>
+  </div>
+</div>
+
+<!-- 02 GA 웹 트래픽 -->
+<div class="sec">
+  <span class="sec-num">02</span>
+  <h2>웹 트래픽 (06.02 ~ 08.03 누적)</h2>
+  <div class="sub">전주 누적(~7/27, 63,717) vs 이번주 누적(~8/3, 67,765). 증분 = 최근 7일. 증가율 둔화 → 자연 성장 전환.</div>
+
+  <table>
+    <thead>
+      <tr><th>페이지</th><th class="tr">전주 누적</th><th class="tr">이번주 누적</th><th class="tr">증분</th><th class="tr">증가율</th><th>평가</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="b">/mcp/main (direct)</td><td class="tr num">19,893</td><td class="tr num">20,241</td><td class="tr num up">+348</td><td class="tr flat">+1.7%</td><td><span class="tag tgr">안정</span></td></tr>
+      <tr><td class="b">/mcp/guide (direct)</td><td class="tr num">10,935</td><td class="tr num">10,950</td><td class="tr num flat">+15</td><td class="tr flat">+0.1%</td><td><span class="tag tgr">정체</span></td></tr>
+      <tr><td class="b">/mcp/main (instagram)</td><td class="tr num">8,305</td><td class="tr num">9,650</td><td class="tr num up">+1,345</td><td class="tr up">+16.2%</td><td><span class="tag tg">성장</span></td></tr>
+      <tr><td class="b">/mcp/main (m.facebook)</td><td class="tr num">4,517</td><td class="tr num">5,470</td><td class="tr num up">+953</td><td class="tr up">+21.1%</td><td><span class="tag tg">성장</span></td></tr>
+      <tr><td class="b">/mcp/connect (direct)</td><td class="tr num">6,392</td><td class="tr num">5,207</td><td class="tr num dn">—</td><td class="tr flat">집계변경</td><td><span class="tag tgr">재확인</span></td></tr>
+      <tr><td class="b">/mcp/main (google)</td><td class="tr num">—</td><td class="tr num">2,414</td><td class="tr num up">—</td><td class="tr up">누적</td><td><span class="tag tg">SEO성장</span></td></tr>
+      <tr><td class="b">/mcp/main (facebook.com)</td><td class="tr num">—</td><td class="tr num">1,712</td><td class="tr num up">—</td><td class="tr up">누적</td><td><span class="tag tb">소셜</span></td></tr>
+      <tr><td class="b">/mcp/skills (direct)</td><td class="tr num">—</td><td class="tr num">1,592</td><td class="tr num up">—</td><td class="tr up">누적</td><td><span class="tag tg">스킬관심↑</span></td></tr>
+      <tr class="b"><td>전체 합계</td><td class="tr num">63,717</td><td class="tr num">67,765</td><td class="tr num up">+4,048</td><td class="tr up">+6.4%</td><td><span class="tag tg">안정성장</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="box info">
+    <div class="bt">트래픽 해석</div>
+    <p><strong>성장률 둔화(+6.4% vs 전주 +27%)</strong> — 폭발 성장 후 안정기 진입. 이는 자연스러운 패턴.</p>
+    <p><strong>인스타그램 9,650건(+16%)</strong> — 여전히 유입 소스 #1. 광고 효율 유지 중.</p>
+    <p><strong>m.facebook 5,470건(+21%)</strong> — 모바일 FB 지속 성장. 소셜 합산 16,832건(전체의 25%).</p>
+    <p><strong>google 검색 2,414건</strong> — SEO 자연유입 안정화. 키워드 "모바일인덱스 MCP" 확산.</p>
+    <p><strong>chatgpt.com 38건, gemini 14건, claude.ai 3건, perplexity 3건</strong> — AI 툴 연동 트래픽 다변화.</p>
+    <p><strong>신규 유입원</strong>: cjwwm.cj.net(CJ 인트라넷 23건), khan.co.kr(경향신문), portal.kpf.or.kr(언론재단)</p>
+  </div>
+</div>
+
+<!-- 03 주 평균 사용량 순위 -->
+<div class="sec">
+  <span class="sec-num">03</span>
+  <h2>주 평균 사용량 TOP 20</h2>
+  <div class="sub">주 평균 = 총 사용량 ÷ 활성 주 수(최초 사용 주~현재). 내부 제외. 단위: cr/주. W9(7/28~8/3) 반영.</div>
+
+  <div style="margin:20px 0;">
+    <div class="bar-row">
+      <div class="bar-l b">한국투자증권 🔥</div>
+      <div class="bar-t"><div class="bar-f" style="width:100%; background:#1a73e8;">587</div></div>
+      <div class="bar-v">587 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">nm-neo 우고은</div>
+      <div class="bar-t"><div class="bar-f" style="width:97%; background:#ff7043;">573</div></div>
+      <div class="bar-v">573 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">hsad 차현웅</div>
+      <div class="bar-t"><div class="bar-f" style="width:80%; background:#1a73e8;">469</div></div>
+      <div class="bar-v">469 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">WBMS (adwitt) 🔥</div>
+      <div class="bar-t"><div class="bar-f" style="width:61%; background:#2e7d32;">358</div></div>
+      <div class="bar-v">358 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">그린브릭스</div>
+      <div class="bar-t"><div class="bar-f" style="width:44%; background:#2e7d32;">255</div></div>
+      <div class="bar-v">255 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">스마일게이트자산운용</div>
+      <div class="bar-t"><div class="bar-f" style="width:39%; background:#7c4dff;">229</div></div>
+      <div class="bar-v">229 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">밀리의서재</div>
+      <div class="bar-t"><div class="bar-f" style="width:37%; background:#42a5f5;">220</div></div>
+      <div class="bar-v">220 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">현대증권</div>
+      <div class="bar-t"><div class="bar-f" style="width:43%; background:#42a5f5;">251</div></div>
+      <div class="bar-v">251 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">하나금융</div>
+      <div class="bar-t"><div class="bar-f" style="width:37%; background:#ccc;">218</div></div>
+      <div class="bar-v">218 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">K카 (이수경)</div>
+      <div class="bar-t"><div class="bar-f" style="width:23%; background:#ccc;">137</div></div>
+      <div class="bar-v">137 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">모지세</div>
+      <div class="bar-t"><div class="bar-f" style="width:22%; background:#2e7d32;">134</div></div>
+      <div class="bar-v">134 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">동원 유진아 🆕</div>
+      <div class="bar-t"><div class="bar-f" style="width:22%; background:#ff7043;">131</div></div>
+      <div class="bar-v">131 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">버즈빌</div>
+      <div class="bar-t"><div class="bar-f" style="width:22%; background:#90caf9;">132</div></div>
+      <div class="bar-v">132 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">허블</div>
+      <div class="bar-t"><div class="bar-f" style="width:21%; background:#90caf9;">125</div></div>
+      <div class="bar-v">125 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">넥스트미디어 🆕</div>
+      <div class="bar-t"><div class="bar-f" style="width:21%; background:#ff7043;">123</div></div>
+      <div class="bar-v">123 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">알토스</div>
+      <div class="bar-t"><div class="bar-f" style="width:20%; background:#90caf9;">115</div></div>
+      <div class="bar-v">115 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">비펙스</div>
+      <div class="bar-t"><div class="bar-f" style="width:17%; background:#90caf9;">100</div></div>
+      <div class="bar-v">100 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l b">쿠로게임즈 🆕</div>
+      <div class="bar-t"><div class="bar-f" style="width:17%; background:#ff7043;">100</div></div>
+      <div class="bar-v">100 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">휴맥스 모빌리티</div>
+      <div class="bar-t"><div class="bar-f" style="width:15%; background:#90caf9;">87</div></div>
+      <div class="bar-v">87 cr/주</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-l">야놀자</div>
+      <div class="bar-t"><div class="bar-f" style="width:16%; background:#ccc;">94</div></div>
+      <div class="bar-v">94 cr/주</div>
+    </div>
+  </div>
+
+  <div class="box good">
+    <div class="bt">주 평균 사용량 해석</div>
+    <p>🥇 <strong>한국투자증권</strong>이 9주 연속 사용으로 주 평균 1위(587cr) 등극. nm-neo를 처음 역전.</p>
+    <p>🔥 <strong>WBMS 3주 연속 고강도</strong>: W7(0)→W8(611)→W9(755) 우상향. 프로젝트 기반 집중 사용 확인.</p>
+    <p>🆕 <strong>신규 진입 밀도</strong>: 동원(131), 넥스트미디어(123), 쿠로게임즈(100) — 첫 주부터 100cr+ 사용 = 정착 가능성.</p>
+    <p>⚠️ <strong>비펙스 급감</strong>: W8(776cr) → W9(4cr). 데모 기간 만료 또는 프로젝트 종료 가능성. 팔로업 필요.</p>
+  </div>
+</div>
+
+<!-- 04 히트맵 (주간 단위) -->
+<div class="sec">
+  <span class="sec-num">04</span>
+  <h2>상위 유저 주간 사용량 히트맵</h2>
+  <div class="sub">주간 합산 크레딧 기준. ■ = 가입 전(비활성). W9(7/28~8/3) 반영. 전주 대비 증감 표시.</div>
+
+  <div class="hm-wrap">
+  <table class="hm">
+    <thead>
+      <tr>
+        <th>사용자</th><th>플랜</th>
+        <th>W4<br><span style="font-weight:400;font-size:9px;">6/23~29</span></th>
+        <th>W5<br><span style="font-weight:400;font-size:9px;">6/30~7/6</span></th>
+        <th>W6<br><span style="font-weight:400;font-size:9px;">7/7~13</span></th>
+        <th>W7<br><span style="font-weight:400;font-size:9px;">7/14~20</span></th>
+        <th>W8<br><span style="font-weight:400;font-size:9px;">7/21~27</span></th>
+        <th style="background:#c8e6c9;">W9<br><span style="font-weight:400;font-size:9px;">7/28~8/3</span></th>
+        <th>패턴</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="nm b">한국투자증권 🔥</td><td><span class="tag tb">PRM</span></td>
+        <td class="c1">60</td><td class="c4">1,063</td><td class="c3">762</td><td class="c2">319</td><td class="c3">658</td><td class="c3">755</td><td><span class="tag tg">정착</span></td></tr>
+      <tr><td class="nm b">WBMS (adwitt) 🔥</td><td><span class="tag tb">PRM</span></td>
+        <td class="c1">102</td><td class="c2">287</td><td class="c1">142</td><td class="c0">0</td><td class="c3">611</td><td class="c3">755</td><td><span class="tag tg">폭발</span></td></tr>
+      <tr><td class="nm b">nm-neo 우고은</td><td><span class="tag tgr">BASIC</span></td>
+        <td class="cx">■</td><td class="c3">592</td><td class="c3">768</td><td class="c3">672</td><td class="c3">670</td><td class="c2">452</td><td><span class="tag tg">정착</span></td></tr>
+      <tr><td class="nm b">hsad 차현웅</td><td><span class="tag tb">PRM</span></td>
+        <td class="c1">253</td><td class="c1">98</td><td class="c4">1,296</td><td class="c0">0</td><td class="c2">366</td><td class="c2">319</td><td><span class="tag ty">버스트</span></td></tr>
+      <tr><td class="nm b">그린브릭스</td><td><span class="tag tb">PRM</span></td>
+        <td class="c2">313</td><td class="c2">294</td><td class="c2">318</td><td class="c2">294</td><td class="c2">317</td><td class="c2">294</td><td><span class="tag tg">정착</span></td></tr>
+      <tr><td class="nm b">스마일게이트자산운용</td><td><span class="tag tg">ESS</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="c2">400</td><td class="c0">0</td><td class="c0">0</td><td class="c2">286</td><td><span class="tag tg">재활성</span></td></tr>
+      <tr><td class="nm b">모지세</td><td><span class="tag tg">ESS</span></td>
+        <td class="c1">68</td><td class="c2">212</td><td class="c2">276</td><td class="c0">2</td><td class="c1">132</td><td class="c2">263</td><td><span class="tag tg">정착</span></td></tr>
+      <tr><td class="nm b">밀리의서재</td><td><span class="tag tb">PRM</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="c4">500</td><td class="c1">62</td><td class="c2">344</td><td class="c2">193</td><td><span class="tag tg">정착</span></td></tr>
+      <tr><td class="nm b">동원 유진아 🆕</td><td><span class="tag tn">데모</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="c1">131</td><td><span class="tag tg">신규</span></td></tr>
+      <tr><td class="nm b">넥스트미디어 🆕</td><td><span class="tag tb">PRM</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="c0">32</td><td class="c1">123</td><td><span class="tag tg">급성장</span></td></tr>
+      <tr><td class="nm b">쿠로게임즈 🆕</td><td><span class="tag tgr">BASIC</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="c1">100</td><td><span class="tag tg">신규</span></td></tr>
+      <tr><td class="nm">휴맥스 모빌리티</td><td><span class="tag tb">PRM</span></td>
+        <td class="c0">35</td><td class="c1">158</td><td class="c1">61</td><td class="c0">49</td><td class="c0">52</td><td class="c1">94</td><td><span class="tag tgr">간헐</span></td></tr>
+      <tr><td class="nm">스테이션3</td><td><span class="tag tb">PRM</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="c0">17</td><td class="c1">90</td><td><span class="tag tg">급성장</span></td></tr>
+      <tr><td class="nm">현대증권</td><td><span class="tag tg">ESS</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="c2">447</td><td class="c2">222</td><td class="c1">85</td><td><span class="tag ty">감속</span></td></tr>
+      <tr><td class="nm b">바이브컴퍼니 🆕</td><td><span class="tag tn">데모</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="c0">4</td><td class="c1">74</td><td><span class="tag tg">급성장</span></td></tr>
+      <tr><td class="nm">MZ 오지연</td><td><span class="tag tgr">BASIC</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="c1">164</td><td class="c1">72</td><td><span class="tag ty">감속</span></td></tr>
+      <tr><td class="nm">허블</td><td><span class="tag tb">PRM</span></td>
+        <td class="c4">518</td><td class="c4">500</td><td class="c0">9</td><td class="c0">0</td><td class="c0">0</td><td class="c0">46</td><td><span class="tag tg">미약복귀</span></td></tr>
+      <tr><td class="nm b">KDI 선유택 🆕</td><td><span class="tag tb">PRM</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="c0">41</td><td><span class="tag tg">신규</span></td></tr>
+      <tr><td class="nm">비펙스</td><td><span class="tag tg">ESS</span></td>
+        <td class="cx">■</td><td class="c1">102</td><td class="c0">22</td><td class="c2">400</td><td class="c4">776</td><td class="c0">4</td><td><span class="tag tr2">급감</span></td></tr>
+      <tr><td class="nm">버즈빌</td><td><span class="tag tb">PRM</span></td>
+        <td class="c0">7</td><td class="c4">505</td><td class="c1">91</td><td class="c0">0</td><td class="c2">265</td><td class="c0">13</td><td><span class="tag ty">감속</span></td></tr>
+      <tr><td class="nm">알토스</td><td><span class="tag tb">PRM</span></td>
+        <td class="c2">320</td><td class="c0">16</td><td class="c1">71</td><td class="c0">41</td><td class="c1">116</td><td class="c0">9</td><td><span class="tag ty">감속</span></td></tr>
+      <tr><td class="nm">K카 (이수경)</td><td><span class="tag tgr">기타</span></td>
+        <td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="cx">■</td><td class="c4">822</td><td class="c0">0</td><td><span class="tag tr2">이탈위험</span></td></tr>
+      <tr><td class="nm">하나금융</td><td><span class="tag tb">PRM</span></td>
+        <td class="c4">931</td><td class="c1">120</td><td class="c2">259</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td><span class="tag tr2">이탈</span></td></tr>
+      <tr><td class="nm">야놀자</td><td><span class="tag tb">PRM</span></td>
+        <td class="cx">■</td><td class="c1">62</td><td class="c4">504</td><td class="c0">0</td><td class="c0">0</td><td class="c0">0</td><td><span class="tag tr2">이탈</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="box info">
+    <div class="bt">히트맵 패턴 유형 해석</div>
+    <p>🟩 <strong>정착형</strong> (한투 9주, 그린브릭스 8주, nm-neo 5주, 모지세 7주, 밀리 4주): 루틴 사용 안정화</p>
+    <p>🔥 <strong>폭발형</strong> (WBMS W8→W9: 611→755): 2주 연속 750cr+ — 프로젝트 전담 활용</p>
+    <p>🔄 <strong>재활성</strong> (스마일게이트 +286, 허블 +46): 3주+ 휴면 후 복귀 시그널</p>
+    <p>🆕 <strong>신규 고밀도</strong> (동원 131, 넥스트미디어 123, 쿠로게임즈 100): 첫 주 100cr+ → 정착 유력</p>
+    <p>🟥 <strong>급감 경고</strong> (비펙스 776→4, 버즈빌 265→13, K카 822→0): 전주 최고→금주 거의 0. 즉시 팔로업 필요</p>
+    <p>⬛ <strong>이탈 확정</strong> (하나금융 4주 0cr, 야놀자 3주 0cr): 복귀 가능성 낮음</p>
+  </div>
+
+  <div class="box info">
+    <div class="bt">연속 사용 기록 (Streak)</div>
+    <p>🥇 <strong>그린브릭스</strong>: 39일 연속 (6/26~8/3) — 역대 최장 갱신 중 🔥</p>
+    <p>🥈 <strong>nm-neo 우고은</strong>: W9에 중간 1일 0cr 발생 후 재개. 실질 33일+4일 연속.</p>
+    <p>🥉 <strong>한국투자증권</strong>: W9에 5일 사용 (토일 제외). 업무일 기준 거의 매일.</p>
+    <p>📌 <strong>WBMS</strong>: W8~W9 연속 14일 중 12일 사용 — 업무 루틴 통합 완료.</p>
+  </div>
+</div>
+
+<!-- 05 신규 유저 -->
+<div class="sec">
+  <span class="sec-num">05</span>
+  <h2>금주 신규 유입 유저 (7/28~8/3)</h2>
+  <div class="sub">이번 주에 처음 사용된 계정. W9에 처음 크레딧 사용 발생.</div>
+
+  <table>
+    <thead>
+      <tr><th>사용자</th><th>도메인</th><th>플랜</th><th class="tr">금주 사용량</th><th>특이사항</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="b">동원 (유진아)</td><td>dongwon.com</td><td><span class="tag tn">프리미엄(데모)</span></td><td class="tr num">131</td><td>7/30~8/1 3일 연속. 식품 대기업 진입.</td></tr>
+      <tr><td class="b">쿠로게임즈 (이재빈)</td><td>kurogames.com</td><td><span class="tag tgr">베이직</span></td><td class="tr num">100</td><td>8/1 하루 MAX 사용. 게임사 신규.</td></tr>
+      <tr><td class="b">KDI (선유택)</td><td>kdi.re.kr</td><td><span class="tag tb">프리미엄</span></td><td class="tr num">41</td><td>7/30~8/2 3일. 정부 연구기관.</td></tr>
+      <tr><td>집지켜 (peulda)</td><td>peulda.com</td><td><span class="tag tgr">베이직</span></td><td class="tr num">33</td><td>8/1 첫 사용. 부동산/보안.</td></tr>
+      <tr><td>제일펑타이 (제이든)</td><td>cheilpengtai.com</td><td><span class="tag tgr">베이직</span></td><td class="tr num">19</td><td>8/1 첫 사용. 제일기획 중국법인.</td></tr>
+      <tr><td>넷마블 (강병찬)</td><td>netmarble.com</td><td><span class="tag tgr">베이직</span></td><td class="tr num">18</td><td>8/1 첫 사용. 대형 게임사.</td></tr>
+      <tr><td>NBT (김지훈)</td><td>nbt.com</td><td><span class="tag tgr">베이직</span></td><td class="tr num">18</td><td>7/31 첫 사용. 캐시워크.</td></tr>
+      <tr><td>GS SHOP</td><td>gmail.com</td><td><span class="tag tb">프리미엄</span></td><td class="tr num">15</td><td>8/1 첫 사용. 커머스.</td></tr>
+      <tr><td>팀블라인드 (조민태)</td><td>teamblind.com</td><td><span class="tag tgr">베이직</span></td><td class="tr num">15</td><td>7/31 첫 사용. HR 플랫폼.</td></tr>
+      <tr><td>인포스톡 (김세원)</td><td>infostock.co.kr</td><td><span class="tag tgr">베이직</span></td><td class="tr num">5</td><td>7/30 첫 사용. 증권정보.</td></tr>
+      <tr><td>아이나비 (김혜원)</td><td>inavi.kr</td><td><span class="tag tgr">베이직</span></td><td class="tr num">5</td><td>8/1 첫 사용. 내비게이션.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box good">
+    <div class="bt">금주 신규 유입 해석</div>
+    <p><strong>게임사 2개 동시 진입</strong>: 쿠로게임즈(명조:워더링웨이브) + 넷마블(강병찬). 기존 nm-neo와 합산 시 게임 업종 확대.</p>
+    <p><strong>정부/연구기관 최초 진입</strong>: KDI(한국개발연구원) — 경제정책 연구 목적 데이터 분석 수요 확인. 학술/공공 채널 확산.</p>
+    <p><strong>식품 대기업</strong>: 동원그룹(유진아 131cr, 3일 연속) — F&B 업종 첫 대형 고객.</p>
+    <p><strong>제일기획 계열</strong>: 제일펑타이(중국법인) — 광고/마케팅 업종에 글로벌 확장 시그널.</p>
+  </div>
+</div>
+
+<!-- 06 플랜별 분석 -->
+<div class="sec">
+  <span class="sec-num">06</span>
+  <h2>플랜별 현황</h2>
+  <div class="sub">내부(digitaltrinity, tradingworks, mtupu) 제외 기준. 총 126명.</div>
+
+  <div class="insight-grid">
+    <div class="insight-card">
+      <div class="ic-title">프리미엄 (유료) — 31개</div>
+      <div class="ic-body">
+        <p><strong>31개 계정</strong> (전주 30 → +1 KDI)</p>
+        <p>금주 활성: 14개 (45%)</p>
+        <p>TOP: 한투(755), WBMS(755), hsad(319)</p>
+        <p>비활성 3주+: 하나금융, 야놀자, TBWA</p>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-title">에센셜 (유료) — 5개</div>
+      <div class="ic-body">
+        <p><strong>5개 계정</strong> (유지)</p>
+        <p>금주 활성: 4개 (80%)</p>
+        <p>TOP: 스마일게이트(286), 모지세(263)</p>
+        <p>현대증권 감속(222→85) 모니터링</p>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-title">베이직 (무료) — 71개</div>
+      <div class="ic-body">
+        <p><strong>71개 계정</strong> (전주 56 → +15)</p>
+        <p>금주 활성: 8개 (11%)</p>
+        <p>TOP: nm-neo 우고은(452), MZ 오지연(72)</p>
+        <p>쿠로게임즈(100) 첫 주 MAX 사용</p>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-title">전환 가능성 높은 무료 유저</div>
+      <div class="ic-body">
+        <p><strong>nm-neo 우고은</strong> — 2,866cr 누적 (무료 역대 1위)</p>
+        <p><strong>MZ 오지연</strong> — 236cr (2주 연속 100cr+)</p>
+        <p><strong>쿠로게임즈 이재빈</strong> — 100cr (첫 주 MAX)</p>
+        <p><strong>에어코리아 노윤지</strong> — 59cr (2주 연속)</p>
+        <p>👉 nm-neo 즉시 전환, MZ·쿠로 2주차 관찰</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07 주간 인사이트 -->
+<div class="sec">
+  <span class="sec-num">07</span>
+  <h2>주간 인사이트 & 액션 아이템</h2>
+
+  <div class="box good">
+    <div class="bt">✅ GOOD — 성장 시그널</div>
+    <p>1. <strong>126명 돌파</strong>: 전주 113→126명, 13명 순증. 3주 연속 두 자릿수 성장.</p>
+    <p>2. <strong>WBMS 완전 정착</strong>: W8(611)→W9(755) 연속 증가. 3주 전 0cr이던 고객이 최고 사용량 기록.</p>
+    <p>3. <strong>업종 다변화 가속</strong>: 게임(쿠로게임즈, 넷마블), 식품(동원), 정부연구(KDI), HR(블라인드) — 신규 5개 업종 동시 진입.</p>
+    <p>4. <strong>그린브릭스 39일 연속</strong>: 역대 최장 갱신 중. 매일 42cr 정확한 루틴 사용 → 완전 업무 통합.</p>
+    <p>5. <strong>스마일게이트 재활성(+286)</strong>: 3주 0cr 후 복귀. 에센셜 유지 의지 확인.</p>
+  </div>
+
+  <div class="box warn">
+    <div class="bt">⚠️ WATCH — 모니터링 포인트</div>
+    <p>1. <strong>비펙스 급락(776→4)</strong>: 전주 에센셜 데모 최고 사용 후 급감. 데모 만료? 프로젝트 종료? 즉시 확인 필요.</p>
+    <p>2. <strong>K카 이수경 이탈(822→0)</strong>: W8 폭발 사용 후 W9 완전 0. 1회성 프로젝트 종료 확정 or 팔로업.</p>
+    <p>3. <strong>버즈빌(265→13), 알토스(116→9) 급감</strong>: 유료 고객 동시 감속. 프로젝트 사이클 종료 가능.</p>
+    <p>4. <strong>현대증권 감속(447→222→85)</strong>: 3주 연속 하락. 에센셜 유료인데 관심 감소 추세.</p>
+    <p>5. <strong>하나금융/야놀자 이탈 확정</strong>: 각각 4주, 3주 연속 0cr. 재활성 가능성 낮음.</p>
+  </div>
+
+  <div class="box info">
+    <div class="bt">📌 다음 주 추적 포인트 (8/4~)</div>
+    <p>1. 비펙스 데모 상태 확인 → 유료 전환 vs 이탈 분기점</p>
+    <p>2. 동원(유진아) 2주차 리텐션 → 식품 업종 정착 여부</p>
+    <p>3. 쿠로게임즈/넷마블 게임사 2주차 사용 확인</p>
+    <p>4. KDI 정부기관 지속 사용 → 공공 섹터 확산 여부</p>
+    <p>5. nm-neo 우고은 유료 전환 제안 실행 (누적 2,866cr, 무료 한계)</p>
+    <p>6. WBMS 3주차 연속 확인 → 연간 계약 제안 타이밍</p>
+    <p>7. 바이브컴퍼니(vaiv) 2주차 → 데모 기간 내 정착 가능성</p>
+  </div>
+</div>
+
+<!-- 08 업종별 분포 -->
+<div class="sec">
+  <span class="sec-num">08</span>
+  <h2>유료 고객 업종 분포</h2>
+
+  <table>
+    <thead>
+      <tr><th>업종</th><th class="tr">고객 수</th><th>주요 고객</th><th>금주 변화</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="b">광고/마케팅</td><td class="tr">8</td><td>HS AD, 이노션, WBMS, 모지세, 팀민트, 엠플랜잇, 하이브랩, 넥스트미디어</td><td><span class="tag tg">+1</span></td></tr>
+      <tr><td class="b">금융/증권</td><td class="tr">5</td><td>한국투자증권, 하나금융, 현대증권, JB금융, KDI</td><td><span class="tag tg">+1 (KDI)</span></td></tr>
+      <tr><td class="b">게임</td><td class="tr">3</td><td>쿠로게임즈, 넷마블, nm-neo(넷마블네오)</td><td><span class="tag tg">+2</span></td></tr>
+      <tr><td class="b">커머스/유통</td><td class="tr">4</td><td>K카, GS SHOP, W컨셉, 그린브릭스</td><td><span class="tag tg">+1</span></td></tr>
+      <tr><td class="b">콘텐츠/미디어</td><td class="tr">4</td><td>밀리의서재, 티빙, 버즈빌, 스마일게이트자산운용</td><td><span class="tag flat">유지</span></td></tr>
+      <tr><td class="b">여행/부동산</td><td class="tr">3</td><td>야놀자, 스테이션3(다방), 허블</td><td><span class="tag flat">유지</span></td></tr>
+      <tr><td class="b">IT/플랫폼</td><td class="tr">4</td><td>네이버, 원스토어, 알토스, 닥터나우</td><td><span class="tag flat">유지</span></td></tr>
+      <tr><td class="b">제조/식품</td><td class="tr">2</td><td>동원, 휴맥스 모빌리티</td><td><span class="tag tg">+1 (동원)</span></td></tr>
+      <tr><td class="b">HR/채용</td><td class="tr">1</td><td>팀블라인드</td><td><span class="tag tg">+1 🆕</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="box info">
+    <div class="bt">업종 분석</div>
+    <p><strong>광고/마케팅</strong>이 여전히 최다(8개). WBMS의 W9 폭발(755cr)이 업종 전체 사용량 견인.</p>
+    <p><strong>게임 업종 급확대</strong>: 기존 nm-neo 3명에 쿠로게임즈+넷마블 추가. 게임 데이터 분석 니즈 검증.</p>
+    <p><strong>정부/공공 최초 진입</strong>: KDI(한국개발연구원). 정책 리서치 목적 → 공공 섹터 GTM 기회.</p>
+    <p><strong>식품/제조 확대</strong>: 동원그룹 진입으로 B2C 브랜드 고객층 다변화.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>모바일인덱스 MCP 주간 리포트 · 8월 1주차(W9) · 생성일 2026.08.03</p>
+  <p>데이터 기준: GA4 06.02~08.03 누적, MCP 사용량 06.03~08.03 일별 크레딧</p>
+  <p>내부(digitaltrinity 6명 + tradingworks + mtupu) 제외 기준</p>
+</div>
+
+</body>
+</html>
