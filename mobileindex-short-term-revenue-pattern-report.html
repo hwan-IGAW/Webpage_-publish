@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모바일인덱스 단기 매출 패턴 분석과 잠재 고객 선별</title>
+<style>
+  :root{
+    --ink:#1a1a1a; --sub:#5f6672; --navy:#1F3864; --rule:#dfe3ea; --tint:#eef2f8; --amber:#b8860b;
+  }
+  *{box-sizing:border-box}
+  html{background:#fff}
+  body{margin:0;background:#fff;color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+    font-size:15.5px;line-height:1.8;-webkit-font-smoothing:antialiased}
+  .page{max-width:820px;margin:0 auto;padding:64px 28px 96px}
+  header{border-bottom:3px solid var(--navy);padding-bottom:28px;margin-bottom:48px}
+  header .kicker{color:var(--sub);font-size:14px;margin:0 0 10px}
+  header h1{font-size:30px;line-height:1.35;margin:0 0 14px;font-weight:700;letter-spacing:-0.01em}
+  header p.lead{margin:0;color:var(--ink);font-size:16px}
+  header .meta{margin-top:18px;color:var(--sub);font-size:13.5px}
+  section{margin:0 0 52px}
+  h2{font-size:20px;font-weight:700;margin:0 0 16px;padding-left:14px;border-left:4px solid var(--navy);line-height:1.4;letter-spacing:-0.01em}
+  h3{font-size:16px;font-weight:700;margin:26px 0 8px}
+  p{margin:0 0 14px}
+  strong{font-weight:700}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.55;margin:14px 0 20px}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+  th{background:var(--tint);font-weight:700;border-bottom:2px solid var(--navy)}
+  td.num,th.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  tr.total td{font-weight:700;border-top:2px solid var(--navy);background:#fafbfd}
+  .note{color:var(--sub);font-size:13px;margin:-8px 0 20px}
+  /* 연도별 대분류 매출 막대 */
+  .bars{margin:18px 0 8px}
+  .bar-row{display:grid;grid-template-columns:72px 1fr 90px;align-items:center;gap:12px;margin:8px 0}
+  .bar-row .y{font-weight:700;font-variant-numeric:tabular-nums}
+  .bar{display:flex;height:22px;background:#f3f4f6;overflow:hidden}
+  .bar span{display:block;height:100%}
+  .g{background:var(--navy)} .a{background:#7f95b8} .c{background:#c9d3e3}
+  .bar-row .t{text-align:right;color:var(--sub);font-size:13px;font-variant-numeric:tabular-nums}
+  .legend{display:flex;gap:18px;font-size:13px;color:var(--sub);margin:6px 0 0 84px}
+  .legend i{display:inline-block;width:12px;height:12px;vertical-align:-1px;margin-right:6px}
+  /* 월별 히트 */
+  .months{display:grid;grid-template-columns:110px repeat(12,1fr);gap:3px;font-size:12px;margin:14px 0 6px}
+  .months .lab{font-weight:700;padding-right:6px}
+  .months .m{text-align:center;color:var(--sub)}
+  .months .cell{height:26px;display:flex;align-items:center;justify-content:center;color:#fff;font-variant-numeric:tabular-nums}
+  /* 잠재고객 */
+  .prospects{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;margin:10px 0 18px}
+  .prospects div{padding:6px 0;border-bottom:1px solid var(--rule);font-size:14px}
+  .prospects div small{display:block;color:var(--sub);font-size:12.5px;line-height:1.5}
+  .callout{background:var(--tint);border-left:4px solid var(--navy);padding:14px 18px;margin:18px 0 22px}
+  .callout p{margin:0 0 8px} .callout p:last-child{margin:0}
+  footer{border-top:1px solid var(--rule);padding-top:18px;color:var(--sub);font-size:13px}
+  @media (max-width:640px){
+    .page{padding:40px 18px 64px}
+    header h1{font-size:24px}
+    .prospects{grid-template-columns:1fr}
+    .months{grid-template-columns:70px repeat(12,1fr);font-size:10px}
+    .bar-row{grid-template-columns:52px 1fr 70px}
+  }
+  @media print{ .page{padding:0} section{break-inside:avoid} }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <p class="kicker">모바일인덱스 전략 · 내부 검토용</p>
+  <h1>단기 매출 패턴 분석과 잠재 고객 선별 기준</h1>
+  <p class="lead">2023년 1월부터 2026년 8월까지의 단기 매출 65개 고객사를 산업군으로 분류하고, 재구매를 만드는 조건을 추려 잠재 고객 선별 기준과 1차 접촉 리스트로 정리했다.</p>
+  <div class="meta">데이터 출처 : 모바일인덱스 단기 매출 시트(2023~2026년 8월) · 작성일 2026년 9월 8일 · 금액 단위 원</div>
+</header>
+
+<section>
+  <h2>분석의 목적 : 단발성 매출의 복제 조건 찾기</h2>
+  <p>단기 매출은 건별로 보면 대부분 300만 원 안팎의 1개월 계약이라 개별 영업의 결과처럼 보인다. 그러나 4년치를 고객 단위로 묶으면 같은 조직이 같은 시점에 같은 상품을 반복해서 사는 구조가 드러난다. 이 리포트의 목적은 그 반복이 어떤 조직 유형과 업무 조건에서 발생하는지를 확인하고, 아직 구매하지 않았지만 동일한 조건을 가진 조직을 골라내는 기준을 세우는 것이다.</p>
+  <p>분석 단위는 고객사이며, 다날 경유 계약은 실사용 조직으로 통합했다. 4년 누계 매출은 약 5억 2,000만 원, 고객사는 65곳이다. 산업 분류는 사명과 비고를 근거로 했고 티지·더마그넷·플래시포스트·레드컬튼·트리플콤마·씨드젠·MBP처럼 사명만으로 확정하기 어려운 7곳은 잠정 분류다.</p>
+</section>
+
+<section>
+  <h2>산업군 분류 : 3대 군과 14개 세부 군</h2>
+  <p>정부/기관, 대행사·전문서비스, 일반 기업의 3대 군으로 나누고 각 군을 구매 주체의 업무 성격에 따라 세분화했다. 대행사 군에는 광고 대행사뿐 아니라 컨설팅·리서치·기관사업 수행사를 포함했는데, 이들은 모두 자기 예산이 아니라 클라이언트 프로젝트나 입찰 예산으로 구매한다는 점에서 행동이 같기 때문이다.</p>
+  <table>
+    <thead><tr><th>대분류</th><th>세부 군</th><th>주요 고객사</th><th class="num">고객 수</th><th class="num">누계 매출</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="5">정부/기관</td><td>공공기관/위원회</td><td>한국교통안전공단, 한국언론진흥재단, 방송미디어통신위원회, 게임물관리위원회(안양대 경유)</td><td class="num">4</td><td class="num">6,000만</td></tr>
+      <tr><td>국책연구기관</td><td>KISDI, 농촌경제연구원, 조세재정연구원, 한국교통연구원, 정보통신산업연구원</td><td class="num">5</td><td class="num">3,700만</td></tr>
+      <tr><td>지자체 산하</td><td>코리아경기도(주), 대구테크노파크, 광주경제진흥일자리재단, 서울연구원</td><td class="num">4</td><td class="num">3,250만</td></tr>
+      <tr><td>협회</td><td>한국정보통신진흥협회, 개인정보보호협회</td><td class="num">2</td><td class="num">1,400만</td></tr>
+      <tr><td>대학</td><td>카이스트, 서울대, 동아대</td><td class="num">3</td><td class="num">750만</td></tr>
+      <tr><td rowspan="5">대행사·전문서비스</td><td>광고/마케팅 대행·렙</td><td>데이터마케팅코리아, 모비데이즈, 더마그넷, 블루인마케팅, 엘커뮤니케이션 외</td><td class="num">10</td><td class="num">4,470만</td></tr>
+      <tr><td>전략컨설팅</td><td>베인앤컴퍼니, PwC, 커니, 딜로이트</td><td class="num">4</td><td class="num">3,100만</td></tr>
+      <tr><td>리서치/데이터</td><td>메트릭스, 케이스탯컨설팅, 타인에이아이, 씨드젠</td><td class="num">4</td><td class="num">3,000만</td></tr>
+      <tr><td>기관사업 수행사</td><td>엑스텐정보, 씨씨미디어서비스</td><td class="num">2</td><td class="num">3,000만</td></tr>
+      <tr><td>법률</td><td>김장법률사무소</td><td class="num">1</td><td class="num">300만</td></tr>
+      <tr><td rowspan="4">일반 기업</td><td>유통/커머스/플랫폼</td><td>신세계, SSG닷컴, 여기어때, GS리테일, SK스토아, HY, 무신사, 이랜드, 퀸라이브</td><td class="num">9</td><td class="num">1억 5,700만</td></tr>
+      <tr><td>스타트업/중소</td><td>스캐터랩, 이노무브, 채널코퍼레이션, 모픽, 오픈루트 외</td><td class="num">8</td><td class="num">3,480만</td></tr>
+      <tr><td>미디어/콘텐츠/게임</td><td>MBC플러스, SK웹노벨, 게이크게임즈, 포켓컴퍼니, 엔트리플, 액트세븐</td><td class="num">6</td><td class="num">2,700만</td></tr>
+      <tr><td>대기업 제조/IT</td><td>삼성전자, LG전자, 구글코리아</td><td class="num">3</td><td class="num">1,200만</td></tr>
+      <tr class="total"><td colspan="3">합계</td><td class="num">65</td><td class="num">5억 2,000만</td></tr>
+    </tbody>
+  </table>
+
+  <div class="bars">
+    <div class="bar-row"><span class="y">2023</span><div class="bar"><span class="g" style="width:26%"></span><span class="a" style="width:30%"></span><span class="c" style="width:44%"></span></div><span class="t">8,020만</span></div>
+    <div class="bar-row"><span class="y">2024</span><div class="bar"><span class="g" style="width:16%"></span><span class="a" style="width:37%"></span><span class="c" style="width:47%"></span></div><span class="t">1억 6,390만</span></div>
+    <div class="bar-row"><span class="y">2025</span><div class="bar"><span class="g" style="width:44%"></span><span class="a" style="width:18%"></span><span class="c" style="width:38%"></span></div><span class="t">1억 6,170만</span></div>
+    <div class="bar-row"><span class="y">2026.8</span><div class="bar"><span class="g" style="width:43%"></span><span class="a" style="width:32%"></span><span class="c" style="width:25%"></span></div><span class="t">7,400만</span></div>
+    <div class="legend"><span><i class="g"></i>정부/기관</span><span><i class="a"></i>대행사·전문서비스</span><span><i class="c"></i>일반 기업</span></div>
+  </div>
+  <p class="note">연도별 대분류 구성비. 2023~2024년은 일반 기업(신세계·여기어때·SSG닷컴)이 절반 가까이를 차지했으나 2025년부터 정부/기관이 40%대로 올라섰다.</p>
+</section>
+
+<section>
+  <h2>매출 구조 : 단발성이 아니라 연례성이 본체</h2>
+  <p>65개 고객 중 2개년 이상 재구매한 곳은 17개(26%)에 불과하지만 이들이 누계 매출의 52%를 만든다. 신세계 하나가 6,600만 원, 한국교통안전공단이 4,270만 원이고, 씨씨미디어·엑스텐·메트릭스처럼 매년 300만 원짜리 1개월을 빠짐없이 사는 고객이 그 아래를 받친다. 나머지 48개는 1회 구매 후 소멸했고, 이 중 상당수는 재사용 여부가 판단 불가로 남아 있다.</p>
+  <table>
+    <thead><tr><th>재구매 고객</th><th>군</th><th>구매 연도</th><th class="num">누계</th><th>비고에서 확인된 구매 조건</th></tr></thead>
+    <tbody>
+      <tr><td>신세계</td><td>유통/커머스</td><td>2023·24·25·26</td><td class="num">6,600만</td><td>연 1,500만 원 예산을 5~8회 분할 사용, 12개월 전환 거절</td></tr>
+      <tr><td>한국교통안전공단</td><td>공공기관</td><td>2024·25·26</td><td class="num">4,270만</td><td>교통앱 시/군/구 추출을 매년 제공, 450만 → 1,818만 → 2,000만</td></tr>
+      <tr><td>씨씨미디어서비스</td><td>기관사업 수행사</td><td>2023·24·25·26</td><td class="num">1,800만</td><td>기관 사업 참여 시점에 1개월, 2026년은 2회</td></tr>
+      <tr><td>한국농촌경제연구원</td><td>국책연구기관</td><td>2024·25</td><td class="num">1,330만</td><td>과거 구독에서 연 1~2개월 사용으로 전환, 발표자료 준비용</td></tr>
+      <tr><td>PwC</td><td>전략컨설팅</td><td>2023·24</td><td class="num">1,300만</td><td>프로젝트 단위, 소비인덱스·게임까지 상품 확장</td></tr>
+      <tr><td>정보통신정책연구원</td><td>국책연구기관</td><td>2023·26</td><td class="num">1,300만</td><td>사용량인덱스 구독 고객이 추출·앱마켓인덱스를 단기 추가</td></tr>
+      <tr><td>엑스텐정보</td><td>기관사업 수행사</td><td>2023·24·25·26</td><td class="num">1,200만</td><td>기관사업 참여용 연 1회, 과거 랭키닷컴 사용</td></tr>
+      <tr><td>메트릭스</td><td>리서치</td><td>2024·25·26</td><td class="num">1,200만</td><td>매년 1개월 1회</td></tr>
+      <tr><td>데이터마케팅코리아</td><td>마케팅 대행</td><td>2024·25</td><td class="num">1,200만</td><td>한국출판문화산업진흥원 사업에 활용, 2026년 사용 예정</td></tr>
+      <tr><td>스캐터랩</td><td>스타트업</td><td>2025·26</td><td class="num">1,200만</td><td>에센셜 1개월 → 에센셜+앱마켓으로 업셀, 12개월 제안 중</td></tr>
+      <tr><td>베인앤컴퍼니</td><td>전략컨설팅</td><td>2023·24</td><td class="num">1,200만</td><td>프로젝트 단위, 연 1~2건</td></tr>
+    </tbody>
+  </table>
+  <p class="note">누계 1,000만 원 이상 재구매 고객. 이 외에 타인에이아이, 한국정보통신진흥협회, 대구테크노파크, 한국정보통신산업연구원, 개인정보보호협회, 게이크게임즈가 2개년 이상 구매했다.</p>
+  <p>따라서 단기 매출은 두 층으로 갈린다. 하나는 연 1~2회 정해진 시점에 1개월씩 쓰는 고객이고, 다른 하나는 한 번 쓰고 사라지는 고객이다. 잠재 고객 선별은 전자를 복제하는 문제로 정의해야 하며, 후자는 프로모션 유입이나 사명 불명의 3M 단건이 대부분이라 패턴 자체가 없다.</p>
+</section>
+
+<section>
+  <h2>연례 구매의 트리거 : 구독 전환이 안 되는 이유가 곧 패턴</h2>
+  <p>재구매 고객의 비고를 보면 사용 시점이 업무 캘린더에 고정돼 있다. 엑스텐과 씨씨미디어는 기관사업 입찰 시점, 농촌경제연구원은 기관 발표자료 준비, 신세계는 연간 예산 안에서 분기별 보고 시점이다. 삼성전자 SmartThings 사업부는 연 1~2회면 충분하다며 12개월 제안을 거절했고, 신세계도 2026년 연간 계약 제안에 예산 부족을 이유로 3~4회 단기 사용을 택했다.</p>
+  <p>이들에게 모바일인덱스는 상시 모니터링 도구가 아니라 특정 산출물, 즉 제안서·보고서·예산 집행을 위한 재료다. 이 군은 구독 전환 대상이 아니라 단기 상품의 안정 고객으로 관리하는 것이 맞고, 잠재 고객도 "연 1~2회 앱 데이터가 들어간 산출물을 만들어야 하는 조직"으로 정의된다.</p>
+  <p>반대로 구독 전환에 성공한 사례는 데이터가 일상 업무에 붙은 경우다. 게임물관리위원회는 안양대학교 산학협력단 경유로 900만 원을 쓴 뒤 2026년 3월 12개월 직접 계약으로 전환했고, 스캐터랩은 에센셜 1개월에서 앱마켓인덱스까지 업셀된 뒤 12개월 제안이 진행 중이다. 방송미디어통신위원회의 앱평가 데이터 활용도 같은 성격이라 연장 제안이 통할 가능성이 높다. 규제·평가 업무를 가진 기관은 단기로 진입해 구독으로 전환하는 경로가 실증된 셈이다.</p>
+</section>
+
+<section>
+  <h2>시간 패턴 : 정부/기관은 4분기, 기업은 5월과 8~9월</h2>
+  <p>월별 매출을 대분류로 나누면 정부/기관은 12월, 8월, 5월 순으로 크고 10~12월에 전체의 40%가 몰린다. 예산 소진과 연말 보고서 시점이 겹치기 때문이다. 일반 기업은 5월과 9월이 크지만 SSG닷컴 앱그룹 건과 여기어때 추출 건 같은 대형 단건의 영향이 커서, 신세계를 빼면 뚜렷한 계절성은 약하다. 대행사는 5월과 10월이 높은데 컨설팅·기관사업 제안 시즌과 겹친다.</p>
+  <div class="months">
+    <div class="lab"></div><div class="m">1</div><div class="m">2</div><div class="m">3</div><div class="m">4</div><div class="m">5</div><div class="m">6</div><div class="m">7</div><div class="m">8</div><div class="m">9</div><div class="m">10</div><div class="m">11</div><div class="m">12</div>
+    <div class="lab">정부/기관</div>
+    <div class="cell" style="background:#c9d3e3">3</div><div class="cell" style="background:#a9b9d3">9</div><div class="cell" style="background:#e8ecf3;color:#5f6672">0</div><div class="cell" style="background:#a9b9d3">9</div><div class="cell" style="background:#5f7aa6">22</div><div class="cell" style="background:#8aa0c2">13</div><div class="cell" style="background:#c9d3e3">3</div><div class="cell" style="background:#3f5b8c">26</div><div class="cell" style="background:#7f95b8">15</div><div class="cell" style="background:#7f95b8">16</div><div class="cell" style="background:#c9d3e3">5</div><div class="cell" style="background:#1F3864">30</div>
+    <div class="lab">대행사</div>
+    <div class="cell" style="background:#c9d3e3">6</div><div class="cell" style="background:#a9b9d3">9</div><div class="cell" style="background:#c9d3e3">6</div><div class="cell" style="background:#a9b9d3">9</div><div class="cell" style="background:#3f5b8c">24</div><div class="cell" style="background:#7f95b8">15</div><div class="cell" style="background:#8aa0c2">12</div><div class="cell" style="background:#c9d3e3">3</div><div class="cell" style="background:#a9b9d3">9</div><div class="cell" style="background:#2f4a7a">27</div><div class="cell" style="background:#a9b9d3">9</div><div class="cell" style="background:#a9b9d3">10</div>
+    <div class="lab">일반 기업</div>
+    <div class="cell" style="background:#7f95b8">14</div><div class="cell" style="background:#a9b9d3">9</div><div class="cell" style="background:#8aa0c2">12</div><div class="cell" style="background:#8aa0c2">14</div><div class="cell" style="background:#1F3864">47</div><div class="cell" style="background:#c9d3e3">6</div><div class="cell" style="background:#5f7aa6">21</div><div class="cell" style="background:#3f5b8c">24</div><div class="cell" style="background:#2f4a7a">40</div><div class="cell" style="background:#7f95b8">16</div><div class="cell" style="background:#3f5b8c">25</div><div class="cell" style="background:#c9d3e3">3</div>
+  </div>
+  <p class="note">2023~2026년 8월 월별 합산, 단위 백만 원. 색이 짙을수록 매출이 크다.</p>
+  <p>영업 타이밍 관점에서 정부/기관은 차년도 예산이 편성되는 8~9월과 집행이 마감되는 10~11월 두 번이 접점이다. 단기 상품은 예산 편성에 앞서 제안해야 연간 예산에 항목으로 잡히고, 집행 마감 전에는 잔여 예산 소진 수요를 받을 수 있다.</p>
+</section>
+
+<section>
+  <h2>고단가 세그먼트 : 데이터 추출은 공공 지역 데이터로 수렴 중</h2>
+  <p>데이터 추출 7건이 1억 2,500만 원, 건당 평균 1,250만 원으로 구독형 단기(평균 460만 원)의 2.7배다. 2023년에는 여기어때의 OTA 교차 이용 추출(4,000만)과 KISDI의 OTT 교차 이용 추출(997만)처럼 민간·연구 성격이었지만, 2024년부터는 한국교통안전공단의 교통앱 시/군/구 추출, 코리아경기도(주)의 시/군/구 추출(1,630만), 대구테크노파크의 배달앱 시/도 추출(400만 × 2년)로 무게가 옮겨갔다.</p>
+  <p>한국교통안전공단은 3년간 4.4배 성장했고 매년 제공으로 굳어졌다. 단기 매출 중 단가와 재구매가 동시에 성장하는 유일한 세그먼트이며, 지자체·지역 산하기관·교통·관광·소상공인 정책기관이라는 닫힌 목록의 잠재 고객군이 있다. 이 군은 300만 원 에센셜이 아니라 지역 단위 추출 상품으로 접근해야 단가가 나온다.</p>
+</section>
+
+<section>
+  <h2>다날 채널 : 저단가 롱테일이지만 컨설팅사 발굴 통로</h2>
+  <p>다날 경유 27개 고객은 대부분 300만 원 1회, 재사용 판단 불가다. 그러나 여기서 걸러진 반복 고객이 있다. 베인(2년), PwC(2년, 소비인덱스까지 확장), 커니, 딜로이트까지 4대 컨설팅사가 모두 프로젝트 단위로 구매했다. 이들은 자기 예산이 아니라 클라이언트 프로젝트 예산으로 사기 때문에 개별 건은 작아도 빈도가 있고, 맥킨지·BCG·EY한영·삼정KPMG·액센츄어처럼 아직 구매하지 않은 컨설팅사가 가장 확실한 유사 프로필이다. 리서치사(메트릭스 3년 연속, 케이스탯 신규)도 같은 구조다.</p>
+  <p>다날 채널의 역할은 매출이 아니라 필터다. 첫 구매를 낮은 마찰로 받고, 2년차 재구매가 발생하는 고객만 직접 관리 계정으로 올리면 된다.</p>
+</section>
+
+<section>
+  <h2>선별 기준 : 네 가지 프로필과 우선순위</h2>
+  <p>위 분석에서 잠재 고객 프로필은 네 가지로 도출된다. 각 프로필은 기존 고객 중 재구매가 확인된 유형을 근거로 하며, 우선순위는 기존 고객과 기능·예산 구조가 같고 단가 500만 원 이상 또는 재구매 가능성이 높은 곳을 A, 프로필은 일치하나 예산 규모나 구매 주체가 불확실한 곳을 B, 일치도가 낮거나 규모가 작은 곳을 C로 뒀다.</p>
+  <table>
+    <thead><tr><th>프로필</th><th>정의</th><th>근거가 된 기존 고객</th><th>예상 상품 · 단가</th><th>접점 시점</th></tr></thead>
+    <tbody>
+      <tr><td>1. 지자체·지역 산하기관</td><td>지역 단위 앱 이용 데이터를 정책 근거로 쓰는 조직</td><td>한국교통안전공단, 코리아경기도(주), 대구테크노파크</td><td>데이터 추출 · 400만~2,000만</td><td>8~9월, 10~12월</td></tr>
+      <tr><td>2. 국책연구기관·협회·위원회</td><td>연례 보고서·백서 발간 또는 앱 평가 업무가 있는 조직</td><td>KISDI, 농촌경제연구원, KAIT, 개인정보보호협회, 게임물관리위원회</td><td>PREMIUM/ESSENTIAL 1개월 · 300만~900만, 규제기관은 구독 전환 후보</td><td>10~12월, 2~4월</td></tr>
+      <tr><td>3. 컨설팅·리서치·대행사</td><td>클라이언트 프로젝트·입찰 예산으로 구매하는 조직</td><td>베인, PwC, 커니, 딜로이트, 메트릭스, 엑스텐, 씨씨미디어</td><td>ESSENTIAL 1개월(다날) · 300만 × 연 1~3건</td><td>5월, 10월 제안 시즌</td></tr>
+      <tr><td>4. 유통·커머스 대기업</td><td>연간 마케팅/전략 예산 안에서 분기 보고에 앱 데이터를 쓰는 조직</td><td>신세계, SSG닷컴, SK스토아, GS리테일, HY</td><td>ESSENTIAL 1개월 × 연 3~8회 · 300만~600만/회</td><td>분기 초, 5월·10월</td></tr>
+    </tbody>
+  </table>
+  <div class="callout">
+    <p><strong>제외해야 할 군</strong> 프로모션 유입 스타트업(바이너리큐브·노티플러스·누비랩)은 재사용 불가로 확인됐고, 사명 기준 분류가 애매한 300만 원 단건 고객은 패턴이 없다. 렙사와 금융앱 운영사는 단기보다 구독이 맞는 유형이라 우선순위를 낮췄다.</p>
+    <p><strong>대조가 필요한 것</strong> 아래 리스트는 단기 매출 파일만 근거로 만들었으므로 현재 12개월 구독 중인 고객사와 반드시 대조해 제외해야 한다. 지자체 산하기관은 명칭 개편이 잦아 2026년 9월 기준 재확인이 필요하다.</p>
+  </div>
+</section>
+
+<section>
+  <h2>잠재 고객 리스트 : 우선순위 A 46곳</h2>
+  <p>전체 170곳 중 1차 접촉 대상인 A등급만 실었다. B·C등급을 포함한 전체 목록과 기관별 근거·비고는 별도 스프레드시트에 있다.</p>
+
+  <h3>프로필 1 : 지자체·지역 산하기관 (18곳)</h3>
+  <div class="prospects">
+    <div>경기테크노파크<small>대구TP 복제, 지역산업·소상공인 디지털 전환</small></div>
+    <div>인천테크노파크<small>인천 e음 운영 연계 시 단가 상향 여지</small></div>
+    <div>부산테크노파크</div>
+    <div>경기연구원<small>서울연구원 복제, 프리미엄 진입 후 추출 확장</small></div>
+    <div>인천연구원</div>
+    <div>부산연구원</div>
+    <div>서울경제진흥원(SBA)<small>코리아경기도(주) 유형</small></div>
+    <div>경기도경제과학진흥원</div>
+    <div>대구디지털혁신진흥원(DIP)<small>대구로 공공배달앱 운영 주체</small></div>
+    <div>한국관광공사<small>OTA·여행앱 교차 이용 추출 실적 활용</small></div>
+    <div>서울관광재단</div>
+    <div>경기관광공사</div>
+    <div>한국도로공사<small>한국교통안전공단 복제</small></div>
+    <div>서울교통공사</div>
+    <div>한국철도공사(코레일)</div>
+    <div>경기교통공사<small>광역버스·교통 정책 근거</small></div>
+    <div>소상공인시장진흥공단<small>배달앱·지역상권 앱 데이터</small></div>
+    <div>중소벤처기업진흥공단<small>B에 가까우나 예산 규모로 A 편입 검토</small></div>
+  </div>
+
+  <h3>프로필 2 : 국책연구기관·협회·위원회 (16곳)</h3>
+  <div class="prospects">
+    <div>산업연구원(KIET)</div>
+    <div>한국문화관광연구원</div>
+    <div>한국소비자원<small>플랫폼·앱 소비자 조사 연례 수행</small></div>
+    <div>한국콘텐츠진흥원(KOCCA)<small>게임·웹툰·OTT 백서 연례 발간</small></div>
+    <div>한국인터넷진흥원(KISA)</div>
+    <div>정보통신산업진흥원(NIPA)</div>
+    <div>한국지능정보사회진흥원(NIA)<small>인터넷이용실태조사</small></div>
+    <div>한국방송광고진흥공사(KOBACO)<small>광고시장 통계</small></div>
+    <div>공정거래위원회<small>플랫폼 시장 획정·심사, 구독 전환 후보</small></div>
+    <div>개인정보보호위원회<small>개인정보보호협회 2년 연속 구매</small></div>
+    <div>국회입법조사처<small>플랫폼 규제 입법 조사</small></div>
+    <div>한국인터넷기업협회</div>
+    <div>한국게임산업협회</div>
+    <div>한국핀테크산업협회</div>
+    <div>한국온라인쇼핑협회</div>
+    <div>한국출판문화산업진흥원<small>데이터마케팅코리아 경유 간접 사용 중, 직접 계약 전환 후보</small></div>
+  </div>
+
+  <h3>프로필 3 : 컨설팅·리서치 (8곳)</h3>
+  <div class="prospects">
+    <div>맥킨지앤컴퍼니</div>
+    <div>보스턴컨설팅그룹(BCG)</div>
+    <div>액센츄어 코리아</div>
+    <div>EY한영</div>
+    <div>삼정KPMG</div>
+    <div>한국리서치<small>메트릭스 복제</small></div>
+    <div>한국갤럽</div>
+    <div>마크로밀엠브레인<small>패널 데이터 협력 검토 중, 판매보다 제휴 프레임 우선</small></div>
+  </div>
+  <p class="note">기관사업 수행사(엑스텐·씨씨미디어 유형)는 사명으로 사전 선별이 어려워 리스트에서 비웠다. 나라장터의 앱 이용 분석 포함 용역 낙찰 이력 기업, 또는 랭키닷컴 이용 이력 기업이 더 정확한 리스트가 된다.</p>
+
+  <h3>프로필 4 : 유통·커머스 대기업 (6곳)</h3>
+  <div class="prospects">
+    <div>롯데쇼핑(롯데온 포함)<small>신세계 복제, 연간 예산 분할 사용</small></div>
+    <div>현대백화점그룹</div>
+    <div>CJ올리브영</div>
+    <div>롯데홈쇼핑<small>SK스토아·GS리테일·HY 유형</small></div>
+    <div>현대홈쇼핑</div>
+    <div>CJ온스타일</div>
+  </div>
+</section>
+
+<section>
+  <h2>실행 순서 : 지역 데이터 추출부터, 다날 채널은 필터로</h2>
+  <p>첫 번째로 프로필 1을 8~9월 예산 편성 시점에 맞춰 접촉한다. 목록이 닫혀 있고 단가가 가장 높으며 한국교통안전공단이라는 3년 연속 성장 레퍼런스가 있다. 상품은 에센셜이 아니라 지역 단위 추출로 제안해야 하고, 교통·관광·소상공인 세 축으로 레퍼런스를 나눠 쓰면 된다.</p>
+  <p>두 번째로 프로필 2 중 규제·평가 업무가 있는 위원회와 진흥기관을 10~12월에 접촉한다. 이 군은 단기 진입 후 구독 전환이 실증된 유일한 공공 경로이므로, 단기 계약 시점에 이미 12개월 전환 조건을 함께 제시하는 것이 맞다.</p>
+  <p>세 번째로 프로필 3은 별도 영업 없이 다날 채널로 첫 구매를 열어두고 2년차 재구매가 발생한 곳만 직접 관리로 올린다. 프로필 4는 개별 영업 의존도가 높고 복제 가능성이 상대적으로 낮으므로 기존 홈쇼핑·유통 레퍼런스가 통하는 6곳에 한정한다.</p>
+</section>
+
+<footer>
+  분류와 우선순위는 사명·비고 기반 판단이며, 실제 구매 주체와 예산 구조는 접촉 과정에서 검증이 필요하다. 전체 170곳 리스트는 「모바일인덱스_단기매출_잠재고객_리스트.xlsx」 참조.
+</footer>
+
+</div>
+</body>
+</html>
