@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모바일인덱스 INSIGHT — AI 리포트</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', -apple-system, sans-serif; background: #f5f6fa; color: #1a1a2e; height: 100vh; display: flex; overflow: hidden; }
+
+/* ── 사이드바 ── */
+.sidebar { width: 240px; background: #1a1a2e; color: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; }
+.sidebar-logo .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+.sidebar-logo span { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+.sidebar-logo .badge { font-size: 10px; background: #6c5ce7; padding: 2px 6px; border-radius: 4px; margin-left: 2px; font-weight: 600; }
+
+.sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+.nav-section { padding: 0 16px; margin-bottom: 4px; }
+.nav-section-title { font-size: 10px; text-transform: uppercase; color: rgba(255,255,255,0.35); letter-spacing: 1px; padding: 12px 8px 6px; font-weight: 600; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 13.5px; color: rgba(255,255,255,0.6); transition: all 0.15s; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.nav-item.active { background: rgba(108,92,231,0.2); color: #fff; font-weight: 600; }
+.nav-item .icon { width: 18px; text-align: center; font-size: 14px; }
+.nav-item .new-badge { font-size: 9px; background: #e74c3c; padding: 1px 5px; border-radius: 3px; color: #fff; font-weight: 700; margin-left: auto; }
+
+.sidebar-user { padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; }
+.sidebar-user .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #6c5ce7, #a29bfe); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+.sidebar-user .user-info { font-size: 12px; }
+.sidebar-user .user-name { font-weight: 600; color: #fff; }
+.sidebar-user .user-plan { color: rgba(255,255,255,0.4); font-size: 11px; }
+
+/* ── 메인 영역 ── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* 탑바 */
+.topbar { height: 56px; background: #fff; border-bottom: 1px solid #e8e8ef; display: flex; align-items: center; padding: 0 24px; gap: 16px; flex-shrink: 0; }
+.topbar-title { font-size: 16px; font-weight: 700; color: #1a1a2e; }
+.topbar-breadcrumb { font-size: 12px; color: #999; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.topbar-btn { padding: 6px 14px; border-radius: 6px; border: 1px solid #e0e0e8; background: #fff; font-size: 12px; color: #666; cursor: pointer; transition: all 0.15s; }
+.topbar-btn:hover { border-color: #6c5ce7; color: #6c5ce7; }
+
+/* 콘텐츠 영역 */
+.content { flex: 1; display: flex; overflow: hidden; }
+
+/* ── 리포트 목록 패널 ── */
+.report-list-panel { width: 320px; background: #fff; border-right: 1px solid #e8e8ef; display: flex; flex-direction: column; flex-shrink: 0; }
+.report-list-header { padding: 16px 20px; border-bottom: 1px solid #f0f0f5; display: flex; align-items: center; justify-content: space-between; }
+.report-list-header h3 { font-size: 14px; font-weight: 700; }
+.report-count { font-size: 12px; color: #999; background: #f0f0f5; padding: 2px 8px; border-radius: 10px; }
+.report-list { flex: 1; overflow-y: auto; padding: 8px; }
+.report-card { padding: 14px 16px; border-radius: 10px; cursor: pointer; transition: all 0.15s; border: 1.5px solid transparent; margin-bottom: 4px; }
+.report-card:hover { background: #f8f8fc; }
+.report-card.active { background: #f0eeff; border-color: #6c5ce7; }
+.report-card .report-title { font-size: 13.5px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px; line-height: 1.4; }
+.report-card .report-meta { font-size: 11px; color: #999; display: flex; gap: 8px; align-items: center; }
+.report-card .report-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.report-card .tag-competitor { background: #fff0f0; color: #e74c3c; }
+.report-card .tag-market { background: #f0f0ff; color: #6c5ce7; }
+.report-card .tag-strategy { background: #f0fff4; color: #27ae60; }
+.report-card .tag-daily { background: #fff8e6; color: #f39c12; }
+
+/* ── 리포트 뷰어 ── */
+.report-viewer { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.report-viewer-content { flex: 1; overflow-y: auto; background: #f5f6fa; }
+.report-iframe-wrapper { max-width: 1000px; margin: 24px auto; background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; min-height: calc(100vh - 200px); }
+.report-iframe-wrapper iframe { width: 100%; height: 100%; border: none; min-height: calc(100vh - 200px); }
+.report-viewer-toolbar { padding: 12px 24px; background: #fff; border-bottom: 1px solid #e8e8ef; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.viewer-btn { padding: 5px 12px; border-radius: 6px; border: 1px solid #e0e0e8; background: #fff; font-size: 12px; color: #666; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
+.viewer-btn:hover { border-color: #6c5ce7; color: #6c5ce7; }
+.viewer-btn .icon { font-size: 13px; }
+.viewer-report-title { font-size: 13px; font-weight: 600; color: #1a1a2e; margin-left: 4px; }
+.viewer-date { font-size: 11px; color: #999; margin-left: auto; }
+
+/* ── 프롬프트 입력 영역 ── */
+.prompt-area { background: #fff; border-top: 1px solid #e8e8ef; padding: 16px 24px; flex-shrink: 0; }
+.prompt-container { max-width: 1000px; margin: 0 auto; }
+.prompt-box { display: flex; align-items: flex-end; gap: 10px; background: #f8f8fc; border: 1.5px solid #e0e0e8; border-radius: 14px; padding: 10px 14px; transition: border-color 0.2s; }
+.prompt-box:focus-within { border-color: #6c5ce7; background: #fff; box-shadow: 0 0 0 3px rgba(108,92,231,0.08); }
+.prompt-input { flex: 1; border: none; outline: none; font-size: 14px; background: transparent; resize: none; font-family: inherit; line-height: 1.5; min-height: 22px; max-height: 120px; color: #1a1a2e; }
+.prompt-input::placeholder { color: #b0b0c0; }
+.prompt-actions { display: flex; gap: 6px; align-items: center; }
+.prompt-btn { width: 36px; height: 36px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.15s; }
+.prompt-send { background: #6c5ce7; color: #fff; }
+.prompt-send:hover { background: #5a4bd1; }
+.prompt-send:disabled { background: #d0d0e0; cursor: not-allowed; }
+.prompt-attach { background: transparent; color: #999; }
+.prompt-attach:hover { color: #6c5ce7; }
+.prompt-hints { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.prompt-hint { font-size: 11px; padding: 4px 10px; border-radius: 6px; background: #f0f0f5; color: #666; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
+.prompt-hint:hover { background: #f0eeff; color: #6c5ce7; border-color: #d0ccf0; }
+
+/* ── 빈 상태 / 새 리포트 ── */
+.empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.6; }
+.empty-state h3 { font-size: 18px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+.empty-state p { font-size: 13px; color: #999; line-height: 1.6; max-width: 400px; }
+
+/* ── 생성 중 애니메이션 ── */
+.generating-overlay { display: none; position: absolute; inset: 0; background: rgba(255,255,255,0.92); z-index: 10; flex-direction: column; align-items: center; justify-content: center; }
+.generating-overlay.active { display: flex; }
+.generating-spinner { width: 40px; height: 40px; border: 3px solid #e0e0e8; border-top-color: #6c5ce7; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.generating-text { font-size: 14px; color: #666; }
+.generating-steps { margin-top: 12px; font-size: 12px; color: #999; }
+.generating-step { padding: 3px 0; display: flex; align-items: center; gap: 6px; }
+.generating-step .check { color: #27ae60; }
+.generating-step.pending { opacity: 0.4; }
+
+/* ── 스크롤바 ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d0d0e0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #b0b0c0; }
+
+/* ── 반응형 ── */
+@media (max-width: 1200px) { .report-list-panel { width: 280px; } }
+@media (max-width: 900px) { .report-list-panel { display: none; } }
+</style>
+</head>
+<body>
+
+<!-- ── 사이드바 ── -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">MI</div>
+    <span>모바일인덱스</span>
+    <span class="badge">INSIGHT</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title">인덱스</div>
+      <div class="nav-item"><span class="icon">📊</span> 사용량 인덱스</div>
+      <div class="nav-item"><span class="icon">💳</span> 소비 인덱스</div>
+      <div class="nav-item"><span class="icon">📈</span> 앱 마켓 인덱스</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">분석 도구</div>
+      <div class="nav-item"><span class="icon">🔍</span> 앱 검색</div>
+      <div class="nav-item"><span class="icon">⚔️</span> 경쟁앱 비교</div>
+      <div class="nav-item"><span class="icon">👥</span> 오디언스 분석</div>
+      <div class="nav-item"><span class="icon">🗺️</span> 지역 분석</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">AI 리포트</div>
+      <div class="nav-item active">
+        <span class="icon">✨</span> AI 리포트
+        <span class="new-badge">NEW</span>
+      </div>
+      <div class="nav-item"><span class="icon">📁</span> 내 리포트</div>
+      <div class="nav-item"><span class="icon">⏰</span> 자동 리포트</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">차트</div>
+      <div class="nav-item"><span class="icon">🏆</span> 통합 순위</div>
+      <div class="nav-item"><span class="icon">🔥</span> 급상승 앱</div>
+      <div class="nav-item"><span class="icon">🌏</span> 글로벌 차트</div>
+    </div>
+  </nav>
+  <div class="sidebar-user">
+    <div class="avatar">M</div>
+    <div class="user-info">
+      <div class="user-name">마국성</div>
+      <div class="user-plan">Enterprise Plan</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 메인 영역 ── -->
+<div class="main">
+  <!-- 탑바 -->
+  <div class="topbar">
+    <div class="topbar-title">AI 리포트</div>
+    <div class="topbar-breadcrumb">AI가 모바일인덱스 데이터를 분석하여 맞춤 리포트를 생성합니다</div>
+    <div class="topbar-right">
+      <button class="topbar-btn" onclick="showNewReport()">+ 새 리포트</button>
+    </div>
+  </div>
+
+  <!-- 콘텐츠 -->
+  <div class="content">
+    <!-- 리포트 목록 -->
+    <div class="report-list-panel">
+      <div class="report-list-header">
+        <h3>내 리포트</h3>
+        <span class="report-count">3개</span>
+      </div>
+      <div class="report-list">
+        <div class="report-card active" onclick="showReport(0)">
+          <div class="report-title">여기어때 데일리 마케팅 리포트</div>
+          <div class="report-meta">
+            <span class="report-tag tag-daily">데일리</span>
+            <span>2025.04.14</span>
+          </div>
+        </div>
+        <div class="report-card" onclick="showReport(1)">
+          <div class="report-title">지그재그 vs 무신사 경쟁 분석 + 타겟 오디언스</div>
+          <div class="report-meta">
+            <span class="report-tag tag-competitor">경쟁분석</span>
+            <span>2025.04.14</span>
+          </div>
+        </div>
+        <div class="report-card" onclick="showReport(2)">
+          <div class="report-title">INSIGHT 트래픽 변화 분석 및 통합 시나리오 검증</div>
+          <div class="report-meta">
+            <span class="report-tag tag-strategy">전략</span>
+            <span>2026.04.17</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 리포트 뷰어 -->
+    <div class="report-viewer" id="reportViewer">
+      <!-- 뷰어 툴바 -->
+      <div class="report-viewer-toolbar" id="viewerToolbar">
+        <button class="viewer-btn" onclick="showNewReport()"><span class="icon">←</span> 목록</button>
+        <span class="viewer-report-title" id="viewerTitle">여기어때 데일리 마케팅 리포트</span>
+        <span class="viewer-date" id="viewerDate">2025.04.14 생성</span>
+        <button class="viewer-btn"><span class="icon">🔗</span> 공유</button>
+        <button class="viewer-btn"><span class="icon">📥</span> PDF</button>
+        <button class="viewer-btn"><span class="icon">🔄</span> 갱신</button>
+      </div>
+
+      <!-- 리포트 콘텐츠 (iframe) -->
+      <div class="report-viewer-content" id="reportContent">
+        <div class="report-iframe-wrapper">
+          <iframe id="reportFrame" srcdoc="" sandbox="allow-same-origin"></iframe>
+        </div>
+      </div>
+
+      <!-- 생성 중 오버레이 -->
+      <div class="generating-overlay" id="generatingOverlay">
+        <div class="generating-spinner"></div>
+        <div class="generating-text">AI가 리포트를 생성하고 있습니다...</div>
+        <div class="generating-steps" id="generatingSteps">
+          <div class="generating-step" id="step1"><span class="check">⏳</span> 프롬프트 분석 중...</div>
+          <div class="generating-step pending" id="step2"><span class="check">○</span> MCP 데이터 조회 중...</div>
+          <div class="generating-step pending" id="step3"><span class="check">○</span> 인사이트 도출 중...</div>
+          <div class="generating-step pending" id="step4"><span class="check">○</span> 리포트 렌더링 중...</div>
+        </div>
+      </div>
+
+      <!-- 프롬프트 입력 -->
+      <div class="prompt-area">
+        <div class="prompt-container">
+          <div class="prompt-box">
+            <button class="prompt-btn prompt-attach" title="앱 첨부">📎</button>
+            <textarea class="prompt-input" id="promptInput" rows="1" placeholder="분석하고 싶은 내용을 입력하세요. 예: 배달의민족 vs 쿠팡이츠 경쟁 분석 리포트 만들어줘" oninput="autoResize(this)" onkeydown="handleKeydown(event)"></textarea>
+            <button class="prompt-btn prompt-send" id="sendBtn" onclick="handleSend()" disabled>➤</button>
+          </div>
+          <div class="prompt-hints">
+            <span class="prompt-hint" onclick="fillPrompt('여기어때 마케터 입장에서 데일리 모니터링 리포트 써줘')">📊 데일리 리포트</span>
+            <span class="prompt-hint" onclick="fillPrompt('지그재그 vs 무신사 경쟁 분석하고 타겟 오디언스 추천해줘')">⚔️ 경쟁앱 비교</span>
+            <span class="prompt-hint" onclick="fillPrompt('쿠팡이츠의 20대 여성 사용 패턴과 이탈 경로 분석해줘')">👥 유저 분석</span>
+            <span class="prompt-hint" onclick="fillPrompt('게임 업종 TOP 10 매출 순위와 트렌드 리포트 만들어줘')">🎮 업종 트렌드</span>
+            <span class="prompt-hint" onclick="fillPrompt('우리 앱(토스) 사용자의 페르소나와 관심 업종 분석해줘')">🎯 페르소나 분석</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 리포트 데이터 (기존 HTML 리포트를 srcdoc으로 임베딩) ──
+const reports = [
+  {
+    title: '여기어때 데일리 마케팅 리포트',
+    date: '2025.04.14 생성',
+    prompt: '여기어때 마케터 입장에서 꼭 모니터링 해야 할만 한 내용으로 데일리 리포트 써줘',
+    file: 'yeogi-report.html'
+  },
+  {
+    title: '지그재그 vs 무신사 경쟁 분석 + 타겟 오디언스',
+    date: '2025.04.14 생성',
+    prompt: '지그재그와 무신사를 지그재그 입장에서 비교하되, 특이점과 타겟 오디언스를 추천해줘',
+    file: 'zigzag-report.html'
+  },
+  {
+    title: 'INSIGHT 트래픽 변화 분석 및 통합 시나리오 검증',
+    date: '2026.04.17 생성',
+    prompt: '모바일인덱스 INSIGHT 트래픽 변화 분석 및 하위 페이지 통합 시나리오 검증',
+    file: 'mobileindex-insight-report.html'
+  }
+];
+
+let currentReport = 0;
+
+// 페이지 로드 시 첫 번째 리포트 표시
+window.addEventListener('DOMContentLoaded', () => {
+  loadReportContent(0);
+});
+
+async function loadReportContent(index) {
+  try {
+    const resp = await fetch(reports[index].file);
+    if (resp.ok) {
+      const html = await resp.text();
+      document.getElementById('reportFrame').srcdoc = html;
+    } else {
+      document.getElementById('reportFrame').srcdoc = generateFallbackContent(index);
+    }
+  } catch (e) {
+    document.getElementById('reportFrame').srcdoc = generateFallbackContent(index);
+  }
+}
+
+function generateFallbackContent(index) {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:'Apple SD Gothic Neo',sans-serif;padding:40px;color:#333;line-height:1.7;}h1{color:#1a1a2e;border-bottom:3px solid #6c5ce7;padding-bottom:10px;}p{color:#666;}</style></head><body><h1>${reports[index].title}</h1><p>원본 프롬프트: "${reports[index].prompt}"</p><p style="margin-top:20px;padding:16px;background:#f0eeff;border-radius:8px;color:#6c5ce7;">이 리포트는 모바일인덱스 MCP를 통해 실시간 데이터를 조회하여 AI가 자동 생성한 분석 리포트입니다.</p></body></html>`;
+}
+
+function showReport(index) {
+  currentReport = index;
+  // 카드 활성화
+  document.querySelectorAll('.report-card').forEach((c, i) => {
+    c.classList.toggle('active', i === index);
+  });
+  // 뷰어 업데이트
+  document.getElementById('viewerTitle').textContent = reports[index].title;
+  document.getElementById('viewerDate').textContent = reports[index].date;
+  loadReportContent(index);
+  // 뷰어 보이기
+  document.getElementById('reportContent').style.display = '';
+  document.getElementById('viewerToolbar').style.display = '';
+}
+
+function showNewReport() {
+  // 새 리포트 모드 — 빈 상태 표시
+  document.getElementById('reportFrame').srcdoc = `
+    <!DOCTYPE html><html><head><meta charset="UTF-8">
+    <style>
+      body { font-family: 'Apple SD Gothic Neo', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 80vh; color: #999; text-align: center; }
+      .empty { max-width: 400px; }
+      .empty .icon { font-size: 56px; margin-bottom: 16px; opacity: 0.5; }
+      h3 { color: #1a1a2e; font-size: 18px; margin-bottom: 8px; }
+      p { font-size: 13px; line-height: 1.6; }
+    </style></head><body>
+    <div class="empty">
+      <div class="icon">✨</div>
+      <h3>새 AI 리포트 만들기</h3>
+      <p>아래 프롬프트 입력창에 분석하고 싶은 내용을 입력하세요.<br>모바일인덱스의 모든 데이터를 활용하여 맞춤 리포트를 생성합니다.</p>
+    </div></body></html>`;
+  document.querySelectorAll('.report-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('viewerTitle').textContent = '새 리포트';
+  document.getElementById('viewerDate').textContent = '';
+  document.getElementById('promptInput').focus();
+}
+
+function fillPrompt(text) {
+  const input = document.getElementById('promptInput');
+  input.value = text;
+  autoResize(input);
+  document.getElementById('sendBtn').disabled = false;
+  input.focus();
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  document.getElementById('sendBtn').disabled = el.value.trim() === '';
+}
+
+function handleKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    if (document.getElementById('promptInput').value.trim()) handleSend();
+  }
+}
+
+function handleSend() {
+  const input = document.getElementById('promptInput');
+  const prompt = input.value.trim();
+  if (!prompt) return;
+
+  // 생성 애니메이션 시작
+  const overlay = document.getElementById('generatingOverlay');
+  overlay.classList.add('active');
+
+  // 단계별 진행 시뮬레이션
+  const steps = [
+    { id: 'step1', text: '프롬프트 분석 완료', delay: 800 },
+    { id: 'step2', text: 'MCP 데이터 조회 중... (app_usage, app_demographic, competitor_retention)', delay: 2000 },
+    { id: 'step3', text: '인사이트 도출 중...', delay: 3500 },
+    { id: 'step4', text: '리포트 렌더링 중...', delay: 4500 }
+  ];
+
+  // 리셋
+  steps.forEach(s => {
+    const el = document.getElementById(s.id);
+    el.classList.add('pending');
+    el.querySelector('.check').textContent = '○';
+  });
+  document.getElementById('step1').classList.remove('pending');
+  document.getElementById('step1').querySelector('.check').textContent = '⏳';
+
+  steps.forEach((step, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(step.id);
+      el.classList.remove('pending');
+      el.querySelector('.check').textContent = '✓';
+      el.style.color = '#27ae60';
+      // 다음 단계 활성화
+      if (i + 1 < steps.length) {
+        const next = document.getElementById(steps[i + 1].id);
+        next.classList.remove('pending');
+        next.querySelector('.check').textContent = '⏳';
+      }
+    }, step.delay);
+  });
+
+  // 완료 후 리포트 표시
+  setTimeout(() => {
+    overlay.classList.remove('active');
+    // 리셋 스텝 스타일
+    steps.forEach(s => {
+      document.getElementById(s.id).style.color = '';
+    });
+
+    // 생성된 리포트 표시 (데모용)
+    document.getElementById('reportFrame').srcdoc = generateDemoReport(prompt);
+    document.getElementById('viewerTitle').textContent = prompt.substring(0, 40) + (prompt.length > 40 ? '...' : '');
+    document.getElementById('viewerDate').textContent = '방금 생성됨';
+
+    input.value = '';
+    autoResize(input);
+  }, 5500);
+}
+
+function generateDemoReport(prompt) {
+  return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
+<style>
+  body { font-family: 'Apple SD Gothic Neo', sans-serif; max-width: 900px; margin: 0 auto; padding: 32px; color: #333; line-height: 1.7; }
+  h1 { color: #1a1a2e; border-bottom: 3px solid #6c5ce7; padding-bottom: 12px; font-size: 22px; }
+  .prompt-badge { display: inline-block; background: #f0eeff; color: #6c5ce7; padding: 8px 14px; border-radius: 8px; font-size: 13px; margin: 16px 0; }
+  .data-source { background: #f8f8fc; border: 1px solid #e8e8ef; border-radius: 10px; padding: 16px 20px; margin: 20px 0; }
+  .data-source h3 { font-size: 14px; color: #6c5ce7; margin-bottom: 8px; }
+  .data-source .api-call { font-family: 'SF Mono', monospace; font-size: 12px; background: #1a1a2e; color: #a29bfe; padding: 8px 12px; border-radius: 6px; margin: 4px 0; display: block; }
+  .insight-card { background: linear-gradient(135deg, #f0eeff, #f8f8fc); border-left: 4px solid #6c5ce7; padding: 16px 20px; border-radius: 0 10px 10px 0; margin: 20px 0; }
+  .metric { display: inline-block; background: #fff; border: 1px solid #e8e8ef; border-radius: 8px; padding: 12px 20px; margin: 6px; text-align: center; }
+  .metric .value { font-size: 24px; font-weight: 800; color: #6c5ce7; }
+  .metric .label { font-size: 11px; color: #999; margin-top: 2px; }
+  .section { margin-top: 32px; }
+  .section h2 { font-size: 17px; color: #1a1a2e; border-left: 4px solid #6c5ce7; padding-left: 12px; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  th { background: #1a1a2e; color: #fff; padding: 10px 12px; text-align: center; }
+  td { padding: 9px 12px; border-bottom: 1px solid #f0f0f5; text-align: center; }
+  tr:hover { background: #f8f8fc; }
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #e8e8ef; font-size: 11px; color: #999; }
+</style></head><body>
+  <h1>📊 AI 분석 리포트</h1>
+  <div class="prompt-badge">💬 "${prompt}"</div>
+
+  <div class="data-source">
+    <h3>📡 MCP 데이터 소스</h3>
+    <span class="api-call">mobileindex.search_app → 앱 검색 및 패키지명 확인</span>
+    <span class="api-call">mobileindex.app_usage → 기간별 사용량 (DAU/MAU/사용시간)</span>
+    <span class="api-call">mobileindex.app_demographic → 성별/연령별 사용자 구성</span>
+    <span class="api-call">mobileindex.app_persona → 사용자 페르소나 분석</span>
+    <span class="api-call">mobileindex.competitor_retention → 경쟁앱 재방문율 비교</span>
+    <span class="api-call">mobileindex.usage_overlap_rank → 동시 사용 앱 분석</span>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:4px;margin:24px 0;">
+    <div class="metric"><div class="value">1.2M</div><div class="label">월간 활성 사용자</div></div>
+    <div class="metric"><div class="value">342K</div><div class="label">일간 활성 사용자</div></div>
+    <div class="metric"><div class="value">8.4분</div><div class="label">1인당 평균 사용시간</div></div>
+    <div class="metric"><div class="value">32.5%</div><div class="label">업종 내 점유율</div></div>
+  </div>
+
+  <div class="insight-card">
+    <strong>🔍 핵심 인사이트</strong><br>
+    이 리포트는 프롬프트 기반으로 모바일인덱스 MCP API를 실시간 호출하여 생성되었습니다.
+    실제 서비스에서는 LLM이 프롬프트를 분석하고, 필요한 MCP 도구를 자동으로 선택하여 데이터를 조합한 뒤, 이와 같은 형태의 분석 리포트를 동적으로 생성합니다.
+  </div>
+
+  <div class="section">
+    <h2>사용자 구성 분석</h2>
+    <table>
+      <tr><th>연령대</th><th>여성</th><th>남성</th><th>합계</th></tr>
+      <tr><td>10대</td><td>5.2%</td><td>4.8%</td><td>10.0%</td></tr>
+      <tr><td>20대</td><td>18.3%</td><td>15.7%</td><td>34.0%</td></tr>
+      <tr><td>30대</td><td>12.1%</td><td>11.4%</td><td>23.5%</td></tr>
+      <tr><td>40대</td><td>8.6%</td><td>9.2%</td><td>17.8%</td></tr>
+      <tr><td>50대+</td><td>7.1%</td><td>7.6%</td><td>14.7%</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>경쟁앱 비교</h2>
+    <table>
+      <tr><th>앱</th><th>DAU</th><th>MAU</th><th>점유율</th><th>추세</th></tr>
+      <tr><td>우리 앱</td><td>342K</td><td>1.2M</td><td>32.5%</td><td style="color:#27ae60">▲ 2.1%</td></tr>
+      <tr><td>경쟁사 A</td><td>298K</td><td>1.05M</td><td>28.3%</td><td style="color:#e74c3c">▼ 0.8%</td></tr>
+      <tr><td>경쟁사 B</td><td>187K</td><td>720K</td><td>19.4%</td><td style="color:#27ae60">▲ 1.2%</td></tr>
+    </table>
+  </div>
+
+  <div class="footer">
+    데이터 출처: 모바일인덱스 INSIGHT MCP API | 생성일: ${new Date().toLocaleDateString('ko-KR')} | AI 자동 생성 리포트
+  </div>
+</body></html>`;
+}
+</script>
+</body>
+</html>

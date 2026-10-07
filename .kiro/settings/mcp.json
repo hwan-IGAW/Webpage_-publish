@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "mobileindex": {
+      "url": "https://mcp-test.mobileindex.com/mi-mcp/sse",
+      "headers": {
+        "Authorization": "Bearer 6h4aFtDPOHPhCOVACuSNGdWS2/DM5ZC/gEiR7CVODK3cU8vKtwOtfsUYnUe1H+kO"
+      },
+      "disabled": false,
+      "autoApprove": ["*"]
+    },
+    "mobileindex-local": {
+      "url": "http://localhost:3001/sse",
+      "disabled": false,
+      "autoApprove": ["*"]
+    }
+  }
+}
